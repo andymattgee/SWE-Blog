@@ -1,0 +1,25 @@
+This will serve as basic walk through of folder structure of app:
+
+/client - This directory will contain all your React frontend code. Inside, you might have:
+    /src - For your React components, utilities, hooks, and any other JavaScript or JSX files.
+    /public - For public assets like images, index.html, etc.
+/server - Contains your Express.js server and API logic. 
+    /controllers - For functions that directly respond to HTTP requests.
+    /models - For your MongoDB models (using Mongoose, perhaps).
+    /routes - To define your API endpoints.
+.env file -> stores config variables such as PORT, DB connection strings, API keys
+webpack.config ->
+    -Transpile JSX and ES6+ syntax to browser-compatible JavaScript using Babel.
+    -Bundle CSS, possibly processing it through PostCSS (which you'll need for Tailwind CSS).
+    -Optimize images and other static assets.
+    -Enable hot module replacement (HMR) for a smoother development experience.
+package.json - To manage project dependencies and scripts.
+    -This project will only utilize a single package.json in root folder for simplicity 
+
+
+
+Setting up MongoDB
+    make new data base in Mongo Atlas DB, browse collections, + create database.
+    How to connect: click on Database on left side, next to cluster name (cluster0), Connect button
+        click on drivers button, copy connection strint to code, replace password and username
+        make sure to add either dbURL to .env or password/username to .env
