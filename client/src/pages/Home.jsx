@@ -9,6 +9,9 @@ const Home = () => {
     const handleClick = () =>{
         navigate('/test1');
     }
+    const handleClick2 = () =>{
+        navigate('/test2');
+    }
 
   return (
     <div style={{color:'red'}}>
@@ -16,6 +19,8 @@ const Home = () => {
             this is from home comp
         </h2>
         <button onClick={handleClick}>Button to Test1</button>
+        <br></br>
+        <button onClick={handleClick2}>Button to Test2</button>
     </div>
     
   )
