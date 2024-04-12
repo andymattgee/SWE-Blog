@@ -40,9 +40,30 @@ const addEntry = async (req, res) => {
             errorMessage: error.message
         });
     }
-}
+};
 
+const deleteEntry = async (req,res) =>{
+    try {
+        const {id} = req.params;
+        const results = await Entry.findByIdAndDelete(id);
+        if(!results){
+            return res.status(400).json({
+                message:'Entry not found in DB, check ID/parameters'
+            })
+        }
+        return res.status(200).json({
+            success: true,
+            message: "Entry successfullly deleted!"
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message:'Error deleting entry in DB',
+            errorMessage: error.message
+        })
+    }
+}
 module.exports = {
     getEntries,
-    addEntry
+    addEntry,
+    deleteEntry
 }
