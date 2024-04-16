@@ -1,7 +1,7 @@
 {
   "name": "testapp",
   "version": "1.0.0",
-  "description": "testing app for react components", 
+  "description": "testing app for react components",
   "main": "webpack.config.js",
   "scripts": {
     "server": "NODE_ENV=production nodemon server/server.js",
@@ -11,6 +11,7 @@
   "author": "andy gee",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.6.8",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
