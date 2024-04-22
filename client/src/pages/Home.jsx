@@ -6,18 +6,22 @@ const Home = () => {
 
   const navigate = useNavigate();
     
-    const handleClick = () =>{
+    const handleClick = () => {
         navigate('/test1');
     }
-    const handleClick2 = () =>{
+    const handleClick2 = () => {
         navigate('/test2');
     }
-    const handleAPIClick = () =>{
+    const handleAPIClick = () => {
         navigate('/APITestPage');
+    }
+    const handleViewEntries = ()=> {
+        navigate('/Entries')
     }
 
   return (
     <div style={{color:'red'}}>
+      
         <h2>
             Currently in home component
         </h2>
@@ -26,6 +30,8 @@ const Home = () => {
         <button onClick={handleClick2}>Button to Test2</button>
         <br></br>
         <button onClick={handleAPIClick}>Button to API test Page </button>
+        <br/>
+        <button onClick ={handleViewEntries}>View Entries</button>
     </div>
     
   )
