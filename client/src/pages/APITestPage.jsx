@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios';
 
 //API page, just a playground for working with 3rd party API's and testing axios/fetch requests
-import JokeButton from '../components/JokeButton.jsx';
+
 const APITestPage = () => {
     const [joke, setJoke] = useState("Axios Joke will appear here");
     const [joke2, setFetchJoke] = useState("Fetched joke will appear here");

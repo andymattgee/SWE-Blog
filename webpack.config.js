@@ -17,9 +17,9 @@ module.exports = {
         // The filename of the output bundle
         filename: 'bundle.js',
         // The path to the output directory
-        path: path.join(__dirname, 'build'),
+        path: path.join(__dirname, './build'),
         // The public URL of the output directory when referenced in a browser
-        publicPath: '/',
+        // publicPath: '/',
         // Cleans the output directory before emitting
         clean: true,
         // Specifies the naming convention for assets
@@ -31,8 +31,8 @@ module.exports = {
     devServer: {
         // Serve static files from the build directory
         static: {
-            directory: path.resolve(__dirname, 'build'),
-            publicPath: '/build/',
+            directory: path.resolve(__dirname, './build'),
+            publicPath: '/',
         },
         // Fallback to index.html for Single Page Applications
         historyApiFallback: true,
@@ -44,6 +44,8 @@ module.exports = {
         hot: true,
         // Enable gzip compression
         compress: true,
+        // liveReload: true,
+
 
     },
     // Disable performance hints (e.g., asset size warnings)
@@ -54,7 +56,7 @@ module.exports = {
     plugins: [
         // Generates an HTML file to serve the webpack bundles
         new HtmlWebpackPlugin({
-            title: "testapp",
+            title: "SWE-Blog",
             template: './client/public/index.html'
         })
     ],
@@ -64,6 +66,7 @@ module.exports = {
             {
                 // Test for JavaScript files to use babel-loader
                 test: /\.(?:js|jsx|mjs|cjs)$/,
+
                 // Exclude node_modules from processing
                 exclude: /node_modules/,
                 // Use babel-loader for JS/JSX files
@@ -71,22 +74,28 @@ module.exports = {
                     loader: 'babel-loader',
                     // Presets used for transpiling
                     options: {
-                        presets: ['@babel/preset-env', '@babel/preset-react',]
+                        presets: [
+                            ["@babel/preset-env", { targets: "defaults" }],
+                            // '@babel/preset-env',
+                            '@babel/preset-react',
+                        ]
                     }
                 }
             },
             {
                 // Test for CSS and SCSS files
-                test: /\.(css|scss)$/i,
+                test: /\.css$/i,
+               
                 // Only include files from the specified directory
                 include: path.resolve(__dirname, 'src'),
                 // Use these loaders in sequence for CSS/SCSS files
                 use: [
-                    "style-loader", // Injects styles into the DOM
-                    "css-loader", // Translates CSS into CommonJS
-                    "sass-loader", // Compiles Sass to CSS
-                    "postcss-loader" // Process CSS with PostCSS
+                    "style-loader",
+                    "css-loader",
+                    "postcss-loader",
+                    "sass-loader",
                 ],
+                exclude: /node_modules/,
             },
             {
                 // Loader for image files to handle them as assets/resources
@@ -97,6 +106,6 @@ module.exports = {
     },
     // Automatically resolve these extensions
     resolve: {
-        extensions: [".*", ".js", ".jsx"]
+        extensions: [".*", ".js", ".jsx", ".ts", ".tsx", ".gif", ".png", ".svg"]
     }
 }
