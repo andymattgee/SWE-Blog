@@ -1,6 +1,6 @@
 import React from 'react';
 import {Link,Route,Routes,Navigate,useNavigate} from 'react-router-dom';
-// import "../public/styles/styles.css";
+import "../public/styles/styles.css";
 
 import Login from './pages/Login.jsx';
 import Home from "./pages/Home.jsx";

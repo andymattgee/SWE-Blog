@@ -87,7 +87,11 @@ module.exports = {
                 test: /\.css$/i,
                
                 // Only include files from the specified directory
-                include: path.resolve(__dirname, 'src'),
+                include: [
+                    // path.resolve(__dirname, 'src'),
+                    path.resolve(__dirname, 'client/public/styles'),
+                ],
+                // exclude: /node_modules/,
                 // Use these loaders in sequence for CSS/SCSS files
                 use: [
                     "style-loader",
@@ -95,7 +99,7 @@ module.exports = {
                     "postcss-loader",
                     "sass-loader",
                 ],
-                exclude: /node_modules/,
+                // exclude: /node_modules/,
             },
             {
                 // Loader for image files to handle them as assets/resources
