@@ -1,7 +1,8 @@
 import React from 'react';
 import {Link,Route,Routes,Navigate,useNavigate} from 'react-router-dom';
-// import "../public/styles/styles.css";
+import "../public/styles/styles.css";
 
+import Login from './pages/Login.jsx';
 import Home from "./pages/Home.jsx";
 import Test1 from "./pages/Test1.jsx";
 import Test2 from "./pages/Test2.jsx";
@@ -13,7 +14,7 @@ const App = () => {
     const navigate = useNavigate();
 
   const handleHomeClick = () => {
-    navigate('/');
+    navigate('/Home');
   };
   const newEntry = () => {
     navigate("/NewEntry")
@@ -21,10 +22,11 @@ const App = () => {
 
   return (
     <div>
-<button onClick={handleHomeClick}>Go Home</button>
-<button onClick={newEntry}>Make New Entry Here</button>
+{/* <button onClick={handleHomeClick}>Go Home</button>
+<button onClick={newEntry}>Make New Entry Here</button> */}
     <Routes>
-        <Route path ="/" element={<Home/>}/>
+    <Route path ="/" element={<Login/>}/>
+        <Route path ="/Home" element={<Home/>}/>
         <Route path ="/test1" element={<Test1/>}/>
         <Route path ="/test2" element={<Test2/>}/>
         <Route path ="/APITestPage" element={<APITestPage/>}/>
