@@ -29,6 +29,19 @@ app.get('/', (req, res) => {
 
 app.use('/entries', entriesRoute);
 
+app.use('*',(req, res) => { res.sendStatus(404) });
+
+// Global error handler (taken from express unit)
+app.use((err, req, res, next) => {
+    const defaultErr = {
+      log: 'Express error handler caught unknown middleware error $',
+      status: 500,
+      message: { err: 'An error occurred /Global Error handler$' },
+    };
+    const errorObj = Object.assign({}, defaultErr, err);
+    console.log(errorObj.log);
+    return res.status(errorObj.status).json(errorObj.message);
+  });
 
 //connects to DB, if successfull then starts the server
 //if not, logs the error
