@@ -34,16 +34,14 @@ const NewEntry = () => {
 
   return (
     
-    <div>
-        <h2>
-
-        New Entry page here
-        </h2>
+    <div className="flex flex-col items-center justify-center w-full">
+        
         <h2>Create a new entry here</h2>
             <form 
             onSubmit={handleSubmit}
+            className="w-11/12"
             >
-            <div>
+            <div className="mb-4 ">
                 <label htmlFor="title">Title: </label>
                 <input
                     type="text"
@@ -52,11 +50,13 @@ const NewEntry = () => {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     required
-                    style={{ width: "50%", maxWidth: "50%" }}
+                    
+                    className="border-2 w-5/6"
                 />
             </div>
-            <div>
-                <label htmlFor="profContent">Professional Content</label>
+            <div className="mb-4 ">
+                <label htmlFor="profContent">Professional Content: </label>
+                <br/>
                 <textarea
                     id="entry"
                     name="entry"
@@ -64,11 +64,13 @@ const NewEntry = () => {
                     onChange={(e) => setProfContent(e.target.value)}
                     required
                     rows={20}
-                    style={{ width: "90%", maxWidth: "90%" }}
+                    
+                    className="border-2 w-11/12 p-4"
                 />
             </div>
-            <div>
+            <div className="mb-4">
                 <label htmlFor="persContent">Personal Content</label>
+                <br/>
                 <textarea
                     id="entry"
                     name="entry"
@@ -76,11 +78,15 @@ const NewEntry = () => {
                     onChange={(e) => setPersContent(e.target.value)}
                     required
                     rows={20}
-                    style={{ width: "90%", maxWidth: "90%" }}
+                    
+                    className="border-2 w-11/12 p-4"
                 />
             </div>
-            <div>
-                <button type="submit">Submit Entry</button>
+            <div className="">
+                <button 
+                type="submit"
+                className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 h-20 w-11/12 "
+                >Submit Entry</button>
             </div>
         </form>
     </div>

@@ -23,6 +23,7 @@ const Signup = () => {
             <div className="flex flex-col items-center justify-center h-screen bg-[conic-gradient(at_bottom_right,_var(--tw-gradient-stops))] from-blue-700 via-blue-800 to-gray-900">
             <h1 className="flex flex-col items-center justify-center text-2xl font-bold text-white mb-10">Under Construction</h1>
                 <h1 className="mb-8 text-2xl font-bold text-white">Sign Up Here</h1>
+
                 <form className="w-full max-w-sm" onSubmit={handleSubmit(onSubmit)}>
                     <div className="mb-4">
                         <label htmlFor="username" className="block text-gray-700 font-medium mb-1">Username</label>
@@ -51,10 +52,11 @@ const Signup = () => {
                         Sign Up
                     </button>
                 </form>
+
                 <button onClick={handleHomeButton}
                     className="mt-20 text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-teal-500/50 dark:shadow-lg dark:shadow-teal-800/80 font-medium rounded-lg text-sm h-20 px-10 py-2.5 text-center me-2 mb-2 "
                 >
-                    Home
+                    Enter With Out Sign Up
                 </button>
             </div>
 
