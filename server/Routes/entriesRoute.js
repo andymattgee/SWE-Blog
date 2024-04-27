@@ -4,6 +4,7 @@ const router = express.Router();
 const entriesController = require('../Controllers/entriesController');
 
 router.get('/', entriesController.getEntries);
+router.get('/:id', entriesController.getEntry);
 router.post('/', entriesController.addEntry);
 router.delete('/:id', entriesController.deleteEntry);
 

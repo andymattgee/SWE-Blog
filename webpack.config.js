@@ -19,7 +19,7 @@ module.exports = {
         // The path to the output directory
         path: path.join(__dirname, './build'),
         // The public URL of the output directory when referenced in a browser
-        // publicPath: '/',
+        publicPath: '/',
         // Cleans the output directory before emitting
         clean: true,
         // Specifies the naming convention for assets

@@ -14,6 +14,19 @@ const getEntries = async (req, res) => {
     }
 };
 
+const getEntry = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const entry = await Entry.findById(id);
+        if(!entry){
+            return res.status(404).json({message: `Entry ${id} not found`})
+        }
+        res.status(200).json(entry);
+    } catch (error) {
+        res.status(500).json({message: 'Error fetching entry'})
+    }
+}
+
 const addEntry = async (req, res) => {
     try {
         if (!req.body.title || !req.body.professionalContent) {
@@ -64,6 +77,7 @@ const deleteEntry = async (req,res) =>{
 }
 module.exports = {
     getEntries,
+    getEntry,
     addEntry,
     deleteEntry
 }

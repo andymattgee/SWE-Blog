@@ -10,6 +10,7 @@ import APITestPage from "./pages/APITestPage.jsx";
 import Entries from "./pages/Entries.jsx";
 import NewEntry from './pages/NewEntry.jsx';
 import Signup from './pages/Signup.jsx';
+import SingleEntry from './pages/SingleEntry.jsx';
 
 const App = () => {
     const navigate = useNavigate();
@@ -34,6 +35,7 @@ const App = () => {
         <Route path ="/Entries" element={<Entries/>}/>
         <Route path ="/NewEntry" element={<NewEntry/>}/>
         <Route path ="/Signup" element={<Signup/>}/>
+        <Route path ="/SingleEntry/:id" element={<SingleEntry/>}/>
     </Routes>
    
     </div>
