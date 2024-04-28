@@ -21,7 +21,7 @@ const getEntry = async (req, res) => {
         if(!entry){
             return res.status(404).json({message: `Entry ${id} not found`})
         }
-        res.status(200).json(entry);
+        res.status(200).json([entry]);
     } catch (error) {
         res.status(500).json({message: 'Error fetching entry'})
     }

@@ -12,7 +12,7 @@ const Entries = () => {
     const getEntries = async () => {
         const { data } = await axios.get('http://localhost:3333/entries',
             { headers: { Accept: 'application/json' } });
-        // console.log('axios entry data ->', data.data);
+        console.log('axios entry data ->', data.data);
         setEntries(data.data);
     }
     useEffect(() => {
