@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 // import Form from "../components/Form";
 
 
@@ -48,7 +48,7 @@ const Entries = () => {
     const newEntries = entries.map(({ _id, title, createdAt, personalContent, professionalContent }) => {
         return (
 
-            <div key={_id}
+            <Link to={`/SingleEntry/${_id}`} key={_id}
                 // className="flex flex-col  items-start border-4 border-indigo-500 p-3"
                 className="w-full md:w-1/3 px-2 mb-4"
             >
@@ -59,26 +59,26 @@ const Entries = () => {
                         {/* <li>Professional: <br />{professionalContent}</li> */}
                         {/* <li>Personal: <br />{personalContent}</li> */}
                     </ul>
-                    <button
+                    {/* <button
                         className="text-white bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-5 mt-5 w-2/5 self-center"
                         onClick={() => handleViewEntry(_id)}
                     >
                         View Entry
-                    </button>
+                    </button> */}
                     {/* <button
                         className="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-5 mt-5 w-2/5 self-center"
                         onClick={() => deleteEntry(_id)}>
                         Delete post above
                     </button> */}
                 </div>
-            </div>
+            </Link>
         )
         //.reverse to prepend entries to top, sure there's a better way but i'm tired right now
     }).reverse();
 
     return (
 
-        <div>
+        <div className="px-6">
             <button
                 className="text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
                 onClick={handleHomeButton}>Back Home</button>
@@ -86,6 +86,7 @@ const Entries = () => {
                 className="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
                 onClick={handleNewEntry}>Make New Entry</button>
             <br />
+            <h2 className="text-4xl font-bold  text-center mb-5"> Clicky entry to view details</h2>
             {/* Entries here: */}
 <div className="flex flex-wrap -mx-2">
 
