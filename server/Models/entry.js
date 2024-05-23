@@ -9,7 +9,8 @@ const EntrySchema = new Schema(
         personalContent: {type: String, required: false},
         date: {type: Date, required: false},
         createdAt: {type: Date, default: Date.now},
-        image: {type: String, required: false}
+        image: {type: String, required: false},
+        user: [{type: Schema.Types.ObjectId, ref: 'User'}]
     }
 );
 
