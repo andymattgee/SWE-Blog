@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 
 const Signup = () => {
     const navigate = useNavigate();
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { register, handleSubmit, formState: { errors },reset } = useForm();
 
     const handleHomeButton = () => {
         navigate("/Home")
@@ -14,6 +14,7 @@ const Signup = () => {
 
     const onSubmit = data => {
         console.log(data);
+        reset({username:'', password:''});
     }
 
     return (
