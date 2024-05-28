@@ -1,12 +1,9 @@
 require('dotenv').config();
 
-// import express from 'express';
-// import mongoose from 'mongoose';
-// import entriesRoute from './Routes/entriesRoute.js';
-// import cors from 'cors';
-// const { PORT, DB_URL, DB_NAME } = process.env;
+
 const express = require('express');
 const mongoose = require('mongoose');
+const userRoute = require('./Routes/userRoute.js');
 const entriesRoute = require('./Routes/entriesRoute.js');
 const cors = require('cors');
 
@@ -23,10 +20,10 @@ app.use(express.json());
 app.use(cors());
 
 
-app.get('/', (req, res) => {
-    return res.status(200).send('backend 3333 page')
-});
-
+// app.get('/', (req, res) => {
+//     return res.status(200).send('backend 3333 page')
+// });
+app.use('/api/users', userRoute);
 app.use('/entries', entriesRoute);
 
 app.use('*',(req, res) => { res.sendStatus(404) });

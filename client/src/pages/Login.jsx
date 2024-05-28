@@ -13,9 +13,30 @@ const Login = () => {
   const handleSignupButton = () => {
     navigate("/Signup")
   };
-  const onSubmit = data => {
+  const onSubmit = async data => {
     console.log('data.username ->', data.username);
     console.log('data.password ->', data.password)
+
+    //from the robot
+    try {
+      const response = await fetch('/api/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await response.json();
+      if (response.ok) {
+        console.log('Login successful:', result);
+        // Save token to localStorage or context
+        localStorage.setItem('token', result.token);
+        navigate("/Home");
+      } else {
+        console.error('Login failed:', result);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+
     reset({username:'', password: ''});
 }
 
