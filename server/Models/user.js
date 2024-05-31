@@ -28,7 +28,7 @@ const userSchema = new Schema({
       userSchema.methods.generateAuthToken = async function() {
         // console.log('entered gen token');
         const user = this;
-        const token = jwt.sign({ _id: user._id.toString() }, 'your_jwt_secret');
+        const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET || 'default_jwt_secret');
         console.log('after gen token jwt assignment | token ->', token);
         user.tokens = user.tokens.concat({ token });
         console.log('after user.tokens');

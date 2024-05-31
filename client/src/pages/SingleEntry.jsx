@@ -14,18 +14,30 @@ const SingleEntry = () => {
     }
 
     const getEntry = async () => {
+        const token = localStorage.getItem('token');
         const { data } = await axios.get(`http://localhost:3333/entries/${id}`,
-            { headers: { Accept: 'application/json' } });
+            { headers: { 
+                Accept: 'application/json',
+                Authorization: `Bearer ${token}`,
+             } 
+            });
         console.log("axios data (GET) ->", data);
 
         setEntry(data[0]);
     };
 
     const deleteEntry = async (id) => {
+        const token = localStorage.getItem('token');
         //window pop up that checks to make sure you want to delete the entry 
         if (window.confirm('Are you sure you want to delete this entry?')) {
             try {
-                await axios.delete(`http://localhost:3333/entries/${id}`);
+                await axios.delete(`http://localhost:3333/entries/${id}`,
+                    { headers:{
+                        Authorization:`Bearer ${token}`
+                    }
+
+                    }
+                );
                 console.log("Entry deleted with id:", id);
                 // console.log("Entry id ->", id);
                 // getEntries();

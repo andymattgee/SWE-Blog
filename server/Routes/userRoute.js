@@ -11,7 +11,14 @@ router.post('/register', async (req, res) => {
     await user.save();
     console.log('after user.save');
     const token = await user.generateAuthToken();
-    console.log('after token generation');
+    console.log('after token generation/before cookie token');
+    //this is new code for cookies
+    // res.cookie('token', token,{
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === 'production',
+    //   sameSite: 'strict'
+    // });
+
     res.status(201).send({ user, token });
   } catch (error) {
     res.status(400).send(error);
@@ -24,6 +31,13 @@ router.post('/login', async (req, res) => {
     console.log('req.body from login ->', req.body);
     const user = await User.findByCredentials(req.body.userName, req.body.password);
     const token = await user.generateAuthToken();
+    //new code for cookies
+  //   res.cookie('token', token, {
+  //     httpOnly: true,
+  //     secure: process.env.NODE_ENV === 'production',
+  //     sameSite: 'strict'
+  // });
+
     res.send({ user, token });
   } catch (error) {
     res.status(400).send({ error: 'Unable to login' });
@@ -37,6 +51,9 @@ router.post('/logout', auth, async (req, res) => {
       return token.token !== req.token;
     });
     await req.user.save();
+    //new code regarding cookies
+    res.clearCookie('token');
+  
     res.send();
   } catch (error) {
     res.status(500).send(error);

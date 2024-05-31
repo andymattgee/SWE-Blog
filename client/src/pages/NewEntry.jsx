@@ -15,10 +15,16 @@ const NewEntry = () => {
         e.preventDefault();
         
         try {
+            const token = localStorage.getItem('token');
+
             const response = await axios.post('http://localhost:3333/entries',{
                 title,
                 professionalContent: profContent,
-                personalContent : persContent
+                personalContent : persContent,
+            },{
+                headers:{
+                    Authorization: `Bearer ${token}`,
+                }
             });
             console.log('Entry submitted:', response.data);
 
@@ -26,7 +32,6 @@ const NewEntry = () => {
             setProfContent('');
             setPersContent('');
             navigate('/Entries')
-            // getEntries();
         } catch (error) {
             console.log('error in post req ->', error);
         }

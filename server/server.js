@@ -3,6 +3,7 @@ require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
 const userRoute = require('./Routes/userRoute.js');
 const entriesRoute = require('./Routes/entriesRoute.js');
 const cors = require('cors');
@@ -12,6 +13,12 @@ const DB_URL = process.env.DB_URL;
 const DB_NAME = process.env.DB_NAME;
 
 const app = express();
+
+// Enable query debugging
+// mongoose.set('debug', true); 
+
+//Middleware to parse cookies
+app.use(cookieParser());
 
 //middleware that parses incoming JSON
 app.use(express.json());
