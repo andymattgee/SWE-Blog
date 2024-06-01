@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
+import NavBar from '../components/navbar';
 
 //API page, just a playground for working with 3rd party API's and testing axios/fetch requests
 
@@ -67,6 +68,7 @@ const APITestPage = () => {
 
     return (
         <div>
+            <NavBar/>
             <h1>
                 API test Page
             </h1>
