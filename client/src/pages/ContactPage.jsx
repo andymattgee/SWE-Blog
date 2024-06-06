@@ -1,7 +1,7 @@
 import React from 'react';
 import NavBar from '../components/navbar';
 
-const Test1 = () => {
+const ContactPage = () => {
   return (
     <div>
       <NavBar/>
@@ -12,4 +12,4 @@ const Test1 = () => {
   )
 }
 
-export default Test1;
+export default ContactPage;

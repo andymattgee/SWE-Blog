@@ -4,7 +4,7 @@ import "../public/styles/styles.css";
 
 import Login from './pages/Login.jsx';
 import Home from "./pages/Home.jsx";
-import Test1 from "./pages/Test1.jsx";
+import ContactPage from "./pages/ContactPage.jsx";
 import Test2 from "./pages/Test2.jsx";
 import APITestPage from "./pages/APITestPage.jsx";
 import Entries from "./pages/Entries.jsx";
@@ -31,7 +31,7 @@ onClick={handleHomeClick}>Go Home</button> */}
     <Routes>
     <Route path ="/" element={<Login/>}/>
         <Route path ="/Home" element={<Home/>}/>
-        <Route path ="/test1" element={<Test1/>}/>
+        <Route path ="/ContactPage" element={<ContactPage/>}/>
         <Route path ="/test2" element={<Test2/>}/>
         <Route path ="/APITestPage" element={<APITestPage/>}/>
         <Route path ="/Entries" element={<Entries/>}/>

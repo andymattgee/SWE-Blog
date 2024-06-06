@@ -15,8 +15,8 @@ const auth = async (req, res, next) => {
       throw new Error('Token does not contain a valid user ID');
     }
 
-    console.log('Searching for user with ID:', decoded._id);
-    console.log('Searching for token:', token);
+    // console.log('Searching for user with ID:', decoded._id);
+    // console.log('Searching for token:', token);
 
     
     // const user = await User.findById(decoded._id);

@@ -9,9 +9,9 @@ router.post('/register', async (req, res) => {
   console.log('req body ->', req.body);
   try {
     await user.save();
-    console.log('after user.save');
+    // console.log('after user.save');
     const token = await user.generateAuthToken();
-    console.log('after token generation/before cookie token');
+    // console.log('after token generation/before cookie token');
     //this is new code for cookies
     // res.cookie('token', token,{
     //   httpOnly: true,
@@ -28,7 +28,7 @@ router.post('/register', async (req, res) => {
 // Login
 router.post('/login', async (req, res) => {
   try {
-    console.log('req.body from login ->', req.body);
+    // console.log('req.body from login ->', req.body);
     const user = await User.findByCredentials(req.body.userName, req.body.password);
     const token = await user.generateAuthToken();
     //new code for cookies

@@ -38,8 +38,8 @@ module.exports = {
         historyApiFallback: true,
         // Port to run the devServer
         port: 3000,
-        // Automatically open the browser
-        open: true,
+        // Automatically open the browser to new window w localhost3000
+        // open: true,
         // Enables hot module replacement for CSS/JS
         hot: true,
         // Enable gzip compression
