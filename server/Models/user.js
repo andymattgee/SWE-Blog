@@ -26,24 +26,24 @@ const userSchema = new Schema({
       });
       
       userSchema.methods.generateAuthToken = async function() {
-        // console.log('entered gen token');
+        console.log('Entered Models/user generateAuthToken');
         const user = this;
         const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET || 'default_jwt_secret');
-        console.log('after gen token jwt assignment | token ->', token);
+        // console.log('after gen token jwt assignment | token ->', token);
         user.tokens = user.tokens.concat({ token });
-        console.log('after user.tokens');
         await user.save();
         return token;
       };
       
       userSchema.statics.findByCredentials = async (userName, password) => {
+        console.log('Entered Models/User findByCredentials');
         const user = await User.findOne({ userName });
         if (!user) {
-          throw new Error('Unable to login');
+          throw new Error('Unable to login ');
         }
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-          throw new Error('Unable to login');
+          throw new Error('Unable to login ');
         }
         return user;
       };

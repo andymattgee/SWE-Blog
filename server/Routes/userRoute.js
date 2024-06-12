@@ -5,8 +5,8 @@ const auth = require('../Middleware/auth');
 
 // Register
 router.post('/register', async (req, res) => {
-  const user = new User(req.body);
   console.log('req body ->', req.body);
+  const user = new User(req.body);
   try {
     await user.save();
     // console.log('after user.save');
@@ -28,8 +28,11 @@ router.post('/register', async (req, res) => {
 // Login
 router.post('/login', async (req, res) => {
   try {
-    // console.log('req.body from login ->', req.body);
+    console.log('req.body from login ->', req.body);
     const user = await User.findByCredentials(req.body.userName, req.body.password);
+    if(!user){
+      return res.status(401).json({error: 'Invalid username of password (server)'});
+    }
     const token = await user.generateAuthToken();
     //new code for cookies
   //   res.cookie('token', token, {
@@ -52,7 +55,7 @@ router.post('/logout', auth, async (req, res) => {
     });
     await req.user.save();
     //new code regarding cookies
-    res.clearCookie('token');
+    // res.clearCookie('token');
   
     res.send();
   } catch (error) {

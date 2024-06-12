@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import NavBar from '../components/navbar';
+import LogLocalStorage from '../components/LogLocalStorage';
 
 
 const Home = () => {
@@ -66,6 +67,7 @@ const Home = () => {
           >
             View Entries
           </button> */}
+          <LogLocalStorage/>
         </div>
       </div>
     </div>

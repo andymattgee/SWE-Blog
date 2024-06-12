@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import { useForm } from "react-hook-form";
+import LogLocalStorage from '../components/LogLocalStorage';
 
 
 const Login = () => {
@@ -13,9 +14,9 @@ const Login = () => {
   const handleSignupButton = () => {
     navigate("/Signup")
   };
-  const onSubmit = async data => {
-    console.log('data.username ->', data.username);
-    console.log('data.password ->', data.password)
+  const onSubmit = async (data) => {
+    // console.log('data.username ->', data.username);
+    // console.log('data.password ->', data.password)
 
     //from the robot
     try {
@@ -27,7 +28,7 @@ const Login = () => {
       const result = await response.json();
       if (response.ok) {
         console.log('Login successful:', result);
-        // Save token to localStorage or context
+        // Save token to localStorage or context(not very safe -> cookies!)
         localStorage.setItem('token', result.token);
         localStorage.setItem('userName', result.user.userName);
         navigate("/Home");
@@ -87,6 +88,7 @@ const Login = () => {
         onClick={handleSignupButton} >
         Signup Here
       </button>
+      <LogLocalStorage/>
     </div>
   )
 }

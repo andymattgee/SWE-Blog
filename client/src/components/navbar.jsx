@@ -9,7 +9,7 @@ const navbar = () => {
         const token = localStorage.getItem('token');
         //this will not be needed once I add protected routes
         if (!token) {
-            console.log('no token');
+            console.log('no token, returning to login/sign up page');
             navigate('/');
             return;
         };
@@ -21,9 +21,10 @@ const navbar = () => {
               Authorization: `Bearer ${token}`
             }
           });
-          // Clear localStorage and navigate to login page
-          localStorage.removeItem('token');
-          localStorage.removeItem('userName');
+          // Clear localStorage of token and userName and navigate to login page
+          // localStorage.removeItem('token');
+          // localStorage.removeItem('userName');
+          localStorage.clear();
           navigate('/');
         } catch (error) {
           console.error('Error logging out:', error);
