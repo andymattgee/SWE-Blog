@@ -1,9 +1,8 @@
-// import { Entry } from '../Models/entry.js';
 const Entry = require('../Models/entry');
 
 const getEntries = async (req, res) => {
     try {
-        const entries = await Entry.find();
+        const entries = await Entry.find({user:req.user._id});
         return res.status(200).json({
             success: true,
             count: entries.length,
@@ -17,7 +16,8 @@ const getEntries = async (req, res) => {
 const getEntry = async (req, res) => {
     const { id } = req.params;
     try {
-        const entry = await Entry.findById(id);
+        //shoulder filter by authenticated user
+        const entry = await Entry.findOne({_id: id, user: req.user._id});
         if(!entry){
             return res.status(404).json({message: `Entry ${id} not found`})
         }
@@ -28,6 +28,7 @@ const getEntry = async (req, res) => {
 }
 
 const addEntry = async (req, res) => {
+    console.log('enter addEntry block');
     try {
         if (!req.body.title || !req.body.professionalContent) {
             return res.status(500).send({
@@ -40,7 +41,8 @@ const addEntry = async (req, res) => {
             personalContent: req.body.personalContent,
             date: req.body.date,
             createAt: req.body.createdAt,
-            image: req.body.image
+            image: req.body.image,
+            user: req.user._id, //associated entry w authenticated user
         };
         const entry = await Entry.create(newEntry);
         return res.status(200).json({
@@ -58,7 +60,7 @@ const addEntry = async (req, res) => {
 const deleteEntry = async (req,res) =>{
     try {
         const {id} = req.params;
-        const results = await Entry.findByIdAndDelete(id);
+        const results = await Entry.findOneAndDelete({_id:id, user: req.user._id});
         if(!results){
             return res.status(400).json({
                 message:'Entry not found in DB, check ID/parameters'

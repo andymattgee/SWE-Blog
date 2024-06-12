@@ -1,12 +1,10 @@
 require('dotenv').config();
 
-// import express from 'express';
-// import mongoose from 'mongoose';
-// import entriesRoute from './Routes/entriesRoute.js';
-// import cors from 'cors';
-// const { PORT, DB_URL, DB_NAME } = process.env;
+
 const express = require('express');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
+const userRoute = require('./Routes/userRoute.js');
 const entriesRoute = require('./Routes/entriesRoute.js');
 const cors = require('cors');
 
@@ -16,6 +14,12 @@ const DB_NAME = process.env.DB_NAME;
 
 const app = express();
 
+// Enable query debugging
+// mongoose.set('debug', true); 
+
+//Middleware to parse cookies
+app.use(cookieParser());
+
 //middleware that parses incoming JSON
 app.use(express.json());
 
@@ -23,10 +27,10 @@ app.use(express.json());
 app.use(cors());
 
 
-app.get('/', (req, res) => {
-    return res.status(200).send('backend 3333 page')
-});
-
+// app.get('/', (req, res) => {
+//     return res.status(200).send('backend 3333 page')
+// });
+app.use('/api/users', userRoute);
 app.use('/entries', entriesRoute);
 
 app.use('*',(req, res) => { res.sendStatus(404) });

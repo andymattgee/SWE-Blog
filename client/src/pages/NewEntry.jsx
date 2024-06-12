@@ -1,7 +1,7 @@
 import React,{useState,useEffect} from 'react';
 import {Link,Route,Routes,Navigate,useNavigate} from 'react-router-dom';
 import axios from 'axios';
-
+import NavBar from '../components/navbar';
 
 const NewEntry = () => {
     const navigate = useNavigate();
@@ -15,10 +15,16 @@ const NewEntry = () => {
         e.preventDefault();
         
         try {
+            const token = localStorage.getItem('token');
+
             const response = await axios.post('http://localhost:3333/entries',{
                 title,
                 professionalContent: profContent,
-                personalContent : persContent
+                personalContent : persContent,
+            },{
+                headers:{
+                    Authorization: `Bearer ${token}`,
+                }
             });
             console.log('Entry submitted:', response.data);
 
@@ -26,14 +32,14 @@ const NewEntry = () => {
             setProfContent('');
             setPersContent('');
             navigate('/Entries')
-            // getEntries();
         } catch (error) {
             console.log('error in post req ->', error);
         }
     };
 
   return (
-    
+    <div>
+<NavBar/>
     <div className="flex flex-col items-center justify-center w-screen">
         
         <h2 className='bg-gradient-to-l from-yellow-500 via-blue-500 to-indigo-500 text-transparent bg-clip-text text-4xl font-bold'>Create a new entry here</h2>
@@ -54,7 +60,7 @@ const NewEntry = () => {
                     required
                     
                     className="border-2 w-full"
-                />
+                    />
             </div>
             <div className="mb-4">
                 <label htmlFor="profContent">Professional Content: </label>
@@ -68,7 +74,7 @@ const NewEntry = () => {
                     rows={10}
                     
                     className="border-2 w-full p-4"
-                />
+                    />
             </div>
             <div className="mb-4">
                 <label htmlFor="persContent">Personal Content</label>
@@ -82,7 +88,7 @@ const NewEntry = () => {
                     rows={10}
                     
                     className="border-2 w-full p-4"
-                />
+                    />
             </div>
             <div className="">
                 <button 
@@ -91,6 +97,7 @@ const NewEntry = () => {
                 >Submit Entry</button>
             </div>
         </form>
+                </div>
     </div>
   )
 }

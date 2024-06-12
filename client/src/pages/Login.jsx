@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import { useForm } from "react-hook-form";
+import LogLocalStorage from '../components/LogLocalStorage';
 
 
 const Login = () => {
@@ -13,9 +14,31 @@ const Login = () => {
   const handleSignupButton = () => {
     navigate("/Signup")
   };
-  const onSubmit = data => {
-    console.log('data.username ->', data.username);
-    console.log('data.password ->', data.password)
+  const onSubmit = async (data) => {
+    // console.log('data.username ->', data.username);
+    // console.log('data.password ->', data.password)
+
+    //from the robot
+    try {
+      const response = await fetch('http://localhost:3333/api/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await response.json();
+      if (response.ok) {
+        console.log('Login successful:', result);
+        // Save token to localStorage or context(not very safe -> cookies!)
+        localStorage.setItem('token', result.token);
+        localStorage.setItem('userName', result.user.userName);
+        navigate("/Home");
+      } else {
+        console.error('Login failed:', result);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+
     reset({username:'', password: ''});
 }
 
@@ -26,11 +49,11 @@ const Login = () => {
 
       <h1 className="text-white text-5xl font-bold font-serif mb-10">Engineering Blog</h1>
 
-      <button
+      {/* <button
         type="button" class="text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-4 focus:ring-purple-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mb-8 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900 "
         onClick={handleEnterButton} >
         Enter Page Without Log In
-      </button>
+      </button> */}
 <form className="w-full max-w-sm" onSubmit={handleSubmit(onSubmit)}>
                     <div className="mb-4">
                         <label htmlFor="username" className="block text-gray-700 font-medium mb-1">Username</label>
@@ -38,7 +61,7 @@ const Login = () => {
                             id="username"
                             type="text"
                             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
-                            {...register("username", { required: true })}
+                            {...register("userName", { required: true })}
                         />
                         {errors.username && <span className="text-red-500">Username is required</span>}
                     </div>
@@ -65,6 +88,7 @@ const Login = () => {
         onClick={handleSignupButton} >
         Signup Here
       </button>
+      <LogLocalStorage/>
     </div>
   )
 }
