@@ -15,20 +15,21 @@ import PrivateRoute from './components/PrivateRoute.jsx';
 
 const App = () => {
     const navigate = useNavigate();
+    const token = localStorage.getItem('token');
 
-  const handleHomeClick = () => {
-    navigate('/Home');
-  };
-  const newEntry = () => {
-    navigate("/NewEntry")
-  }
+  // const handleHomeClick = () => {
+  //   navigate('/Home');
+  // };
+  // const newEntry = () => {
+  //   navigate("/NewEntry")
+  // }
 
   return (
     <div>
 
-   
+    {token ? (
     <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<Navigate to="/Home" />} />
         <Route path="/Signup" element={<Signup />} />
         <Route path="/Home" element={<PrivateRoute element={<Home />} />} />
         <Route path="/ContactPage" element={<PrivateRoute element={<ContactPage />} />} />
@@ -38,7 +39,19 @@ const App = () => {
         <Route path="/NewEntry" element={<PrivateRoute element={<NewEntry />} />} />
         <Route path="/SingleEntry/:id" element={<PrivateRoute element={<SingleEntry />} />} />
       </Routes>
-   
+    ) : (
+      <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/Signup" element={<Signup />} />
+        <Route path="/Home" element={<PrivateRoute element={<Home />} />} />
+        <Route path="/ContactPage" element={<PrivateRoute element={<ContactPage />} />} />
+        <Route path="/test2" element={<PrivateRoute element={<Test2 />} />} />
+        <Route path="/APITestPage" element={<PrivateRoute element={<APITestPage />} />} />
+        <Route path="/Entries" element={<PrivateRoute element={<Entries />} />} />
+        <Route path="/NewEntry" element={<PrivateRoute element={<NewEntry />} />} />
+        <Route path="/SingleEntry/:id" element={<PrivateRoute element={<SingleEntry />} />} />
+    </Routes>
+    )}
     </div>
   )
 }
