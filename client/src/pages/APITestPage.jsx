@@ -61,11 +61,23 @@ const APITestPage = () => {
             })
     };
     const handleGetPlayerData = () => {
-        console.log('clicked player data ->', selectedValue);
+        console.log('selected player ->', selectedValue);
+        try {
+        axios.get(`http://b8c40s8.143.198.70.30.sslip.io/api/PlayerDataTotals/name/${selectedValue}`,
+            { headers: { Accept: 'application/json' } })
+            .then(res => {
+                if(res.status === 200) console.log('player data->', res.data);
+            })
+            .catch(error => {
+                console.log('error ->', error.message);
+            });
+        } catch (error) {
+            console.log('error ->', error.message);
         }
-        const handleDropDownChange = (event) => {
-            setSelectedValue(event.target.value);
-        }
+    }
+    const handleDropDownChange = (event) => {
+        setSelectedValue(event.target.value);
+    }
     const playerList = nbaStat.map(({ name, age, team }, idx) =>
         <div key={idx}>
             <p>{idx + 1}. {name} - Age: {age} - Team: {team}</p>
@@ -122,19 +134,24 @@ const APITestPage = () => {
                 </h4>
 
                 <div>
-                    <select value={selectedValue}   onChange={handleDropDownChange}
-                    className="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                    <select value={selectedValue} onChange={handleDropDownChange}
+                        className="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 mt-20">
                         <option value="">Select Player</option>
                         <option value="Lebron James">Lebron James</option>
                         <option value="Michael Jordan">Michael Jordan</option>
-                        <option value="Kobe Bryant">Kobe Bryant</option>  
-                        </select>
+                        <option value="Kobe Bryant">Kobe Bryant</option>
+                        <option value="Anthony Edwards">Anthony Edwards</option>
+                        <option value="James Harden">James Harden</option>
+                    </select>
                 </div>
 
-                <button className="mt-20 text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-teal-500/50 dark:shadow-lg dark:shadow-teal-800/80 font-medium rounded-lg text-sm h-20 px-10 py-2.5 text-center me-2 mb-1"
-                onClick={handleGetPlayerData}>
-                    NBA Test Button
+                <button className="mt-5 text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-teal-500/50 dark:shadow-lg dark:shadow-teal-800/80 font-medium rounded-lg text-sm h-10 px-10 py-2.5 text-center me-2 mb-1"
+                    onClick={handleGetPlayerData}>
+                    Log Player Button
                 </button>
+                <h4>
+                    {nbaStat.length ? playerList : "Player data will appear here"}
+                </h4>
             </div>
         </div>
     )
