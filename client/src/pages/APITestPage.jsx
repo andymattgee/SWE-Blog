@@ -8,6 +8,7 @@ const APITestPage = () => {
     const [joke, setJoke] = useState("Axios Joke will appear here");
     const [joke2, setFetchJoke] = useState("Fetched joke will appear here");
     const [nbaStat, setNbaStat] = useState([]);
+    const [selectedValue, setSelectedValue] = useState('');
 
     const jokeURL = "https://icanhazdadjoke.com/";
 
@@ -59,7 +60,12 @@ const APITestPage = () => {
                 setNbaStat(filteredList);
             })
     };
-
+    const handleGetPlayerData = () => {
+        console.log('clicked player data ->', selectedValue);
+        }
+        const handleDropDownChange = (event) => {
+            setSelectedValue(event.target.value);
+        }
     const playerList = nbaStat.map(({ name, age, team }, idx) =>
         <div key={idx}>
             <p>{idx + 1}. {name} - Age: {age} - Team: {team}</p>
@@ -107,13 +113,28 @@ const APITestPage = () => {
                     onClick={handleNBAClick}>
                     <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
 
-                        Fetch NBA stat!
+                        2023 NBA Scoring Leaders
                     </span>
                 </button>
                 <h3>2023 NBA Scoring Leaders - Top 10</h3>
                 <h4>
                     {nbaStat.length ? playerList : "nbaStat will appear here"}
                 </h4>
+
+                <div>
+                    <select value={selectedValue}   onChange={handleDropDownChange}
+                    className="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                        <option value="">Select Player</option>
+                        <option value="Lebron James">Lebron James</option>
+                        <option value="Michael Jordan">Michael Jordan</option>
+                        <option value="Kobe Bryant">Kobe Bryant</option>  
+                        </select>
+                </div>
+
+                <button className="mt-20 text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-teal-500/50 dark:shadow-lg dark:shadow-teal-800/80 font-medium rounded-lg text-sm h-20 px-10 py-2.5 text-center me-2 mb-1"
+                onClick={handleGetPlayerData}>
+                    NBA Test Button
+                </button>
             </div>
         </div>
     )
