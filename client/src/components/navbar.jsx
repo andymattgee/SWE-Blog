@@ -35,12 +35,12 @@ const navbar = () => {
     
         <nav className="bg-inherit p-4 ">
             <div className="container mx-auto flex justify-between items-center">
-                <Link to="/Home" className="text-red-500 text-2xl">Home</Link>
-                <Link to="/entries" className="text-red-500 text-2xl">Blog Entries</Link>
-                <Link to="/APITestPage" className="text-red-500 text-2xl">API Page</Link>
-                <Link to="/ContactPage" className="text-red-500 text-2xl">Contact Me</Link>
+                <Link to="/Home" className="text-blue-500 text-2xl">Home</Link>
+                <Link to="/entries" className="text-blue-500 text-2xl">Blog Entries</Link>
+                <Link to="/APITestPage" className="text-blue-500 text-2xl">API Page</Link>
+                <Link to="/ContactPage" className="text-blue-500 text-2xl">Contact Me</Link>
                 {/* <Link to="/" className="text-red-500 text-2xl">Logout</Link> */}
-                <button onClick={logout} className="text-red-500 text-2xl">Logout</button>
+                <button onClick={logout} className="text-blue-500 text-2xl">Logout</button>
             </div>
         </nav>
     )
