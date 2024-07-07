@@ -49,6 +49,9 @@ const SingleEntry = () => {
             }
         }
     };
+    const editEntry = (id) => {
+        console.log('id ->', id);
+    };
 
     useEffect(() => {
         getEntry();
@@ -93,9 +96,13 @@ const SingleEntry = () => {
             <button
                 className="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-5 mt-5 w-2/5 self-center"
                 onClick={() => deleteEntry(id)}>
-                Delete post above
+                Delete Post
             </button>
-
+            <button
+                className="text-white bg-gradient-to-r from-yellow-600 via-yellow-500 to-yellow-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-5 w-2/5 self-center"
+                onClick={() => editEntry(id)}>
+                Edit Post
+            </button>
                     </div>
         </div>
 
