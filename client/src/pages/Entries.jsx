@@ -3,6 +3,8 @@ import axios from "axios";
 import { Link, useNavigate } from 'react-router-dom';
 import NavBar from '../components/navbar';
 import fallImage from '../../public/images/fall-bg.jpg';
+import beachIMG from '../../public/images/beach.jpg';
+
 
 const Entries = () => {
     const navigate = useNavigate();
@@ -43,7 +45,7 @@ const Entries = () => {
 
             <Link to={`/SingleEntry/${_id}`} key={_id}
                 className="w-full md:w-1/3 px-2 mb-4">
-                <div className="border-2 border-yellow-600 p-3 rounded-md bg-white bg-opacity-30
+                <div className="border-2 border-blue-600 p-3 rounded-md bg-white bg-opacity-70
                     hover:bg-indigo-200 transition duration-300 ease-in-out transform hover:scale-105 h-24">
                     <ul>
                         <li className="text-l text-slate-800">{title}</li>
@@ -55,7 +57,7 @@ const Entries = () => {
     }).reverse();
 
     return (
-        <div style={{ backgroundImage: `url(${fallImage})`,backgroundSize: 'cover' }}>
+        <div style={{ backgroundImage: `url(${beachIMG})`,backgroundSize: 'cover' }}>
 
     <NavBar/>
         {/* <div className="px-6 flex flex-col items-center" > */}
