@@ -3,12 +3,10 @@ import NavBar from '../components/navbar';
 
 const Test2 = () => {
   return (
-    <div>
+    <div >
       <NavBar/>
-        <h2>
-            Test 2 Page
-        </h2>
-    </div>
+      <h1>Test2</h1>
+      </div>
   )
 }
 
