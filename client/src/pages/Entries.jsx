@@ -15,14 +15,14 @@ const Entries = () => {
     const getEntries = async () => {
         try {
             const token = localStorage.getItem('token');
-            console.log('token from entries fetch req ->', token);
+            // console.log('token from entries fetch req ->', token);
             const { data } = await axios.get('http://localhost:3333/entries', {
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${token}` //This will include token in the headers
                 }
             });
-            console.log('axios entry data ->', data.data);
+            console.log('entries ->', data.data);
             setEntries(data.data);
         } catch (error) {
             console.error('Error fetching entries:', error);
@@ -41,18 +41,28 @@ const Entries = () => {
         navigate('/Home');
     }
     
-    const newEntries = entries.map(({ _id, title }) => {
+    const newEntries = entries.map(({ _id, title,createdAt }) => {
+        
+      const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+
+
         return (
 
             <Link to={`/SingleEntry/${_id}`} key={_id}
                 className="w-full md:w-1/3 px-2 mb-4">
                 <div className="border-2 border-blue-600 p-3 rounded-md bg-white bg-opacity-70
-                    hover:bg-indigo-200 transition duration-300 ease-in-out transform hover:scale-105 h-72">
+                    hover:bg-indigo-200 transition duration-300 ease-in-out transform hover:scale-105 h-72 overflow-hidden ">
                     <ul>
+                        <li className="text-l text-slate-800">{formattedDate}</li>
                         <li className="text-l text-slate-800">{title}</li>
+                        
                     </ul>
-                    <div>
-                        {mountains && <img src={mountains} alt="mountains" />}
+                    <div className="max-w-full">
+                        {mountains && <img src={mountains} alt="mountains" className="max-w-full h-auto"/>}
                     </div>
                 </div>
             </Link>
