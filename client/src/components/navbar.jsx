@@ -33,8 +33,8 @@ const navbar = () => {
 
     return (
     
-        <nav className="bg-inherit p-4 ">
-            <div className="container mx-auto flex justify-between items-center">
+        <nav className="p-4 ">
+            <div className="bg-transparent container mx-auto flex justify-between items-center">
                 <Link to="/Home" className="text-blue-700 text-2xl">Home</Link>
                 <Link to="/entries" className="text-blue-700 text-2xl">Blog Entries</Link>
                 <Link to="/APITestPage" className="text-blue-700 text-2xl">API Page</Link>
