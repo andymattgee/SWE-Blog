@@ -11,6 +11,7 @@ import Entries from "./pages/Entries.jsx";
 import NewEntry from './pages/NewEntry.jsx';
 import Signup from './pages/Signup.jsx';
 import SingleEntry from './pages/SingleEntry.jsx';
+import EditEntry from './pages/EditEntry.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
 
 const App = () => {
@@ -38,6 +39,7 @@ const App = () => {
         <Route path="/Entries" element={<PrivateRoute element={<Entries />} />} />
         <Route path="/NewEntry" element={<PrivateRoute element={<NewEntry />} />} />
         <Route path="/SingleEntry/:id" element={<PrivateRoute element={<SingleEntry />} />} />
+        <Route path="/EditEntry/:id" element={<PrivateRoute element={<EditEntry />} />} />
       </Routes>
     ) : (
       <Routes>
@@ -50,6 +52,7 @@ const App = () => {
         <Route path="/Entries" element={<PrivateRoute element={<Entries />} />} />
         <Route path="/NewEntry" element={<PrivateRoute element={<NewEntry />} />} />
         <Route path="/SingleEntry/:id" element={<PrivateRoute element={<SingleEntry />} />} />
+        <Route path="/EditEntry/:id" element={<PrivateRoute element={<EditEntry />} />} />
     </Routes>
     )}
     </div>

@@ -52,9 +52,7 @@ const Home = () => {
 
           <LogLocalStorage />
 
-          {/* <video className="w-full object-cover" controls autoplay>
-            <source src="/videos/starryVideo.mp4" type="video/mp4" />
-          </video> */}
+          
         </div>
       </div>
 

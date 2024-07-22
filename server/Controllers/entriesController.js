@@ -77,9 +77,38 @@ const deleteEntry = async (req,res) =>{
         })
     }
 }
+
+const updateEntry = async (req, res) => {
+    const { id } = req.params;
+    const { title, professionalContent, personalContent } = req.body;
+
+    try {
+        const updatedEntry = await Entry.findOneAndUpdate(
+            { _id: id, user: req.user._id },
+            { title, professionalContent, personalContent },
+            { new: true, runValidators: true }
+        );
+        
+        if (!updatedEntry) {
+            return res.status(404).json({ message: `Entry ${id} not found` });
+        }
+        
+        res.status(200).json({
+            success: true,
+            message: `${updatedEntry.title} updated successfully`,
+            data: updatedEntry
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error updating entry in DB',
+            errorMessage: error.message
+        });
+    }
+}
 module.exports = {
     getEntries,
     getEntry,
     addEntry,
-    deleteEntry
+    deleteEntry,
+    updateEntry
 }

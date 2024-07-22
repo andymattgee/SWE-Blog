@@ -7,6 +7,7 @@ router.get('/', auth, entriesController.getEntries);
 router.get('/:id', auth, entriesController.getEntry);
 router.post('/', auth, entriesController.addEntry);
 router.delete('/:id', auth, entriesController.deleteEntry);
+router.put('/:id', auth, entriesController.updateEntry);
 
 module.exports = router;
 

@@ -55,6 +55,7 @@ const SingleEntry = () => {
     };
     const editEntry = (id) => {
         console.log('id ->', id);
+        navigate(`/EditEntry/${id}`);
     };
 
     useEffect(() => {
@@ -62,7 +63,7 @@ const SingleEntry = () => {
     }, []);
 
     useEffect(() => {
-        console.log("Updated info / State:", entry);
+        // console.log("Updated info / State:", entry);
     }, [entry]);
 
     const renderEntry = () => {
