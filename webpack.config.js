@@ -85,7 +85,7 @@ module.exports = {
             {
                 // Test for CSS and SCSS files
                 test: /\.css$/i,
-               
+
                 // Only include files from the specified directory
                 include: [
                     // path.resolve(__dirname, 'src'),
@@ -106,10 +106,20 @@ module.exports = {
                 test: /\.(png|svg|jpg|jpeg|gif)$/i,
                 type: 'asset/resource'
             },
+            {
+                // Loader for video files to handle them as assets/resources (npm install file-loader)
+                test: /\.(mp4)$/,
+                use: {
+                    loader: 'file-loader',
+                    options: {
+                        name: 'videos/[name].[ext]',
+                    },
+                },
+            }
         ]
     },
     // Automatically resolve these extensions
     resolve: {
-        extensions: [".*", ".js", ".jsx", ".ts", ".tsx", ".gif", ".png", ".svg"]
+        extensions: [".*", ".js", ".jsx", ".ts", ".tsx", ".gif", ".png", ".svg", ".jpg", ".jpeg", ".mjs", ".cjs"],
     }
 }

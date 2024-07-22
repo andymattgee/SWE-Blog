@@ -49,11 +49,6 @@ const Login = () => {
 
       <h1 className="text-white text-5xl font-bold font-serif mb-10">Engineering Blog</h1>
 
-      {/* <button
-        type="button" class="text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-4 focus:ring-purple-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mb-8 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900 "
-        onClick={handleEnterButton} >
-        Enter Page Without Log In
-      </button> */}
 <form className="w-full max-w-sm" onSubmit={handleSubmit(onSubmit)}>
                     <div className="mb-4">
                         <label htmlFor="username" className="block text-gray-700 font-medium mb-1">Username</label>
