@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const userRoute = require('./Routes/userRoute.js');
 const entriesRoute = require('./Routes/entriesRoute.js');
+const todoRoute = require('./Routes/todoRoute.js');
 const cors = require('cors');
 
 const PORT = process.env.PORT;
@@ -32,6 +33,7 @@ app.use(cors());
 // });
 app.use('/api/users', userRoute);
 app.use('/entries', entriesRoute);
+app.use('/api/todos', todoRoute);
 
 app.use('*',(req, res) => { res.sendStatus(404) });
 

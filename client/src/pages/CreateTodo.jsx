@@ -1,21 +1,51 @@
-import React, { useState } from 'react'
-import NavBar from '../components/navbar'
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import NavBar from '../components/navbar';
+import axios from 'axios';
 
 const Todo = () => {
+    const navigate = useNavigate();
+
     const [title, setTitle] = useState('');
     const [notes, setNotes] = useState('');
     const [priority, setPriority] = useState('');
     const [status, setStatus] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const simpleDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
+        
+        console.log(`Title: ${title}, Notes: ${notes}, Priority: ${priority}, Status: ${status}, Date: ${new Date()}`);
+        
+        // Add Todo logic here using axios, first make sure to check for token in local storage
+        try {
+            console.log('enter try block');
+            const token = localStorage.getItem('token');
+            console.log('token ->', token);
+            const response = await axios.post('http://localhost:3333/api/todos', {
+                title,
+                notes,
+                priority,
+                status,
+                date: new Date(),
+                user: localStorage.getItem('userId')
+            },{
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            });
+            console.log('response from axios req ->', response.data);
 
-        console.log(`Title: ${title}, Notes: ${notes}, Priority: ${priority}, Status: ${status}, Date: ${simpleDate}`);
-        setTitle('');
-        setNotes('');
-        setPriority('');
-        setStatus('');
+            setTitle('');
+            setNotes('');
+            setPriority('');
+            setStatus('');
+            navigate('/todos');
+        } catch (error)  {
+            console.log('Error from catch of axios req');
+            console.log(error);
+        };
+
+    
     };
 
     return (
