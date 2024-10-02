@@ -13,7 +13,8 @@ import Signup from './pages/Signup.jsx';
 import SingleEntry from './pages/SingleEntry.jsx';
 import EditEntry from './pages/EditEntry.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
-import Todo from './pages/Todo.jsx';
+import Todos from './pages/Todos.jsx';
+import CreateTodo from './pages/CreateTodo.jsx';
 
 const App = () => {
     const navigate = useNavigate();
@@ -41,7 +42,8 @@ const App = () => {
         <Route path="/NewEntry" element={<PrivateRoute element={<NewEntry />} />} />
         <Route path="/SingleEntry/:id" element={<PrivateRoute element={<SingleEntry />} />} />
         <Route path="/EditEntry/:id" element={<PrivateRoute element={<EditEntry />} />} />
-        <Route path="/Todo" element={<PrivateRoute element={<Todo />} />} />
+        <Route path="/Todos" element={<PrivateRoute element={<Todos />} />} />
+        <Route path="/CreateTodo" element={<PrivateRoute element={<CreateTodo />} />} />
       </Routes>
     ) : (
       <Routes>
@@ -55,7 +57,8 @@ const App = () => {
         <Route path="/NewEntry" element={<PrivateRoute element={<NewEntry />} />} />
         <Route path="/SingleEntry/:id" element={<PrivateRoute element={<SingleEntry />} />} />
         <Route path="/EditEntry/:id" element={<PrivateRoute element={<EditEntry />} />} />
-        <Route path="/Todo" element={<PrivateRoute element={<Todo />} />} />
+        <Route path="/Todos" element={<PrivateRoute element={<Todos />} />} />
+        <Route path="/CreateTodo" element={<PrivateRoute element={<CreateTodo />} />} />
     </Routes>
     )}
     </div>
