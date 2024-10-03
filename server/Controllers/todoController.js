@@ -1,5 +1,6 @@
 //create logic for todo that will include get,post,put,delete
 
+const { get } = require('http');
 const Todo = require('../Models/todos');
 
 
@@ -46,7 +47,44 @@ const addTodo = async (req, res) => {
     }
 };
 
+const getTodo = async (req, res) => {
+    console.log('enter getTodo block');
+    const { id } = req.params;
+    try {
+        const todo = await Todo.findOne({_id: id, user: req.user._id});
+        if(!todo){
+            return res.status(404).json({message: `Todo ${id} not found`})
+        }
+        res.status(200).json([todo]);
+    } catch (error) {
+        res.status(500).json({message: 'Error fetching todo'})
+    }
+};
+
+const deleteTodo = async (req,res) =>{
+    try {
+        const {id} = req.params;
+        const results = await Todo.findOneAndDelete({_id:id, user: req.user._id});
+        if(!results){
+            return res.status(400).json({
+                message:'Todo not found in DB, check ID/parameters'
+            })
+        }
+        return res.status(200).json({
+            success: true,
+            message: "Todo successfullly deleted!"
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message:'Error deleting todo in DB',
+            errorMessage: error.message
+        })
+    }
+}
+
 module.exports = {
     getTodos,
-    addTodo
+    addTodo,
+    getTodo,
+    deleteTodo,
 }

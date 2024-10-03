@@ -15,6 +15,7 @@ import EditEntry from './pages/EditEntry.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
 import Todos from './pages/Todos.jsx';
 import CreateTodo from './pages/CreateTodo.jsx';
+import SingleTodo from './pages/SingleTodo.jsx';
 
 const App = () => {
     const navigate = useNavigate();
@@ -44,6 +45,7 @@ const App = () => {
         <Route path="/EditEntry/:id" element={<PrivateRoute element={<EditEntry />} />} />
         <Route path="/Todos" element={<PrivateRoute element={<Todos />} />} />
         <Route path="/CreateTodo" element={<PrivateRoute element={<CreateTodo />} />} />
+        <Route path="/SingleTodo/:id" element={<PrivateRoute element={<SingleTodo />} />} />
       </Routes>
     ) : (
       <Routes>
@@ -59,6 +61,7 @@ const App = () => {
         <Route path="/EditEntry/:id" element={<PrivateRoute element={<EditEntry />} />} />
         <Route path="/Todos" element={<PrivateRoute element={<Todos />} />} />
         <Route path="/CreateTodo" element={<PrivateRoute element={<CreateTodo />} />} />
+        <Route path="/SingleTodo/:id" element={<PrivateRoute element={<SingleTodo />} />} />
     </Routes>
     )}
     </div>
