@@ -3,6 +3,7 @@ import axios from 'axios';
 import NavBar from '../components/navbar';
 import { Link, useNavigate } from 'react-router-dom';
 
+
 const Todos = () => {
     const navigate = useNavigate();
     const [todos, setTodos] = useState([]);
@@ -78,7 +79,8 @@ const Todos = () => {
                                     if (window.confirm(`Are you sure you want to delete this task?`)) {
                                         // Call the function to delete the todo and navigate back to the todos page
                                         deleteTodo(todo._id);
-                                        navigate('/Todos');
+                                        navigate('/Todos');  
+                                        getTodos();                   
                                     }
                                 }}
                                 
