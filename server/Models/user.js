@@ -9,6 +9,7 @@ const userSchema = new Schema({
         email : {type: String, required: false},
         image : {type: String, required: false},
         entries:[{type: Schema.Types.ObjectId, ref: 'Entry'}],
+        todos:[{type: Schema.Types.ObjectId, ref: 'Todo'}],
         tokens: [{
             token: {
                 type: String,

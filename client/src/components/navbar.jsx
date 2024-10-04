@@ -39,7 +39,7 @@ const navbar = () => {
                 <Link to="/entries" className="text-blue-700 text-2xl">Blog Entries</Link>
                 <Link to="/APITestPage" className="text-blue-700 text-2xl">API Page</Link>
                 <Link to="/ContactPage" className="text-blue-700 text-2xl">Contact Me</Link>
-                <Link to="/Todo" className="text-white bg-blue-500 text-2xl">ToDo List</Link>
+                <Link to="/Todos" className="text-white bg-blue-500 text-2xl">ToDo List</Link>
                 <button onClick={logout} className="text-blue-700 text-2xl">Logout</button>
             </div>
         </nav>
