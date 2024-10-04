@@ -44,7 +44,7 @@ const Todos = () => {
                 }
             });
             console.log('response.data ->', response.data.data);
-            // getTodos();
+            getTodos();
         } catch (error) {
             console.log(error);
         }
@@ -54,47 +54,51 @@ const Todos = () => {
     const displayTodos = todos.map((todo) => {
 
         return (
-            <div>
+            <div
+                //conditional statement to change background color based on priority
+                className={`flex flex-col items-left justify-center max-w-sm mx-auto p-4 border border-black hover:bg-gray-100 ${todo.priority === "High" ? "bg-red-200" : todo.priority === "Medium" ? "bg-yellow-200" : "bg-green-200"
+                    }`}
+            >
                 {/* <Link to={`/SingleTodo/${todo._id}`} key={todo._id}> */}
-                    <li key={todo._id} className="py-2 px-4 border-b border-gray-200 hover:bg-gray-100">
-                        <p className="text-gray-600">
-                            <span className="font-bold">Title:</span> {todo.title}
-                        </p>
-                        <p className="text-gray-600">
-                            <span className="font-bold">Notes:</span> {todo.notes}
-                        </p>
-                        <p className="text-gray-600">
-                            <span className="font-bold">Priority:</span> {todo.priority}
-                        </p>
-                        <p className="text-gray-600">
-                            <span className="font-bold">Status:</span> {todo.status}
-                        </p>
-                        <p className="text-gray-600">
-                            <span className="font-bold">Date:</span> {todo.date}
-                        </p>
-                        <div className="flex justify-center mt-4">
-                            <button
-                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2"
-                                onClick={() => {
-                                    if (window.confirm(`Are you sure you want to delete this task?`)) {
-                                        // Call the function to delete the todo and navigate back to the todos page
-                                        deleteTodo(todo._id);
-                                        navigate('/Todos');  
-                                        getTodos();                   
-                                    }
-                                }}
-                                
-                            >
-                                Delete
-                            </button>
-                            <button
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                                onClick={() => navigate(`/SingleTodo/${todo._id}`)}
-                            >
-                                Edit
-                            </button>
-                        </div>
-                    </li>
+                <li key={todo._id} className="py-2 px-4  hover:bg-gray-100">
+                    <p className="text-gray-600 text-xl">
+                        <span className="font-bold">Title:</span> {todo.title}
+                    </p>
+                    <p className="text-gray-600 text-sm">
+                        <span className="font-bold">Priority:</span> {todo.priority}
+                    </p>
+                    <p className="text-gray-600 text-sm">
+                        <span className="font-bold">Status:</span> {todo.status}
+                    </p>
+                    <p className="text-gray-600 text-sm">
+                        <span className="font-bold">Date Created:</span> {new Date(todo.date).toLocaleDateString()}
+                    </p>
+                    <p className="text-gray-600 text-xs">
+                        <span className="font-bold">Notes:</span> {todo.notes}
+                    </p>
+                    <div className="flex justify-center mt-4">
+                        <button
+                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2"
+                            onClick={() => {
+                                if (window.confirm(`Are you sure you want to delete this task?`)) {
+                                    // Call the function to delete the todo and navigate back to the todos page
+                                    deleteTodo(todo._id);
+                                    navigate('/Todos');
+                                    getTodos();
+                                }
+                            }}
+
+                        >
+                            Delete
+                        </button>
+                        <button
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                            onClick={() => navigate(`/SingleTodo/${todo._id}`)}
+                        >
+                            Edit
+                        </button>
+                    </div>
+                </li>
                 {/* </Link> */}
             </div>
         );
@@ -105,13 +109,12 @@ const Todos = () => {
     return (
         <div>
             <NavBar />
-            <div>
-                Todos
+            <div className="flex justify-center mt-4 mb-4">
+                <button className='focus:outline-none text-black bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900' onClick={createTodo}>Create ToDo</button>
+
             </div>
-            <button className='focus:outline-none text-black bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900' onClick={createTodo}>Create ToDo</button>
 
             <div>
-                <h1>TODO List   </h1>
                 <ul>
                     {displayTodos}
                 </ul>

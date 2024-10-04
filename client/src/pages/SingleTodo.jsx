@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import NavBar from '../components/navbar';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -34,118 +34,109 @@ const SingleTodo = () => {
     };
 
     //create a function to edit a todo
-    
+
     //when first coming to this page, id like to render the to do and then immediately edit it
     useEffect(() => {
         getTodo();
-        
+
     }, []);
 
-const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log('enter handleSubmit block');
-    console.log('title, notes, priority, status ->', title, notes, priority, status);
-    // const token = localStorage.getItem('token');
-    // const { data } = await axios.patch(`http://localhost:3333/api/todos/${id}`,
-    //     {
-    //         title,
-    //         notes,
-    //         priority,
-    //         status
-    //     },
-    //     {
-    //         headers: {
-    //             Accept: 'application/json',
-    //             Authorization: `Bearer ${token}`,
-    //         }
-    //     }
-    // );
-    // console.log("axios data (PATCH) ->", data);
-    // navigate('/todos');
-}
-    
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        console.log('enter handleSubmit block');
+        console.log('title, notes, priority, status ->', title, notes, priority, status);
+        //logic that will update the todo and then navigate back to the todos page
+        //first make sure to check for token in local storage
+        try {
+            console.log('enter try block');
+            const token = localStorage.getItem('token');
+            // console.log('token ->', token);
+            const response = await axios.put(`http://localhost:3333/api/todos/${id}`, {
+                title,
+                notes,
+                priority,
+                status
+            },{
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            });
+            console.log('response from axios req ->', response.data);
+            navigate('/todos');
+        } catch (error)  {
+            console.log('error from axios req ->', error);
+        }
+        
+    }
+
     const renderTodo = () => {
-        if(!todo) {
+        if (!todo) {
             return <div>Loading to do....</div>
         }
-
         return (
             <div className="max-w-md mx-auto mt-10 bg-white rounded-lg shadow-md p-4">
-              <h2 className="text-lg font-bold text-center mb-4">Todo Details</h2>
-              <div className="flex flex-col items-center justify-center">
-                <p className="text-center mb-2">
-                  <span className="text-lg font-bold">Title:</span> {todo.title}
-                </p>
-                <p className="text-center mb-2">
-                  <span className="text-lg font-bold">Notes:</span> {todo.notes}
-                </p>
-                <p className="text-center mb-2">
-                  <span className="text-lg font-bold">Priority:</span> {todo.priority}
-                </p>
-                <p className="text-center mb-2">
-                  <span className="text-lg font-bold">Status:</span> {todo.status}
-                </p>
-                <p className="text-center mb-2">
-                  <span className="text-lg font-bold">Date:</span> {todo.date}
-                </p>
-                <div className="flex justify-center mt-4">
-                  {/* <button
-                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2"
-                    onClick={() => deleteTodo()}
-                  >
-                    Delete
-                  </button>
-                  <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                    onClick={() => console.log('Edit')}
-                  >
-                    Edit
-                  </button> */}
+                <h2 className="text-lg font-bold text-center mb-4">Todo Details</h2>
+                <div className="flex flex-col items-center justify-center">
+                    <p className="text-center mb-2">
+                        <span className="text-lg font-bold">Title:</span> {todo.title}
+                    </p>
+                    <p className="text-center mb-2">
+                        <span className="text-lg font-bold">Notes:</span> {todo.notes}
+                    </p>
+                    <p className="text-center mb-2">
+                        <span className="text-lg font-bold">Priority:</span> {todo.priority}
+                    </p>
+                    <p className="text-center mb-2">
+                        <span className="text-lg font-bold">Status:</span> {todo.status}
+                    </p>
+                    <p className="text-center mb-2">
+                        <span className="text-lg font-bold">Date:</span> {todo.date}
+                    </p>
+                    <div className="flex justify-center mt-4">
+                    </div>
                 </div>
-              </div>
             </div>
-          )
-        }
+        )
+    }
 
-  return (
-      <div>
-    <h1>Single Todo</h1>
-        <NavBar/>
-        {renderTodo()}
-    <div>
-    <h3> Edit to go here</h3>
+    return (
+        <div>
+            <NavBar />
+            {/* {renderTodo()} */}
+            <div>
+                <h3> Edit to go here</h3>
 
-    <form onSubmit={handleSubmit} className="w-8/12">
-                <div className="mb-4 ">
-                    <label htmlFor="title">Title: </label>
-                    <br />
-                    <input
-                        type="text"
-                        id="title"
-                        name="title"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        required
-                        className="border-2 w-full"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label htmlFor="profContent"> Notes: </label>
-                    <br />
-                    <textarea
-                        id="notes"
-                        name="notes"
-                        value={notes}
-                        onChange={(e) => setNotes(e.target.value)}
-                        required
-                        rows={10}
-                        className="border-2 w-full p-4"
-                    />
-                </div>
+                <form onSubmit={handleSubmit} className="w-8/12">
+                    <div className="mb-4 ">
+                        <label htmlFor="title">Title: </label>
+                        <br />
+                        <input
+                            type="text"
+                            id="title"
+                            name="title"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            required
+                            className="border-2 w-full"
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="profContent"> Notes: </label>
+                        <br />
+                        <textarea
+                            id="notes"
+                            name="notes"
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
+                            
+                            rows={10}
+                            className="border-2 w-full p-4"
+                        />
+                    </div>
 
-                <div className="mb-4">
-                    <label htmlFor="priority">Priority: 
-                    <select
+                    <div className="mb-4">
+                        <label htmlFor="priority">Priority:
+                            <select
                                 value={priority}
                                 onChange={(e) => setPriority(e.target.value)}
                                 className="w-full p-2 border border-gray-400 rounded-lg"
@@ -155,8 +146,8 @@ const handleSubmit = async (e) => {
                                 <option value="Low">Low</option>
                             </select>
 
-                    </label>
-                    {/* <br />
+                        </label>
+                        {/* <br />
                     <textarea
                         id="priority"
                         name="priority"
@@ -166,11 +157,11 @@ const handleSubmit = async (e) => {
                         rows={10}
                         className="border-2 w-full p-4"
                     /> */}
-                </div>
+                    </div>
 
-                <div className="mb-4">
-                    <label htmlFor="status">Status 
-                    <select
+                    <div className="mb-4">
+                        <label htmlFor="status">Status
+                            <select
                                 value={status}
                                 onChange={(e) => setStatus(e.target.value)}
                                 className="w-full p-2 border border-gray-400 rounded-lg"
@@ -180,8 +171,8 @@ const handleSubmit = async (e) => {
                                 <option value="In Progress">In Progress</option>
                                 <option value="Completed">Completed</option>
                             </select>
-                    </label>
-                    {/* <br />
+                        </label>
+                        {/* <br />
                     <textarea
                         id="status"
                         name="status"
@@ -191,22 +182,22 @@ const handleSubmit = async (e) => {
                         rows={10}
                         className="border-2 w-full p-4"
                     /> */}
-                </div>
+                    </div>
 
-                <div className="">
-                    <button
-                        type="submit"
-                        className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 h-20 w-full"
-                    >
-                        Save Changes
-                    </button>
-                </div>
+                    <div className="">
+                        <button
+                            type="submit"
+                            className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 h-20 w-full"
+                        >
+                            Save Changes
+                        </button>
+                    </div>
 
-            </form>
+                </form>
 
-    </div>
-    </div>
-  )
+            </div>
+        </div>
+    )
 }
 
 export default SingleTodo;

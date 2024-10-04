@@ -80,6 +80,34 @@ const deleteTodo = async (req,res) =>{
             errorMessage: error.message
         })
     }
+};
+
+const updateTodo = async (req, res) => {
+    const { id } = req.params;
+    const { title, notes, priority, status } = req.body;
+
+    try {
+        const updatedTodo = await Todo.findOneAndUpdate(
+            { _id: id, user: req.user._id },
+            { title, notes, priority, status },
+            { new: true, runValidators: true }
+        );
+        
+        if (!updatedTodo) {
+            return res.status(404).json({ message: `Todo ${id} not found` });
+        }
+        
+        res.status(200).json({
+            success: true,
+            message: `${updatedTodo.title} updated successfully`,
+            data: updatedTodo
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error updating todo in DB',   
+            errorMessage: error.message
+        });
+    }
 }
 
 module.exports = {
@@ -87,4 +115,5 @@ module.exports = {
     addTodo,
     getTodo,
     deleteTodo,
+    updateTodo
 }
