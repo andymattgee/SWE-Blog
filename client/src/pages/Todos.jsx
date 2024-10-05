@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import NavBar from '../components/navbar';
 import { Link, useNavigate } from 'react-router-dom';
+import TodoList from '../components/TodoList';
 
 
 const Todos = () => {
     const navigate = useNavigate();
     const [todos, setTodos] = useState([]);
+    const [completedTodos, setCompletedTodos] = useState([]);
+    const [incompleteTodos, setIncompleteTodos] = useState([]);
 
     const createTodo = async () => {
         navigate('/CreateTodo');
@@ -22,8 +25,13 @@ const Todos = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
-            console.log('response.data ->', response.data.data);
-            setTodos(response.data.data);
+            // console.log('response.data ->', response.data.data);
+            const todoList = response.data.data;
+            setTodos(todoList);
+
+            setCompletedTodos(todoList.filter((todo) => todo.status === "Completed"));
+            setIncompleteTodos(todoList.filter((todo) => todo.status !== "Completed"));
+
         } catch (error) {
             console.log(error);
         }
@@ -32,6 +40,7 @@ const Todos = () => {
     useEffect(() => {
         getTodos();
     }, []);
+
 
     //create function to delete todos
     const deleteTodo = async (id) => {
@@ -49,6 +58,9 @@ const Todos = () => {
             console.log(error);
         }
     }
+
+
+
     //function that will map through todos and display them in a list
     //make sure to include all properties such as title, createdAt, etc.
     const displayTodos = todos.map((todo) => {
@@ -60,7 +72,7 @@ const Todos = () => {
                     }`}
             >
                 {/* <Link to={`/SingleTodo/${todo._id}`} key={todo._id}> */}
-                <li key={todo._id} className="py-2 px-4  hover:bg-gray-100">
+                <li key={todo._id} className="py-2 px-4  hover:bg-gray-100 hover:border-purple-500">
                     <p className="text-gray-600 text-xl">
                         <span className="font-bold">Title:</span> {todo.title}
                     </p>
@@ -114,11 +126,18 @@ const Todos = () => {
 
             </div>
 
-            <div>
-                <ul>
-                    {displayTodos}
-                </ul>
+            <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <h2 className="text-lg font-bold mb-2 text-center">Incomplete Todos</h2>
+                    <TodoList todo={incompleteTodos} onDeleteTodo={deleteTodo} />
+                </div>
+                <div>
+                    <h2 className="text-lg font-bold mb-2 text-center">Completed Todos</h2>
+                    <TodoList todo={completedTodos} onDeleteTodo={deleteTodo} />
+                </div>
             </div>
+
+
         </div>
     )
 }
