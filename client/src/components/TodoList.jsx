@@ -9,19 +9,19 @@ const TodoList = ({ todo, onDeleteTodo }) => {
 
     const handleDelete = (id) => {
         if (window.confirm("Are you sure you want to delete this todo?")) {
-          onDeleteTodo(id);
+            onDeleteTodo(id);
         }
-      };
+    };
 
     return (
-      <div>
-        {todo.map((todo) => (
-          <div
-          //conditional statement to change background color based on priority
-          className={`flex flex-col items-left justify-center max-w-sm mx-auto p-4 border border-black hover:bg-blue-300 ${todo.priority === "High" ? "bg-red-200" : todo.priority === "Medium" ? "bg-yellow-200" : "bg-green-200"
-              }`}
-      >
-            <p className="text-gray-600 text-xl">
+        <div>
+            {todo.map((todo) => (
+                <div
+                    //conditional statement to change background color based on priority
+                    className={`flex flex-col items-left justify-center max-w-sm rounded-lg shadow-lg  w-2/3 my-4 mx-auto p-4 border border-black hover:bg-blue-300 ${todo.priority === "High" ? "bg-red-200" : todo.priority === "Medium" ? "bg-yellow-200" : "bg-green-200"
+                        }`}
+                >
+                    <p className="text-gray-600 text-xl">
                         <span className="font-bold">Title:</span> {todo.title}
                     </p>
                     <p className="text-gray-600 text-sm">
@@ -40,8 +40,7 @@ const TodoList = ({ todo, onDeleteTodo }) => {
                     <div className="flex justify-center mt-4">
                         <button
                             className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2"
-                            onClick={   () => handleDelete(todo._id)}
-
+                            onClick={() => handleDelete(todo._id)}
                         >
                             Delete
                         </button>
@@ -53,10 +52,13 @@ const TodoList = ({ todo, onDeleteTodo }) => {
                         </button>
                     </div>
 
-          </div>
-        ))}
-      </div>
+                </div>
+            ))}
+
+
+
+        </div>
     );
-  };
+};
 
 export default TodoList
