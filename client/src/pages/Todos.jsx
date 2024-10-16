@@ -30,7 +30,15 @@ const Todos = () => {
             setTodos(todoList);
 
             setCompletedTodos(todoList.filter((todo) => todo.status === "Completed"));
-            setIncompleteTodos(todoList.filter((todo) => todo.status !== "Completed"));
+
+            const sortedIncompleteTodos = todoList.filter((todo) => todo.status !== "Completed")
+            .sort((a, b) => {
+                const priorityOrder = ["High", "Medium", "Low"];
+                return priorityOrder.indexOf(a.priority) - priorityOrder.indexOf(b.priority);
+            });
+        setIncompleteTodos(sortedIncompleteTodos);
+
+            // setIncompleteTodos(todoList.filter((todo) => todo.status !== "Completed"));
 
         } catch (error) {
             console.log(error);
@@ -43,7 +51,8 @@ const Todos = () => {
 
     //create function to delete todos
     const deleteTodo = async (id) => {
-        try {
+        try {   
+            console.log('enter deleteTodo block');
             const token = localStorage.getItem('token');
             const response = await axios.delete(`http://localhost:3333/api/todos/${id}`, {
                 headers: {
