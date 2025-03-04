@@ -1,7 +1,9 @@
+//this page is main entry point for the application. 
 import React from 'react';
 import {Link,Route,Routes,Navigate,useNavigate} from 'react-router-dom';
 import "../public/styles/styles.css";
 
+//importing all the 'pages' (components) from other .JSX files 
 import Login from './pages/Login.jsx';
 import Home from "./pages/Home.jsx";
 import ContactPage from "./pages/ContactPage.jsx";
@@ -17,16 +19,14 @@ import Todos from './pages/Todos.jsx';
 import CreateTodo from './pages/CreateTodo.jsx';
 import SingleTodo from './pages/SingleTodo.jsx';
 
+//App returns a JSX componenent, esentially the entire app which is wrapped in React Router. 
+// Private router, imported from private route component, ensures only users that are logged in have access to this route.
+// Component checks if user has a token and renders componenet, if not they are sent to login page. Does this on every component render if that componenent
+//is wrapped in <PrivateRoute >. Currently this method is not very effecient. 
 const App = () => {
     const navigate = useNavigate();
     const token = localStorage.getItem('token');
 
-  // const handleHomeClick = () => {
-  //   navigate('/Home');
-  // };
-  // const newEntry = () => {
-  //   navigate("/NewEntry")
-  // }
 
   return (
     <div>
