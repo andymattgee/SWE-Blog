@@ -37,4 +37,4 @@ Setting up MongoDB
         click on drivers button, copy connection string to code, replace password and username
         make sure to add either dbURL to .env or password/username to .env
 
-Git commit messages: cmd + W exits the window
+Git commit messages:  cmd + S to save changes, cmd + W exits the window,
