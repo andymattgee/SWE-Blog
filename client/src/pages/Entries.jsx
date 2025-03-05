@@ -7,81 +7,90 @@ import beachIMG from '../../public/images/beach.jpg';
 import mountains from '../../public/images/mountains.jpg';
 
 
+/**
+ * Entries component that displays a list of blog entries fetched from the server.
+ * Provides navigation to create a new entry and view individual entry details.
+ */
 const Entries = () => {
     const navigate = useNavigate();
     const [entries, setEntries] = useState([]);
     const [error, setError] = useState(null);
 
+    /**
+     * Fetches the list of entries from the server and updates the state.
+     */
     const getEntries = async () => {
         try {
             const token = localStorage.getItem('token');
-            // console.log('token from entries fetch req ->', token);
             const { data } = await axios.get('http://localhost:3333/entries', {
                 headers: {
                     Accept: 'application/json',
-                    Authorization: `Bearer ${token}` //This will include token in the headers
+                    Authorization: `Bearer ${token}`
                 }
             });
-            // console.log('entries ->', data.data);
             setEntries(data.data);
         } catch (error) {
             console.error('Error fetching entries:', error);
-            setError("Error fetching entries in FrontEnd. Please fix your shit")
+            setError("Error fetching entries in FrontEnd. Please fix your shit");
         }
-    }
+    };
+
+    // Fetch entries on component mount
     useEffect(() => {
         getEntries();
     }, []);
 
-
+    /**
+     * Navigates to the NewEntry page for creating a new entry.
+     */
     const handleNewEntry = () => {
-        navigate('/NewEntry')
+        navigate('/NewEntry');
     };
+
+    /**
+     * Navigates to the Home page.
+     */
     const handleHomeButton = () => {
         navigate('/Home');
-    }
+    };
 
+    // Maps each entry to a formatted JSX element for display
     const newEntries = entries.map(({ _id, title, createdAt }) => {
-
         const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {
             month: 'short',
             day: 'numeric',
             year: 'numeric',
         });
 
-
         return (
-            
-            <div class=" w-full flex items-center justify-center ">
-                <Link to={`/SingleEntry/${_id}`} key={_id}
-                    className="w-full  px-2 mb-4">
-                    <article class="max-w-sm w-full bg-white rounded-lg shadow-lg overflow-hidden  dark:bg-amber-50 hover:bg-cyan-600 transition duration-300 ease-in-out transform hover:scale-105 h-96 ">
+            <div className="w-full flex items-center justify-center" key={_id}>
+                <Link to={`/SingleEntry/${_id}`} className="w-full px-2 mb-4">
+                    <article className="max-w-sm w-full bg-white rounded-lg shadow-lg overflow-hidden dark:bg-amber-50 hover:bg-cyan-600 transition duration-300 ease-in-out transform hover:scale-105 h-96">
                         <div className="max-w-full">
                             {mountains && <img src={mountains} alt="mountains" className="max-w-full h-auto" />}
                         </div>
-                        <div class="flex flex-col gap-1 mt-4 px-4">
-                            <h2 class="text-lg font-semibold text-gray-800 dark:text-black">{title}</h2>
-                            {/* <span class="font-normal text-gray-600 dark:text-gray-300">Blog Article</span> */}
-                            {/* <span class="font-semibold text-gray-800 dark:text-gray-50">{formattedDate}</span> */}
+                        <div className="flex flex-col gap-1 mt-4 px-4">
+                            <h2 className="text-lg font-semibold text-gray-800 dark:text-black">{title}</h2>
                         </div>
-                        <div class="mt-4 p-4 border-t border-black ">
-                            <h3 class="text-lg font-semibold text-gray-800 dark:text-black">{formattedDate}</h3>
+                        <div className="mt-4 p-4 border-t border-black">
+                            <h3 className="text-lg font-semibold text-gray-800 dark:text-black">{formattedDate}</h3>
                         </div>
                     </article>
                 </Link>
             </div>
-
-        )
+        );
     }).reverse();
-   
+
     return (
-        <div style={{ backgroundImage: `url(${beachIMG})`, backgroundSize: 'cover' }}>
-
-            <NavBar />
-            
-
-            {/* <div className="px-6 flex flex-col items-center" > */}
-            <div className="px-6 flex flex-col items-center" >
+        <div style={{
+            background: 'linear-gradient(to bottom, white, #3498DB, #2C3E50)',
+            height: '100%',
+            minHeight: '100vh',
+            position: 'relative',
+            overflow: 'hidden'
+        }}>
+                <NavBar />
+            <div className="px-6 flex flex-col items-center">
                 <br />
                 <h1 className="text-4xl font-bold text-center mb-5"> Blog Entries</h1>
                 <h5>Click entries to view details</h5>
@@ -100,7 +109,7 @@ const Entries = () => {
                 </button>
             </div>
         </div>
-    )
+    );
 }
 
 export default Entries;
