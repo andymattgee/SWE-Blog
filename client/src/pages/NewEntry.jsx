@@ -38,7 +38,13 @@ const NewEntry = () => {
     };
 
   return (
-    <div>
+    <div style={{
+        backgroundImage: 'linear-gradient(to bottom, #ADD8E6, #032B44)',
+        height: '100%',
+        width: '100vw',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }}>
 <NavBar/>
     <div className="flex flex-col items-center justify-center w-screen">
         
@@ -59,7 +65,7 @@ const NewEntry = () => {
                     onChange={(e) => setTitle(e.target.value)}
                     required
                     
-                    className="border-2 w-full"
+                    className="border-2 w-full bg-grey-100"
                     />
             </div>
             <div className="mb-4">
@@ -73,7 +79,7 @@ const NewEntry = () => {
                     required
                     rows={10}
                     
-                    className="border-2 w-full p-4"
+                    className="border-2 w-full p-4 bg-grey-100"
                     />
             </div>
             <div className="mb-4">
@@ -87,7 +93,7 @@ const NewEntry = () => {
                     required
                     rows={10}
                     
-                    className="border-2 w-full p-4"
+                    className="border-2 w-full p-4 bg-grey-100"
                     />
             </div>
             <div className="">
