@@ -6,10 +6,19 @@ import stars from '../../public/videos/starryVideo.mp4'
 import mountains from '../../public/images/mountains.jpg';
 
 
+/**
+ * The Home component is the main page of the application.
+ * It displays a welcome message with the user's name, a button to navigate to the Test2 page,
+ * and a LogLocalStorage component to display the user's information stored in local storage.
+ */
+
 const Home = () => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState('');
 
+  /**
+   * Retrieve user information from localStorage and update the state
+   */
   useEffect(() => {
     // Retrieve user information from localStorage
     const storedUserName = localStorage.getItem('userName');
@@ -18,24 +27,22 @@ const Home = () => {
     }
   }, []);
 
-
+  /**
+   * Navigate to the Test2 page when the button is clicked
+   */
   const handleTest2 = () => {
     navigate('/test2');
   }
 
-
   return (
-
-
+    /**
+     * The JSX returned by the Home component
+     */
     <div>
       <div className='bg-transparent'>
-
         <NavBar />
       </div>
       <div className="h-screen relative  inset-0 flex flex-col justify-center items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)] z-0">
-
-
-
 
         <h2 className="z-10 text-white bg-clip-text text-6xl font-bold text-center mb-10">
           Welcome to the Home Page {userName}
@@ -52,34 +59,32 @@ const Home = () => {
 
           <LogLocalStorage />
 
-          
         </div>
       </div>
 
 
-        <div class="flex justify-center ">
-          <article class="max-w-sm w-full bg-white rounded-lg shadow-lg overflow-hidden dark:bg-gray-600">
-            <div className="max-w-full">
-              {mountains && <img src={mountains} alt="mountains" className="max-w-full h-auto" />}
+      {/* <div class="flex justify-center ">
+        <article class="max-w-sm w-full bg-white rounded-lg shadow-lg overflow-hidden dark:bg-gray-600">
+          <div className="max-w-full">
+            {mountains && <img src={mountains} alt="mountains" className="max-w-full h-auto" />}
 
-            </div>
+          </div>
 
-            <div class="flex flex-col gap-1 mt-4 px-4">
-              <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-50">Title</h2>
-              <span class="font-normal text-gray-600 dark:text-gray-300">Blog Article</span>
-              <span class="font-semibold text-gray-800 dark:text-gray-50">Data Here</span>
-            </div>
+          <div class="flex flex-col gap-1 mt-4 px-4">
+            <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-50">Title</h2>
+            <span class="font-normal text-gray-600 dark:text-gray-300">Blog Article</span>
+            <span class="font-semibold text-gray-800 dark:text-gray-50">Data Here</span>
+          </div>
 
-            <div class="mt-4 p-4 border-t border-gray-200 dark:border-gray-500">
-              <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-50">Text below Line</h3>
-            </div>
-          </article>
-        </div>
+          <div class="mt-4 p-4 border-t border-gray-200 dark:border-gray-500">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-50">Text below Line</h3>
+          </div>
+        </article>
+      </div> */}
 
 
     </div>
   );
-
 }
 
 export default Home

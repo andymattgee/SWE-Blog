@@ -38,16 +38,16 @@ const App = () => {
             <Route path="/" element={<Navigate to="/home" />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/home" element={<PrivateRoute element={<Home />} />} />
-            <Route path="/contact-page" element={<PrivateRoute element={<ContactPage />} />} />
+            <Route path="/contactpage" element={<PrivateRoute element={<ContactPage />} />} />
             <Route path="/test2" element={<PrivateRoute element={<Test2 />} />} />
-            <Route path="/api-test-page" element={<PrivateRoute element={<APITestPage />} />} />
+            <Route path="/apitestpage" element={<PrivateRoute element={<APITestPage />} />} />
             <Route path="/entries" element={<PrivateRoute element={<Entries />} />} />
-            <Route path="/new-entry" element={<PrivateRoute element={<NewEntry />} />} />
-            <Route path="/single-entry/:id" element={<PrivateRoute element={<SingleEntry />} />} />
-            <Route path="/edit-entry/:id" element={<PrivateRoute element={<EditEntry />} />} />
+            <Route path="/newentry" element={<PrivateRoute element={<NewEntry />} />} />
+            <Route path="/singleentry/:id" element={<PrivateRoute element={<SingleEntry />} />} />
+            <Route path="/editentry/:id" element={<PrivateRoute element={<EditEntry />} />} />
             <Route path="/todos" element={<PrivateRoute element={<Todos />} />} />
-            <Route path="/create-todo" element={<PrivateRoute element={<CreateTodo />} />} />
-            <Route path="/single-todo/:id" element={<PrivateRoute element={<SingleTodo />} />} />
+            <Route path="/createtodo" element={<PrivateRoute element={<CreateTodo />} />} />
+            <Route path="/singletodo/:id" element={<PrivateRoute element={<SingleTodo />} />} />
           </>
         ) : (
           // Routes accessible when the user is not authenticated
