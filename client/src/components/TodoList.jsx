@@ -7,8 +7,15 @@ const TodoList = ({ todo, onDeleteTodo }) => {
     console.log('todo from TodoList component ->', todo);
     const navigate = useNavigate();
 
+    /**
+     * A function that prompts a user to confirm they want to delete the todo, and
+     * if confirmed, calls the onDeleteTodo function with the todo's id.
+     * @param {string} id - The id of the todo to delete
+     */
     const handleDelete = (id) => {
+        // confirm that the user wants to delete the todo
         if (window.confirm("Are you sure you want to delete this todo?")) {
+            // call the onDeleteTodo function with the todo's id
             onDeleteTodo(id);
         }
     };
