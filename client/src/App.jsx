@@ -5,6 +5,7 @@ import React from 'react';
 import {Link,Route,Routes,Navigate,useNavigate} from 'react-router-dom';
 import "../public/styles/styles.css";
 
+
 //importing all the 'pages' (components) from other .JSX files 
 import Login from './pages/Login.jsx';
 import Home from "./pages/Home.jsx";

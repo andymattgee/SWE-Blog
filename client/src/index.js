@@ -4,6 +4,7 @@ import App from './App.jsx';
 import {createRoot} from 'react-dom/client';
 import {BrowserRouter} from 'react-router-dom';
 
+
 // Create a root element for the React application
 const root = createRoot(document.getElementById('root'));
 
