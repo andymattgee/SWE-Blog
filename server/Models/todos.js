@@ -5,13 +5,37 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const TodoSchema = new Schema({
-    title: {type: String, required: true},
-    notes: {type: String, required: false},
-    priority: {type: String, required: false},
-    status: {type: String, required: false},
-    date: {type: Date, required: false},
-    createdAt: {type: Date, default: Date.now},
-    user: {type: Schema.Types.ObjectId, ref: 'User'}
+    task: {
+        type: String, 
+        required: [true, 'Task title is required']
+    },
+    notes: {
+        type: String, 
+        default: ''
+    },
+    priority: {
+        type: String, 
+        enum: ['high', 'low'],
+        default: 'low'
+    },
+    completed: {
+        type: Boolean,
+        default: false
+    },
+    deadlineDate: {
+        type: Date,
+        required: [true, 'Deadline date is required']
+    },
+    createdAt: {
+        type: Date, 
+        default: Date.now,
+        immutable: true
+    },
+    user: {
+        type: Schema.Types.ObjectId, 
+        ref: 'User',
+        required: true
+    }
 }); 
 
 const Todo = mongoose.model('Todo', TodoSchema);
