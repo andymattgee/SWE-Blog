@@ -37,34 +37,8 @@ Setting up MongoDB
         click on drivers button, copy connection string to code, replace password and username
         make sure to add either dbURL to .env or password/username to .env
 
-Git commit messages:  cmd + S to save changes, cmd + W exits the window,
 
 
 
-Major ToDo Changes 3/5/25 w Cursor AP
-    BELOW CHANGES MADE WITH AGENT USING CLAUDE SONNET 3.5
-    Todos.js Model page updated to reflect new toDo fields
-    todoController.js page modified to handle new fields
-    todoModal.jsx newly created page that created a reusable model for creating and editing tasks
-    TodoItems.jsx displays individual TodoItems
-    Todos.jsx updated - main page updated with new functionality
-
-    PUSHED AND COMBINED W DEV VIA PR
 
 
-Minor ToDo changes 3/6/2
-    BELOW DONE WITH AGENT USING CLAUDE SONNET 3.5
-    Reordered the today,pending,overdue section and made them wider
-    Made sure text fields were clear for every new task
-    Confirmation modal popup for deleting a task
-    Changed order of tasks so that new tasks appear at top of list
-    Changed red indicator to an exclamation point ! instead of red dot 
-    Changed edit and delete button to icons and change priotity indicator to an icon
-
-    DOCS ADDED USING EDIT FETURE W GPT-4o-MINI
-    Docs and comments added to the following pages:
-        Models/todo.js
-        Controllers/todoController
-        components/TodoModal.jsx (new component)
-        componenets/TodoItem.jsx (new component)
-        pages/Todos.jsx

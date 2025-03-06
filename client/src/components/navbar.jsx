@@ -3,38 +3,50 @@ import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import axios from 'axios';
 
+// Navbar component for the application
 const Navbar = () => {
+    // State to manage the open/closed state of the mobile menu
     const [isOpen, setIsOpen] = useState(false);
-    const navigate = useNavigate();
+    const navigate = useNavigate(); // Hook to programmatically navigate
 
+    /**
+     * Handles user logout by sending a request to the server and clearing local storage.
+     */
     const logout = async () => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token'); // Retrieve the authentication token
         if (!token) {
             console.log('no token, returning to login/sign up page');
-            navigate('/');
+            navigate('/'); // Navigate to the home page if no token is found
             return;
-        };
+        }
     
         try {
-            console.log('user with token, start log out process...')
+            console.log('user with token, start log out process...');
+            // Send a POST request to log out the user
             await axios.post('http://localhost:3333/api/users/logout', {}, {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${token}` // Include the token in the request headers
                 }
             });
-            localStorage.clear();
-            navigate('/');
+            localStorage.clear(); // Clear local storage
+            navigate('/'); // Navigate to the home page after logout
         } catch (error) {
-            console.error('Error logging out:', error);
+            console.error('Error logging out:', error); // Log any errors that occur during logout
         }
     }
 
+    /**
+     * Toggles the mobile menu open/closed state.
+     */
     const toggleMenu = () => {
-        setIsOpen(!isOpen);
+        setIsOpen(!isOpen); // Toggle the state of the mobile menu
     }
 
+    /**
+     * Closes the mobile menu.
+     */
     const closeMenu = () => {
-        setIsOpen(false);
+        setIsOpen(false); // Set the mobile menu state to closed
     }
 
     return (
@@ -47,12 +59,12 @@ const Navbar = () => {
                             Matt's Tech Journey
                         </Link>
 
-                        {/* Hamburger Button */}
+                        {/* Hamburger Button for mobile menu */}
                         <button
-                            onClick={toggleMenu}
+                            onClick={toggleMenu} // Toggle the mobile menu on click
                             className="text-blue-700 hover:text-blue-800 focus:outline-none"
                         >
-                            {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+                            {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />} {/* Show appropriate icon based on menu state */}
                         </button>
                     </div>
                 </div>
@@ -61,45 +73,46 @@ const Navbar = () => {
                 <div className={`${isOpen ? 'block' : 'hidden'} bg-white bg-opacity-95 shadow-lg absolute right-0 w-1/5`}>
                     <div className="container mx-auto px-4 py-2">
                         <div className="flex flex-col space-y-4 pb-4">
+                            {/* Navigation Links */}
                             <Link 
                                 to="/Home" 
                                 className="text-blue-700 hover:text-blue-900 text-lg font-medium text-right"
-                                onClick={closeMenu}
+                                onClick={closeMenu} // Close menu on link click
                             >
                                 Home
                             </Link>
                             <Link 
                                 to="/entries" 
                                 className="text-blue-700 hover:text-blue-900 text-lg font-medium text-right"
-                                onClick={closeMenu}
+                                onClick={closeMenu} // Close menu on link click
                             >
                                 Blog Entries
                             </Link>
                             <Link 
                                 to="/ContactPage" 
                                 className="text-blue-700 hover:text-blue-900 text-lg font-medium text-right"
-                                onClick={closeMenu}
+                                onClick={closeMenu} // Close menu on link click
                             >
                                 Contact Me
                             </Link>
                             <Link 
                                 to="/APITestPage" 
                                 className="text-blue-700 hover:text-blue-900 text-lg font-medium text-right"
-                                onClick={closeMenu}
+                                onClick={closeMenu} // Close menu on link click
                             >
                                 API Page
                             </Link>
                             <Link 
                                 to="/Todos" 
                                 className="text-blue-700 hover:text-blue-900 text-lg font-medium text-right"
-                                onClick={closeMenu}
+                                onClick={closeMenu} // Close menu on link click
                             >
                                 ToDo List
                             </Link>
                             <button 
                                 onClick={() => {
-                                    logout();
-                                    closeMenu();
+                                    logout(); // Call logout function
+                                    closeMenu(); // Close menu after logout
                                 }} 
                                 className="text-blue-700 hover:text-blue-900 text-lg font-medium text-right"
                             >
