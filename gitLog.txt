@@ -1,7 +1,9 @@
 This will be a log that will keep track of app updates and Git pushes and GitHub PR'S
 Git commit messages, if extra window pops up:  cmd + S to save changes, cmd + W exits the window,
 
-3/5/25 Major ToDo Changes w Cursor AP
+3/5/25 
+    Major ToDo Changes w Cursor AP
+
     BELOW CHANGES MADE WITH AGENT USING CLAUDE SONNET 3.5
     Todos.js Model page updated to reflect new toDo fields
     todoController.js page modified to handle new fields
@@ -12,7 +14,9 @@ Git commit messages, if extra window pops up:  cmd + S to save changes, cmd + W 
     PUSHED AND COMBINED W DEV VIA PR
 
 
-3/6/25 Minor ToDo changes
+3/6/25 
+    Minor ToDo changes
+
     BELOW DONE WITH AGENT USING CLAUDE SONNET 3.5
     Reordered the today,pending,overdue section and made them wider
     Made sure text fields were clear for every new task
@@ -31,3 +35,7 @@ Git commit messages, if extra window pops up:  cmd + S to save changes, cmd + W 
         componenets/TodoItem.jsx (new component)
         pages/Todos.jsx
      -Added gitLog.txt to capture major git pushes and PR's
+
+    Front end pages clean up - going through pages and deleting pages/files that are no longer needed to due recent app revisions
+        Following pages were removed: singleTodo.jsx, CreateTodo.jsx, NewEntry.jsx, SingleEntry.jsx, editEntry.jsx,Test2.jsx
+        Files deleted from pages folder and removed from App.jsx router and imports sections
