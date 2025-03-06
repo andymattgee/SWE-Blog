@@ -46,19 +46,23 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
             onClick={onClose}
         >
             <div 
-                className="bg-white rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+                className="bg-blue-100 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Modal Header */}
-                <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-2xl font-bold">{entry.title}</h2>
+                <div className="flex justify-between items-start mb-4">
+                    <h2 className="text-2xl font-bold text-center flex-1">{entry.title}</h2>
                     <button
                         onClick={onClose}
-                        className="text-gray-500 hover:text-gray-700"
+                        className="text-gray-500 hover:text-gray-700 mt-[-10px] mr-[-10px]"
                     >
                         ✕
                     </button>
                 </div>
+                {/* Date Display */}
+                <p className="text-center text-gray-600 mb-4">
+                    {new Date(entry.createdAt).toLocaleDateString()}
+                </p>
                 
                 {/* Modal Content */}
                 {isEditing ? (
@@ -70,7 +74,7 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
                                 type="text"
                                 value={editForm.title}
                                 onChange={(e) => setEditForm({...editForm, title: e.target.value})}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
                             />
                         </div>
                         <div>
@@ -79,7 +83,7 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
                                 value={editForm.professionalContent}
                                 onChange={(e) => setEditForm({...editForm, professionalContent: e.target.value})}
                                 rows={5}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
                             />
                         </div>
                         <div>
@@ -88,7 +92,7 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
                                 value={editForm.personalContent}
                                 onChange={(e) => setEditForm({...editForm, personalContent: e.target.value})}
                                 rows={5}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
                             />
                         </div>
                         <div className="flex justify-end space-x-2">
@@ -111,12 +115,16 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
                     // View Mode
                     <>
                         <div className="mb-4">
-                            <h3 className="text-lg font-semibold mb-2">Professional</h3>
-                            <p className="text-gray-700">{entry.professionalContent}</p>
+                            <h3 className="text-lg font-semibold text-center mb-2">Professional</h3>
+                            <div className="border bg-white p-4 rounded-md">
+                                <p className="text-gray-700">{entry.professionalContent}</p>
+                            </div>
                         </div>
                         <div className="mb-4">
-                            <h3 className="text-lg font-semibold mb-2">Personal</h3>
-                            <p className="text-gray-700">{entry.personalContent}</p>
+                            <h3 className="text-lg font-semibold text-center mb-2">Personal</h3>
+                            <div className="border bg-white p-4 rounded-md">
+                                <p className="text-gray-700">{entry.personalContent}</p>
+                            </div>
                         </div>
                         <div className="flex justify-end space-x-2">
                             <button
@@ -366,24 +374,27 @@ const Entries = () => {
             <NavBar />
             <div className="px-6 flex flex-col items-center">
                 <br />
-                <h1 className="text-4xl font-bold text-center mb-5"> Blog Entries</h1>
+                {/* <h1 className="text-4xl font-bold text-center mb-5"> Blog Entries</h1> */}
 
-                {/* View Toggle Button */}
-                <button
-                    onClick={() => setIsListView(!isListView)}
-                    className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-700 hover:to-green-700 border border-grey-500 text-white py-2 px-4 rounded"
-                >
-                    {isListView ? 'Change to Grid View' : 'Change to List View'}
-                </button>
-
-                <h5>Click entries to view details</h5>
+                {/* <h5 className="text-left mb-2">Click entries to view details</h5> */}
                 
-                {/* New Entry Button */}
-                <button
-                    className="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-xl w-1/3 px-5 py-2.5 text-center mb-2"
-                    onClick={handleNewEntry}>
-                    Make New Entry
-                </button>
+                {/* Button Container */}
+                <div className="flex justify-between w-full mb-4"> {/* Flex container for buttons */}
+                    {/* View Toggle Button */}
+                    <button
+                        onClick={() => setIsListView(!isListView)}
+                        className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-700 hover:to-green-700 border border-grey-500 text-white py-2 px-4 rounded"
+                    >
+                        {isListView ? 'Change to Grid View' : 'Change to List View'}
+                    </button>
+
+                    {/* New Entry Button */}
+                    <button
+                        className="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm w-1/6 px-3 py-1.5 text-center"
+                        onClick={handleNewEntry}>
+                        Make New Entry
+                    </button>
+                </div>
 
                 {/* Entries Container */}
                 <div className={`${isListView ? "flex flex-col items-center w-full" : "grid grid-cols-5 gap-4"}`}>
@@ -406,13 +417,6 @@ const Entries = () => {
                         newEntries
                     )}
                 </div>
-
-                {/* New Entry Button (Bottom) */}
-                <button
-                    className="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-xl w-1/3 px-5 py-2.5 text-center mb-2"
-                    onClick={handleNewEntry}>
-                    Make New Entry
-                </button>
             </div>
 
             {/* Entry Modal */}
