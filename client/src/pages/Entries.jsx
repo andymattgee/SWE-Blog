@@ -183,6 +183,153 @@ const DeleteConfirmationModal = ({ onConfirm, onCancel }) => {
     );
 };
 
+/**
+ * NewEntryModal Component for creating new entries
+ * 
+ * @param {Object} props - Component props
+ * @param {Function} props.onClose - Function to close the modal
+ * @param {Function} props.onSubmit - Function to handle form submission
+ * @param {Function} props.onExitAttempt - Function to handle exit attempts
+ * @returns {JSX.Element} The modal component
+ */
+const NewEntryModal = ({ onClose, onSubmit, onExitAttempt }) => {
+    const [form, setForm] = useState({
+        title: '',
+        professionalContent: '',
+        personalContent: ''
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setForm(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit(form);
+    };
+
+    const handleClose = () => {
+        // Only show confirmation if there's content in the form
+        if (form.title || form.professionalContent || form.personalContent) {
+            onExitAttempt();
+        } else {
+            onClose();
+        }
+    };
+
+    return (
+        <div 
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={handleClose}
+        >
+            <div 
+                className="bg-blue-100 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+                onClick={(e) => e.stopPropagation()}
+            >
+                {/* Modal Header */}
+                <div className="flex justify-between items-start mb-4">
+                    <h2 className="text-2xl font-bold text-center flex-1">Create New Entry</h2>
+                    <button
+                        onClick={handleClose}
+                        className="text-gray-500 hover:text-gray-700 mt-[-10px] mr-[-10px]"
+                    >
+                        ✕
+                    </button>
+                </div>
+                
+                {/* Modal Content */}
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Title</label>
+                        <input
+                            type="text"
+                            name="title"
+                            value={form.title}
+                            onChange={handleChange}
+                            required
+                            className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Professional Content</label>
+                        <textarea
+                            name="professionalContent"
+                            value={form.professionalContent}
+                            onChange={handleChange}
+                            required
+                            rows={5}
+                            className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Personal Content</label>
+                        <textarea
+                            name="personalContent"
+                            value={form.personalContent}
+                            onChange={handleChange}
+                            required
+                            rows={5}
+                            className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
+                        />
+                    </div>
+                    <div className="flex justify-end space-x-2">
+                        <button
+                            type="button"
+                            onClick={handleClose}
+                            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                        >
+                            Create Entry
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
+
+/**
+ * ExitConfirmationModal Component for confirming modal exit with unsaved changes
+ * 
+ * @param {Object} props - Component props
+ * @param {Function} props.onConfirm - Function to handle confirmation
+ * @param {Function} props.onCancel - Function to handle cancellation
+ * @returns {JSX.Element} The confirmation modal component
+ */
+const ExitConfirmationModal = ({ onConfirm, onCancel }) => {
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
+            <div className="bg-white rounded-lg p-6 max-w-sm w-full">
+                <h3 className="text-lg font-semibold mb-4">Unsaved Changes</h3>
+                <p className="text-gray-600 mb-6">You have unsaved changes. Are you sure you want to exit? Your changes will be lost.</p>
+                <div className="flex justify-end space-x-2">
+                    <button
+                        onClick={onCancel}
+                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        onClick={onConfirm}
+                        className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+                    >
+                        Exit
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const Entries = () => {
     // Navigation hook for programmatic routing
     const navigate = useNavigate();
@@ -205,6 +352,8 @@ const Entries = () => {
     });
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [entryToDelete, setEntryToDelete] = useState(null);
+    const [isNewEntryModalOpen, setIsNewEntryModalOpen] = useState(false);
+    const [isExitConfirmationOpen, setIsExitConfirmationOpen] = useState(false);
 
     /**
      * Fetches all entries from the server and updates the entries state.
@@ -310,6 +459,30 @@ const Entries = () => {
         }
     };
 
+    /**
+     * Handles the submission of a new entry.
+     * Creates the entry on the server and refreshes the data.
+     * 
+     * @async
+     * @param {Object} formData - The form data for the new entry
+     * @throws {Error} If the API request fails
+     */
+    const handleNewEntrySubmit = async (formData) => {
+        try {
+            const token = localStorage.getItem('token');
+            await axios.post('http://localhost:3333/entries', formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setIsNewEntryModalOpen(false);
+            getEntries();
+        } catch (error) {
+            console.error('Error creating entry:', error);
+            setError('Error creating entry');
+        }
+    };
+
     // Effect to persist view mode preference and fetch entries
     useEffect(() => {
         localStorage.setItem('isListView', isListView.toString());
@@ -391,7 +564,7 @@ const Entries = () => {
                     {/* New Entry Button */}
                     <button
                         className="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm w-1/6 px-3 py-1.5 text-center"
-                        onClick={handleNewEntry}>
+                        onClick={() => setIsNewEntryModalOpen(true)}>
                         Make New Entry
                     </button>
                 </div>
@@ -433,6 +606,26 @@ const Entries = () => {
                     setIsEditing={setIsEditing}
                     editForm={editForm}
                     setEditForm={setEditForm}
+                />
+            )}
+
+            {/* New Entry Modal */}
+            {isNewEntryModalOpen && (
+                <NewEntryModal
+                    onClose={() => setIsNewEntryModalOpen(false)}
+                    onSubmit={handleNewEntrySubmit}
+                    onExitAttempt={() => setIsExitConfirmationOpen(true)}
+                />
+            )}
+
+            {/* Exit Confirmation Modal */}
+            {isExitConfirmationOpen && (
+                <ExitConfirmationModal
+                    onConfirm={() => {
+                        setIsExitConfirmationOpen(false);
+                        setIsNewEntryModalOpen(false);
+                    }}
+                    onCancel={() => setIsExitConfirmationOpen(false)}
                 />
             )}
 
