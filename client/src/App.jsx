@@ -5,6 +5,7 @@ import React from 'react';
 import {Link,Route,Routes,Navigate,useNavigate} from 'react-router-dom';
 import "../public/styles/styles.css";
 
+
 //importing all the 'pages' (components) from other .JSX files 
 import Login from './pages/Login.jsx';
 import Home from "./pages/Home.jsx";
@@ -14,7 +15,7 @@ import APITestPage from "./pages/APITestPage.jsx";
 import Entries from "./pages/Entries.jsx";
 import NewEntry from './pages/NewEntry.jsx';
 import Signup from './pages/Signup.jsx';
-import SingleEntry from './pages/SingleEntry.jsx';
+// import SingleEntry from './pages/SingleEntry.jsx';
 import EditEntry from './pages/EditEntry.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
 import Todos from './pages/Todos.jsx';
@@ -43,7 +44,7 @@ const App = () => {
             <Route path="/apitestpage" element={<PrivateRoute element={<APITestPage />} />} />
             <Route path="/entries" element={<PrivateRoute element={<Entries />} />} />
             <Route path="/newentry" element={<PrivateRoute element={<NewEntry />} />} />
-            <Route path="/singleentry/:id" element={<PrivateRoute element={<SingleEntry />} />} />
+            {/* <Route path="/singleentry/:id" element={<PrivateRoute element={<SingleEntry />} />} /> */}
             <Route path="/editentry/:id" element={<PrivateRoute element={<EditEntry />} />} />
             <Route path="/todos" element={<PrivateRoute element={<Todos />} />} />
             <Route path="/createtodo" element={<PrivateRoute element={<CreateTodo />} />} />
