@@ -3,9 +3,9 @@ import { useState, useEffect } from 'react';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 
+// TodoList component for displaying a list of todos
 const TodoList = ({ todo, onDeleteTodo }) => {
-    console.log('todo from TodoList component ->', todo);
-    const navigate = useNavigate();
+    const navigate = useNavigate(); // Hook to programmatically navigate
 
     /**
      * A function that prompts a user to confirm they want to delete the todo, and
@@ -13,22 +13,21 @@ const TodoList = ({ todo, onDeleteTodo }) => {
      * @param {string} id - The id of the todo to delete
      */
     const handleDelete = (id) => {
-        // confirm that the user wants to delete the todo
+        // Confirm that the user wants to delete the todo
         if (window.confirm("Are you sure you want to delete this todo?")) {
-            // call the onDeleteTodo function with the todo's id
+            // Call the onDeleteTodo function with the todo's id
             onDeleteTodo(id);
         }
     };
-
-    
 
     return (
         <div>
             {todo.map((todo) => (
                 <div
-                    //conditional statement to change background color based on priority
-                    className={`flex flex-col items-left justify-center max-w-sm rounded-lg shadow-lg  w-2/3 my-4 mx-auto p-4 border border-black hover:bg-blue-300 ${todo.priority === "High" ? "bg-red-200" : todo.priority === "Medium" ? "bg-yellow-200" : "bg-green-200"
+                    // Conditional statement to change background color based on priority
+                    className={`flex flex-col items-left justify-center max-w-sm rounded-lg shadow-lg w-2/3 my-4 mx-auto p-4 border border-black hover:bg-blue-300 ${todo.priority === "High" ? "bg-red-200" : todo.priority === "Medium" ? "bg-yellow-200" : "bg-green-200"
                         }`}
+                    key={todo._id} // Unique key for each todo item
                 >
                     <p className="text-gray-600 text-xl">
                         <span className="font-bold">Title:</span> {todo.title}
@@ -47,30 +46,18 @@ const TodoList = ({ todo, onDeleteTodo }) => {
                     </p>
 
                     <div className="flex justify-center mt-4">
-                        {/* <button
-                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2"
-                            onClick={() => handleDelete(todo._id)}
-                        >
-                            Delete
-                        </button> */}
+                        {/* Button to navigate to the edit page for the selected todo */}
                         <button
                             className="bg-yellow-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded border border-black"
-                            onClick={() => navigate(`/SingleTodo/${todo._id}`)}
+                            onClick={() => navigate(`/SingleTodo/${todo._id}`)} // Navigate to the edit page
                         >
                             Edit | Delete
                         </button>
-
-                        
-
                     </div>
-
                 </div>
             ))}
-
-
-
         </div>
     );
 };
 
-export default TodoList
+export default TodoList;

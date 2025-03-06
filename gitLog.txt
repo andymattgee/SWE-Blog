@@ -1,0 +1,33 @@
+This will be a log that will keep track of app updates and Git pushes and GitHub PR'S
+Git commit messages, if extra window pops up:  cmd + S to save changes, cmd + W exits the window,
+
+3/5/25 Major ToDo Changes w Cursor AP
+    BELOW CHANGES MADE WITH AGENT USING CLAUDE SONNET 3.5
+    Todos.js Model page updated to reflect new toDo fields
+    todoController.js page modified to handle new fields
+    todoModal.jsx newly created page that created a reusable model for creating and editing tasks
+    TodoItems.jsx displays individual TodoItems
+    Todos.jsx updated - main page updated with new functionality
+
+    PUSHED AND COMBINED W DEV VIA PR
+
+
+3/6/25 Minor ToDo changes
+    BELOW DONE WITH AGENT USING CLAUDE SONNET 3.5
+    Reordered the today,pending,overdue section and made them wider
+    Made sure text fields were clear for every new task
+    Confirmation modal popup for deleting a task
+    Changed order of tasks so that new tasks appear at top of list
+    Changed red indicator to an exclamation point ! instead of red dot 
+    Changed edit and delete button to icons and change priotity indicator to an icon
+
+    BRANCH FEATURE/TODO PUSHED TO REPO AND MERGE TO DEV BRANCH
+
+    DOCS ADDED USING EDIT FEATURE W GPT-4o-MINI
+    Docs and comments added to the following pages:
+        Models/todo.js
+        Controllers/todoController
+        components/TodoModal.jsx (new component)
+        componenets/TodoItem.jsx (new component)
+        pages/Todos.jsx
+     -Added gitLog.txt to capture major git pushes and PR's
