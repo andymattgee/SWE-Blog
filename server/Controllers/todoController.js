@@ -1,9 +1,13 @@
 // Create logic for todo that will include get, post, put, delete operations
 
 const { get } = require('http');
-const Todo = require('../Models/todos');
+const Todo = require('../Models/todos'); // Import the Todo model
 
-// Fetch all todos for the logged-in user
+/**
+ * Fetches all todos for the authenticated user.
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object
+ */
 const getTodos = async (req, res) => {
     try {
         // Retrieve todos associated with the current user
@@ -48,7 +52,11 @@ const getTodos = async (req, res) => {
     }
 };
 
-// Add a new todo for the logged-in user
+/**
+ * Adds a new todo for the authenticated user.
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object
+ */
 const addTodo = async (req, res) => {
     try {
         // Create a new todo object from the request body
@@ -65,7 +73,7 @@ const addTodo = async (req, res) => {
         return res.status(201).json({
             success: true,
             message: 'Todo created successfully',
-            data: todo
+            data: todo // Respond with the created todo data
         });
     } catch (error) {
         // Handle errors during adding
@@ -77,11 +85,15 @@ const addTodo = async (req, res) => {
     }
 };
 
-// Fetch a specific todo by ID for the logged-in user
+/**
+ * Fetches a specific todo by ID for the authenticated user.
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object
+ */
 const getTodo = async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.params; // Extract the todo ID from the request parameters
     try {
-        // Find the todo by ID and ensure it belongs to the logged-in user
+        // Find the todo by ID and ensure it belongs to the authenticated user
         const todo = await Todo.findOne({ _id: id, user: req.user._id });
         if (!todo) {
             return res.status(404).json({ message: 'Todo not found' });
@@ -89,7 +101,7 @@ const getTodo = async (req, res) => {
         // Respond with the found todo
         res.status(200).json({
             success: true,
-            data: todo
+            data: todo // Respond with the todo data
         });
     } catch (error) {
         // Handle errors during fetching
@@ -100,11 +112,15 @@ const getTodo = async (req, res) => {
     }
 };
 
-// Delete a specific todo by ID for the logged-in user
+/**
+ * Deletes a specific todo by ID for the authenticated user.
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object
+ */
 const deleteTodo = async (req, res) => {
     try {
-        const { id } = req.params;
-        // Find and delete the todo by ID, ensuring it belongs to the logged-in user
+        const { id } = req.params; // Extract the todo ID from the request parameters
+        // Find and delete the todo by ID, ensuring it belongs to the authenticated user
         const todo = await Todo.findOneAndDelete({ _id: id, user: req.user._id });
         if (!todo) {
             return res.status(404).json({
@@ -125,9 +141,13 @@ const deleteTodo = async (req, res) => {
     }
 };
 
-// Update a specific todo by ID for the logged-in user
+/**
+ * Updates a specific todo by ID for the authenticated user.
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object
+ */
 const updateTodo = async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.params; // Extract the todo ID from the request parameters
     // Prepare the update data from the request body
     const updateData = {
         task: req.body.task,
@@ -143,11 +163,11 @@ const updateTodo = async (req, res) => {
     );
 
     try {
-        // Find and update the todo, ensuring it belongs to the logged-in user
+        // Find and update the todo, ensuring it belongs to the authenticated user
         const updatedTodo = await Todo.findOneAndUpdate(
             { _id: id, user: req.user._id },
             updateData,
-            { new: true, runValidators: true }
+            { new: true, runValidators: true } // Return the updated todo and run validators
         );
         
         if (!updatedTodo) {
@@ -158,7 +178,7 @@ const updateTodo = async (req, res) => {
         res.status(200).json({
             success: true,
             message: 'Todo updated successfully',
-            data: updatedTodo
+            data: updatedTodo // Respond with the updated todo data
         });
     } catch (error) {
         // Handle errors during updating

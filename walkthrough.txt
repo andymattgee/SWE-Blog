@@ -1,4 +1,5 @@
-This will serve as basic walk through of folder structure of app:
+This will serve as basic walk through of folder structure of app .
+Will also provide tips and info on how things were set up such as DB.
 
 /client - This directory will contain all your React frontend code. Inside, you might have:
     /src - For your React components, utilities, hooks, and any other JavaScript or JSX files.
@@ -37,7 +38,7 @@ Setting up MongoDB
         click on drivers button, copy connection string to code, replace password and username
         make sure to add either dbURL to .env or password/username to .env
 
-
+3/4/25 Beginning to use Cursor AI IDE for editing and agent use
 
 
 
