@@ -22,6 +22,93 @@ import fallImage from '../../public/images/fall-bg.jpg';
 import beachIMG from '../../public/images/beach.jpg';
 import mountains from '../../public/images/mountains.jpg';
 import { BsGrid3X3Gap, BsListUl } from 'react-icons/bs';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import '../styles/quill-viewer.css';
+
+// Quill modules and formats configuration
+const quillModules = {
+    toolbar: [
+        [{ 'header': [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline'],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'align': ['', 'center', 'right', 'justify'] }],
+        ['clean']
+    ],
+    clipboard: {
+        matchVisual: false
+    },
+    keyboard: {
+        bindings: {
+            tab: {
+                key: 9,
+                handler: function() {
+                    return true; // Let default tab behavior happen
+                }
+            }
+        }
+    }
+};
+
+const quillFormats = [
+    'header',
+    'bold', 'italic', 'underline',
+    'list', 'bullet', 'ordered',
+    'align',
+    'indent',
+    'direction'
+];
+
+// Function to process Quill content for display
+const processQuillContent = (content) => {
+    if (!content) return '';
+    
+    // Log the raw content
+    console.log('Raw content:', content);
+    
+    // Create a temporary div to parse the HTML content
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = content;
+
+    // Log the parsed content
+    console.log('Parsed content:', tempDiv.innerHTML);
+
+    // Process lists
+    const listItems = tempDiv.querySelectorAll('li');
+    console.log('Found list items:', listItems.length);
+    listItems.forEach((li, index) => {
+        console.log(`List item ${index + 1}:`, {
+            parentTag: li.parentElement?.tagName,
+            classes: li.className,
+            content: li.innerHTML
+        });
+    });
+
+    // Process ordered and unordered lists
+    const lists = tempDiv.querySelectorAll('ol, ul');
+    console.log('Found lists:', lists.length);
+    lists.forEach((list, index) => {
+        console.log(`List ${index + 1}:`, {
+            type: list.tagName,
+            classes: list.className,
+            items: list.children.length
+        });
+    });
+
+    // Process headers
+    const headers = tempDiv.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    console.log('Found headers:', headers.length);
+
+    // Handle alignment
+    const alignedElements = tempDiv.querySelectorAll('[class*="ql-align-"]');
+    console.log('Found aligned elements:', alignedElements.length);
+
+    // Handle indentation
+    const indentedElements = tempDiv.querySelectorAll('[class*="ql-indent-"]');
+    console.log('Found indented elements:', indentedElements.length);
+
+    return content;
+};
 
 
 /**
@@ -80,20 +167,32 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Professional Content</label>
-                            <textarea
+                            <ReactQuill
                                 value={editForm.professionalContent}
-                                onChange={(e) => setEditForm({...editForm, professionalContent: e.target.value})}
-                                rows={5}
-                                className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
+                                onChange={(content) => {
+                                    console.log('Professional content HTML:', content);
+                                    setEditForm({...editForm, professionalContent: content});
+                                }}
+                                className="mt-1 bg-white rounded-md"
+                                theme="snow"
+                                modules={quillModules}
+                                formats={quillFormats}
+                                preserveWhitespace={true}
                             />
                         </div>
-                        <div>
+                        <div className="mt-12">
                             <label className="block text-sm font-medium text-gray-700">Personal Content</label>
-                            <textarea
+                            <ReactQuill
                                 value={editForm.personalContent}
-                                onChange={(e) => setEditForm({...editForm, personalContent: e.target.value})}
-                                rows={5}
-                                className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
+                                onChange={(content) => {
+                                    console.log('Personal content HTML:', content);
+                                    setEditForm({...editForm, personalContent: content});
+                                }}
+                                className="mt-1 bg-white rounded-md"
+                                theme="snow"
+                                modules={quillModules}
+                                formats={quillFormats}
+                                preserveWhitespace={true}
                             />
                         </div>
                         <div className="flex justify-end space-x-2">
@@ -118,13 +217,21 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
                         <div className="mb-4">
                             <h3 className="text-lg font-semibold text-center mb-2">Professional</h3>
                             <div className="border bg-white p-4 rounded-md">
-                                <p className="text-gray-700">{entry.professionalContent}</p>
+                                <div className="text-gray-700 ql-snow">
+                                    <div className="ql-editor" 
+                                        dangerouslySetInnerHTML={{ __html: entry.professionalContent }}
+                                    />
+                                </div>
                             </div>
                         </div>
                         <div className="mb-4">
                             <h3 className="text-lg font-semibold text-center mb-2">Personal</h3>
                             <div className="border bg-white p-4 rounded-md">
-                                <p className="text-gray-700">{entry.personalContent}</p>
+                                <div className="text-gray-700 ql-snow">
+                                    <div className="ql-editor" 
+                                        dangerouslySetInnerHTML={{ __html: entry.personalContent }}
+                                    />
+                                </div>
                             </div>
                         </div>
                         <div className="flex justify-end space-x-2">
@@ -200,17 +307,75 @@ const NewEntryModal = ({ onClose, onSubmit, onExitAttempt }) => {
         personalContent: ''
     });
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setForm(prev => ({
-            ...prev,
-            [name]: value
-        }));
+    const handleChange = (name, value) => {
+        // For Quill content, ensure we preserve the HTML
+        if (name === 'professionalContent' || name === 'personalContent') {
+            console.log(`${name} HTML structure:`, value);
+            
+            // Create a temporary div to analyze the HTML structure
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = value;
+            
+            // Log all elements with Quill-specific classes
+            const quillElements = tempDiv.querySelectorAll('[class*="ql-"]');
+            console.log(`Found ${quillElements.length} Quill elements:`);
+            quillElements.forEach((el, i) => {
+                console.log(`Element ${i + 1}:`, {
+                    tag: el.tagName,
+                    classes: el.className,
+                    content: el.innerHTML.slice(0, 50) + '...',
+                    attributes: Array.from(el.attributes).map(attr => `${attr.name}="${attr.value}"`).join(' ')
+                });
+            });
+            
+            // Log list structure specifically
+            const lists = tempDiv.querySelectorAll('ul, ol');
+            lists.forEach((list, i) => {
+                console.log(`List ${i + 1}:`, {
+                    tag: list.tagName,
+                    classes: list.className,
+                    items: Array.from(list.children).map(item => ({
+                        tag: item.tagName,
+                        classes: item.className,
+                        content: item.innerHTML.slice(0, 50) + '...'
+                    }))
+                });
+            });
+            
+            setForm(prev => ({
+                ...prev,
+                [name]: value
+            }));
+        } else {
+            setForm(prev => ({
+                ...prev,
+                [name]: value
+            }));
+        }
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit(form);
+        // Create a temporary div to process the HTML
+        const processContent = (html) => {
+            if (!html) return '';
+            const div = document.createElement('div');
+            div.innerHTML = html;
+            // Log the HTML structure of lists
+            const lists = div.querySelectorAll('ul, ol');
+            lists.forEach((list, i) => {
+                console.log(`List ${i + 1} HTML:`, list.outerHTML);
+            });
+            return html;
+        };
+
+        const formData = {
+            title: form.title,
+            professionalContent: processContent(form.professionalContent) || '',
+            personalContent: processContent(form.personalContent) || ''
+        };
+        console.log('Submitting new entry with content:', formData);
+        onSubmit(formData);
     };
 
     const handleClose = () => {
@@ -250,31 +415,39 @@ const NewEntryModal = ({ onClose, onSubmit, onExitAttempt }) => {
                             type="text"
                             name="title"
                             value={form.title}
-                            onChange={handleChange}
+                            onChange={(e) => handleChange('title', e.target.value)}
                             required
                             className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
                         />
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Professional Content</label>
-                        <textarea
-                            name="professionalContent"
+                        <ReactQuill
                             value={form.professionalContent}
-                            onChange={handleChange}
-                            required
-                            rows={5}
-                            className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
+                            onChange={(content) => {
+                                console.log('New entry professional content HTML:', content);
+                                handleChange('professionalContent', content);
+                            }}
+                            className="mt-1 bg-white rounded-md"
+                            theme="snow"
+                            modules={quillModules}
+                            formats={quillFormats}
+                            preserveWhitespace={true}
                         />
                     </div>
-                    <div>
+                    <div className="mt-12">
                         <label className="block text-sm font-medium text-gray-700">Personal Content</label>
-                        <textarea
-                            name="personalContent"
+                        <ReactQuill
                             value={form.personalContent}
-                            onChange={handleChange}
-                            required
-                            rows={5}
-                            className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
+                            onChange={(content) => {
+                                console.log('New entry personal content HTML:', content);
+                                handleChange('personalContent', content);
+                            }}
+                            className="mt-1 bg-white rounded-md"
+                            theme="snow"
+                            modules={quillModules}
+                            formats={quillFormats}
+                            preserveWhitespace={true}
                         />
                     </div>
                     <div className="flex justify-end space-x-2">
@@ -396,6 +569,10 @@ const Entries = () => {
                 }
             });
             setSelectedEntry(data[0]);
+            // Log the HTML content received
+            console.log('Received Professional Content:', data[0].professionalContent);
+            console.log('Received Personal Content:', data[0].personalContent);
+            
             // Initialize edit form with current entry data
             setEditForm({
                 title: data[0].title,
@@ -421,7 +598,13 @@ const Entries = () => {
         e.preventDefault();
         try {
             const token = localStorage.getItem('token');
-            await axios.put(`http://localhost:3333/entries/${selectedEntry._id}`, editForm, {
+            // Ensure we're sending the raw HTML content
+            const formData = {
+                title: editForm.title,
+                professionalContent: editForm.professionalContent || '',
+                personalContent: editForm.personalContent || ''
+            };
+            await axios.put(`http://localhost:3333/entries/${selectedEntry._id}`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -470,8 +653,12 @@ const Entries = () => {
      */
     const handleNewEntrySubmit = async (formData) => {
         try {
+            // Log the HTML content being sent
+            console.log('Professional Content HTML:', formData.professionalContent);
+            console.log('Personal Content HTML:', formData.personalContent);
+            
             const token = localStorage.getItem('token');
-            await axios.post('http://localhost:3333/entries', formData, {
+            const response = await axios.post('http://localhost:3333/entries', formData, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
