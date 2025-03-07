@@ -1,8 +1,10 @@
-import React from 'react';
-import { FaEdit, FaTrash, FaExclamationCircle } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { FaEdit, FaTrash, FaExclamationCircle, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 // Component for displaying a single todo item
 const TodoItem = ({ todo, onEdit, onDelete, onToggleComplete }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+
     // Function to format the date for display
     const formatDate = (date) => {
         return new Date(date).toLocaleDateString('en-US', {
@@ -33,8 +35,19 @@ const TodoItem = ({ todo, onEdit, onDelete, onToggleComplete }) => {
                     </div>
                     {/* Display notes if they exist */}
                     {todo.notes && (
-                        <div className="text-sm text-gray-600 mt-1">
-                            {todo.notes}
+                        <div className="mt-1">
+                            <button
+                                onClick={() => setIsExpanded(!isExpanded)}
+                                className="text-gray-500 hover:text-gray-700 transition-colors inline-flex items-center gap-1"
+                            >
+                                {isExpanded ? <FaChevronUp size={12} /> : <FaChevronDown size={12} />}
+                                <span className="text-sm">Details</span>
+                            </button>
+                            {isExpanded && (
+                                <div className="text-sm text-gray-600 mt-1 ml-4">
+                                    {todo.notes}
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

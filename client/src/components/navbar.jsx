@@ -70,51 +70,51 @@ const Navbar = () => {
                 </div>
 
                 {/* Mobile Menu */}
-                <div className={`${isOpen ? 'block' : 'hidden'} bg-white bg-opacity-95 shadow-lg absolute right-0 w-1/5`}>
+                <div className={`${isOpen ? 'block' : 'hidden'} bg-white bg-opacity-95 shadow-lg absolute right-0 w-1/6`}>
                     <div className="container mx-auto px-4 py-2">
-                        <div className="flex flex-col space-y-4 pb-4">
+                        <div className="flex flex-col items-center space-y-4 pb-4"> {/* Center items in the column */}
                             {/* Navigation Links */}
                             <Link 
                                 to="/Home" 
-                                className="text-blue-700 hover:text-blue-900 text-lg font-medium text-right"
+                                className="text-blue-700 hover:text-blue-900 text-lg font-medium"
                                 onClick={closeMenu} // Close menu on link click
                             >
                                 Home
                             </Link>
                             <Link 
                                 to="/entries" 
-                                className="text-blue-700 hover:text-blue-900 text-lg font-medium text-right"
+                                className="text-blue-700 hover:text-blue-900 text-lg font-medium"
                                 onClick={closeMenu} // Close menu on link click
                             >
-                                Blog Entries
+                                Blog 
                             </Link>
                             <Link 
-                                to="/ContactPage" 
-                                className="text-blue-700 hover:text-blue-900 text-lg font-medium text-right"
+                                to="/Todos" 
+                                className="text-blue-700 hover:text-blue-900 text-lg font-medium"
                                 onClick={closeMenu} // Close menu on link click
                             >
-                                Contact Me
+                                Tasks
                             </Link>
                             <Link 
                                 to="/APITestPage" 
-                                className="text-blue-700 hover:text-blue-900 text-lg font-medium text-right"
+                                className="text-blue-700 hover:text-blue-900 text-lg font-medium"
                                 onClick={closeMenu} // Close menu on link click
                             >
                                 API Page
                             </Link>
                             <Link 
-                                to="/Todos" 
-                                className="text-blue-700 hover:text-blue-900 text-lg font-medium text-right"
+                                to="/ContactPage" 
+                                className="text-blue-700 hover:text-blue-900 text-lg font-medium"
                                 onClick={closeMenu} // Close menu on link click
                             >
-                                ToDo List
+                                Contact Me
                             </Link>
                             <button 
                                 onClick={() => {
                                     logout(); // Call logout function
                                     closeMenu(); // Close menu after logout
                                 }} 
-                                className="text-blue-700 hover:text-blue-900 text-lg font-medium text-right"
+                                className="text-blue-700 hover:text-blue-900 text-lg font-medium"
                             >
                                 Logout
                             </button>

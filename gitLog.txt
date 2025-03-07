@@ -45,3 +45,5 @@ Git commit messages, if extra window pops up:  cmd + S to save changes, cmd + W 
         All backend files documentation/comments added except for: userController, userRoutes
             Need to go back and edit these files so they are used correctly,
             current routes and controllers are in the same file instead of split
+            UserController and UserRoute fixed, route has route definitions and controller has logic to handle async calls to DB
+            Documentation/comments added to userController and userRoute pages, all backend pages now have docs and comments
