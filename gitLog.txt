@@ -42,3 +42,6 @@ Git commit messages, if extra window pops up:  cmd + S to save changes, cmd + W 
         All frontend pages/components have documentation and cleaned up, move on to back end.
 
     Back end files cleans up and documentation added : IN PROCESS 
+        All backend files documentation/comments added except for: userController, userRoutes
+            Need to go back and edit these files so they are used correctly,
+            current routes and controllers are in the same file instead of split
