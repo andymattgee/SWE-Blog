@@ -21,6 +21,7 @@ import NavBar from '../components/navbar';
 import fallImage from '../../public/images/fall-bg.jpg';
 import beachIMG from '../../public/images/beach.jpg';
 import mountains from '../../public/images/mountains.jpg';
+import { BsGrid3X3Gap, BsListUl } from 'react-icons/bs';
 
 
 /**
@@ -553,12 +554,13 @@ const Entries = () => {
                 
                 {/* Button Container */}
                 <div className="flex justify-between w-full mb-4"> {/* Flex container for buttons */}
-                    {/* View Toggle Button */}
+                    {/* View Toggle Icon */}
                     <button
                         onClick={() => setIsListView(!isListView)}
-                        className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-700 hover:to-green-700 border border-grey-500 text-white py-2 px-4 rounded"
+                        className="bg-white hover:bg-gray-100 text-gray-800 p-2 rounded-full shadow-md transition-all duration-300 transform hover:scale-110"
+                        title={isListView ? 'Change to Grid View' : 'Change to List View'}
                     >
-                        {isListView ? 'Change to Grid View' : 'Change to List View'}
+                        {isListView ? <BsGrid3X3Gap size={24} /> : <BsListUl size={24} />}
                     </button>
 
                     {/* New Entry Button */}
