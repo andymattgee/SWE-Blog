@@ -14,7 +14,7 @@
  * 
  * @component
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from "axios";
 import { Link, useNavigate } from 'react-router-dom';
 import NavBar from '../components/navbar';
@@ -25,6 +25,15 @@ import { BsGrid3X3Gap, BsListUl } from 'react-icons/bs';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import '../styles/quill-viewer.css';
+
+// Debounce helper function
+const debounce = (func, wait) => {
+    let timeout;
+    return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func(...args), wait);
+    };
+};
 
 // Quill modules and formats configuration
 const quillModules = {
@@ -169,10 +178,13 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
                             <label className="block text-sm font-medium text-gray-700">Professional Content</label>
                             <ReactQuill
                                 value={editForm.professionalContent}
-                                onChange={(content) => {
-                                    console.log('Professional content HTML:', content);
-                                    setEditForm({...editForm, professionalContent: content});
-                                }}
+                                onChange={useCallback(
+                                    debounce((content) => {
+                                        console.log('Professional content HTML:', content);
+                                        setEditForm(prev => ({...prev, professionalContent: content}));
+                                    }, 300),
+                                    []
+                                )}
                                 className="mt-1 bg-white rounded-md"
                                 theme="snow"
                                 modules={quillModules}
@@ -184,10 +196,13 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
                             <label className="block text-sm font-medium text-gray-700">Personal Content</label>
                             <ReactQuill
                                 value={editForm.personalContent}
-                                onChange={(content) => {
-                                    console.log('Personal content HTML:', content);
-                                    setEditForm({...editForm, personalContent: content});
-                                }}
+                                onChange={useCallback(
+                                    debounce((content) => {
+                                        console.log('Personal content HTML:', content);
+                                        setEditForm(prev => ({...prev, personalContent: content}));
+                                    }, 300),
+                                    []
+                                )}
                                 className="mt-1 bg-white rounded-md"
                                 theme="snow"
                                 modules={quillModules}
@@ -424,10 +439,13 @@ const NewEntryModal = ({ onClose, onSubmit, onExitAttempt }) => {
                         <label className="block text-sm font-medium text-gray-700">Professional Content</label>
                         <ReactQuill
                             value={form.professionalContent}
-                            onChange={(content) => {
-                                console.log('New entry professional content HTML:', content);
-                                handleChange('professionalContent', content);
-                            }}
+                            onChange={useCallback(
+                                debounce((content) => {
+                                    console.log('New entry professional content HTML:', content);
+                                    handleChange('professionalContent', content);
+                                }, 300),
+                                []
+                            )}
                             className="mt-1 bg-white rounded-md"
                             theme="snow"
                             modules={quillModules}
@@ -439,10 +457,13 @@ const NewEntryModal = ({ onClose, onSubmit, onExitAttempt }) => {
                         <label className="block text-sm font-medium text-gray-700">Personal Content</label>
                         <ReactQuill
                             value={form.personalContent}
-                            onChange={(content) => {
-                                console.log('New entry personal content HTML:', content);
-                                handleChange('personalContent', content);
-                            }}
+                            onChange={useCallback(
+                                debounce((content) => {
+                                    console.log('New entry personal content HTML:', content);
+                                    handleChange('personalContent', content);
+                                }, 300),
+                                []
+                            )}
                             className="mt-1 bg-white rounded-md"
                             theme="snow"
                             modules={quillModules}
