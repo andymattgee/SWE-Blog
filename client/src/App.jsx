@@ -3,6 +3,7 @@
 //Import necessary dependencies and components
 import React from 'react';
 import {Link,Route,Routes,Navigate,useNavigate} from 'react-router-dom';
+import { UserProvider } from './context/UserContext';
 import "../public/styles/styles.css";
 
 
@@ -15,6 +16,7 @@ import Entries from "./pages/Entries.jsx"
 import Signup from './pages/Signup.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
 import Todos from './pages/Todos.jsx';
+import UserProfile from './components/UserProfile.jsx';
 
 
 /**
@@ -26,8 +28,9 @@ const App = () => {
   const token = localStorage.getItem('token'); // Retrieve authentication token from local storage
 
   return (
-    <div>
-      <Routes>
+    <UserProvider>
+      <div>
+        <Routes>
         {token ? (
           // Routes accessible when the user is authenticated
           <>
@@ -38,6 +41,7 @@ const App = () => {
             <Route path="/apitestpage" element={<PrivateRoute element={<APITestPage />} />} />
             <Route path="/entries" element={<PrivateRoute element={<Entries />} />} />
             <Route path="/todos" element={<PrivateRoute element={<Todos />} />} />
+            <Route path="/profile" element={<PrivateRoute element={<UserProfile />} />} />
             
           </>
         ) : (
@@ -47,8 +51,9 @@ const App = () => {
             <Route path="/signup" element={<Signup />} />
           </>
         )}
-      </Routes>
-    </div>
+        </Routes>
+      </div>
+    </UserProvider>
   );
 };
 
