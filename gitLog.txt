@@ -50,13 +50,24 @@ Git commit messages, if extra window pops up:  cmd + S to save changes, cmd + W 
 
 3/7/25
     Testing Windsurf
-    < navbar edited to includes icons....more info here *****
 
-    Added Text Rich editor to entry form, files affected: Entries.jsx (NewEntryModal component,EditEntryModal component)
-    NPM installed react-quill, added to webpack.config.js and import statement, added quill.snow.css
-    Added quill-viewer.css and a lot more changes to get text editor working for entries but not functional! 
+    - Navbar edited to includes icons, rearranging order of things 
+    - Added Text Rich editor to entry form, files affected: Entries.jsx (NewEntryModal component,EditEntryModal component)
+    - NPM installed react-quill, added to webpack.config.js and import statement, added quill.snow.css
+    - Added quill-viewer.css and a lot more changes to get text editor working for entries but not functional! 
+    - Text Rich editor added to task details section, can now add and edit task with TRE.
+    BUG: old tasks were'nt showing TRE formatting, only newer ones. Unable to fix, deleted old tasks and moved on.
+
+3/8/25
+    Continuing to use Windsurf (getting low on credits)
+    - Added userProfile page to keep track of number of tasks, todos,name, and a password change button added (no functionality)
+    - Added context to application to help store user information after login, then used for user profile page
+
     
-    Will move on to adding the same editing skills for details of task...
+
+    
+
+    
 
 
 
