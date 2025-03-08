@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
-import { FaBars, FaTimes } from 'react-icons/fa';
+import { FaBars, FaTimes, FaUser } from 'react-icons/fa';
 import axios from 'axios';
 
 // Navbar component for the application
@@ -59,13 +59,20 @@ const Navbar = () => {
                             Matt's Tech Journey
                         </Link>
 
-                        {/* Hamburger Button for mobile menu */}
-                        <button
-                            onClick={toggleMenu} // Toggle the mobile menu on click
-                            className="text-blue-700 hover:text-blue-800 focus:outline-none"
-                        >
-                            {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />} {/* Show appropriate icon based on menu state */}
-                        </button>
+                        <div className="flex items-center gap-4">
+                            {/* User Profile Icon */}
+                            <Link to="/profile" className="text-blue-700 hover:text-blue-800">
+                                <FaUser size={24} />
+                            </Link>
+
+                            {/* Hamburger Button for mobile menu */}
+                            <button
+                                onClick={toggleMenu}
+                                className="text-blue-700 hover:text-blue-800 focus:outline-none"
+                            >
+                                {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+                            </button>
+                        </div>
                     </div>
                 </div>
 

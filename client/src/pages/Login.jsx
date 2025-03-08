@@ -2,11 +2,13 @@ import React from 'react'
 import { Link, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import { useForm } from "react-hook-form";
 import LogLocalStorage from '../components/LogLocalStorage';
+import { useUser } from '../context/UserContext';
 
 
 const Login = () => {
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
   const navigate = useNavigate();
+  const { updateUserData } = useUser();
 
   const handleEnterButton = () => {
     navigate("/Home")
@@ -28,9 +30,17 @@ const Login = () => {
       const result = await response.json();
       if (response.ok) {
         console.log('Login successful:', result);
-        // Save token to localStorage or context(not very safe -> cookies!)
+        // Save token to localStorage
         localStorage.setItem('token', result.token);
-        localStorage.setItem('userName', result.user.userName);
+        
+        // Store user data in context
+        const userData = {
+          userName: result.user.userName,
+          entriesCount: 0,
+          tasksCount: 0
+        };
+
+        updateUserData(userData);
         navigate("/Home");
       } else {
         console.error('Login failed:', result);
