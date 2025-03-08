@@ -1,4 +1,25 @@
 import React, { useState, useEffect } from 'react';
+import ReactQuill from 'react-quill';
+import '../styles/todo-quill.css';
+
+// Quill modules and formats configuration
+const quillModules = {
+    toolbar: [
+        ['bold', 'italic', 'underline'],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'align': ['', 'center', 'right', 'justify'] }],
+        ['clean']
+    ],
+    clipboard: {
+        matchVisual: false
+    }
+};
+
+const quillFormats = [
+    'bold', 'italic', 'underline',
+    'list', 'bullet', 'ordered',
+    'align'
+];
 
 // Modal component for creating and editing todos
 const TodoModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
@@ -55,13 +76,16 @@ const TodoModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                             required
                         />
                     </div>
-                    {/* Notes input field */}
+                    {/* Notes input field with Quill rich text editor */}
                     <div className="mb-4">
                         <label className="block text-sm font-medium mb-1">Notes</label>
-                        <textarea
+                        <ReactQuill
+                            theme="snow"
                             value={formData.notes}
-                            onChange={(e) => setFormData({...formData, notes: e.target.value})} // Update notes in state
-                            className="w-full p-2 border rounded h-24"
+                            onChange={(content) => setFormData({...formData, notes: content})} // Update notes in state
+                            modules={quillModules}
+                            formats={quillFormats}
+                            className="todo-quill"
                         />
                     </div>
                     {/* Priority selection */}
