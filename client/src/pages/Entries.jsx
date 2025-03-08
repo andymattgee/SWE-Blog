@@ -26,6 +26,9 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import '../styles/quill-viewer.css';
 
+/* Custom styles for Quill editor containers */
+import '../styles/quill-container.css';
+
 // Debounce helper function
 const debounce = (func, wait) => {
     let timeout;
@@ -408,7 +411,7 @@ const NewEntryModal = ({ onClose, onSubmit, onExitAttempt }) => {
             onClick={handleClose}
         >
             <div 
-                className="bg-blue-100 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+                className="bg-blue-100 rounded-lg p-8 max-w-5xl w-[90%] max-h-[90vh] flex flex-col"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Modal Header */}
@@ -423,65 +426,69 @@ const NewEntryModal = ({ onClose, onSubmit, onExitAttempt }) => {
                 </div>
                 
                 {/* Modal Content */}
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="flex-1 flex flex-col min-h-0 overflow-y-auto">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Title</label>
+                        <label className="block text-lg font-medium text-gray-700 mb-2">Title</label>
                         <input
                             type="text"
                             name="title"
                             value={form.title}
                             onChange={(e) => handleChange('title', e.target.value)}
                             required
-                            className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
+                            className="mt-1 block w-full bg-white rounded-lg border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 p-3 text-lg"
                         />
                     </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Professional Content</label>
-                        <ReactQuill
-                            value={form.professionalContent}
-                            onChange={useCallback(
-                                debounce((content) => {
-                                    console.log('New entry professional content HTML:', content);
-                                    handleChange('professionalContent', content);
-                                }, 300),
-                                []
-                            )}
-                            className="mt-1 bg-white rounded-md"
-                            theme="snow"
-                            modules={quillModules}
-                            formats={quillFormats}
-                            preserveWhitespace={true}
-                        />
+                    <div className="mb-6">
+                        <label className="block text-lg font-medium text-gray-700 mb-2">Professional Content</label>
+                        <div className="h-48">
+                            <ReactQuill
+                                value={form.professionalContent}
+                                onChange={useCallback(
+                                    debounce((content) => {
+                                        console.log('New entry professional content HTML:', content);
+                                        handleChange('professionalContent', content);
+                                    }, 300),
+                                    []
+                                )}
+                                className="mt-1 bg-white rounded-md h-full"
+                                theme="snow"
+                                modules={quillModules}
+                                formats={quillFormats}
+                                preserveWhitespace={true}
+                            />
+                        </div>
                     </div>
-                    <div className="mt-12">
-                        <label className="block text-sm font-medium text-gray-700">Personal Content</label>
-                        <ReactQuill
-                            value={form.personalContent}
-                            onChange={useCallback(
-                                debounce((content) => {
-                                    console.log('New entry personal content HTML:', content);
-                                    handleChange('personalContent', content);
-                                }, 300),
-                                []
-                            )}
-                            className="mt-1 bg-white rounded-md"
-                            theme="snow"
-                            modules={quillModules}
-                            formats={quillFormats}
-                            preserveWhitespace={true}
-                        />
+                    <div className="mb-8">
+                        <label className="block text-lg font-medium text-gray-700 mb-2">Personal Content</label>
+                        <div className="h-48">
+                            <ReactQuill
+                                value={form.personalContent}
+                                onChange={useCallback(
+                                    debounce((content) => {
+                                        console.log('New entry personal content HTML:', content);
+                                        handleChange('personalContent', content);
+                                    }, 300),
+                                    []
+                                )}
+                                className="mt-1 bg-white rounded-md h-full"
+                                theme="snow"
+                                modules={quillModules}
+                                formats={quillFormats}
+                                preserveWhitespace={true}
+                            />
+                        </div>
                     </div>
-                    <div className="flex justify-end space-x-2">
+                    <div className="flex justify-end space-x-4 mt-auto pt-6 bg-blue-100">
                         <button
                             type="button"
                             onClick={handleClose}
-                            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                            className="px-6 py-3 text-lg font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition duration-200"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                            className="px-6 py-3 text-lg font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-200"
                         >
                             Create Entry
                         </button>
