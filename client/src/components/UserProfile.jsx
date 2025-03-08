@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from './navbar';
 import { useUser } from '../context/UserContext';
+import PasswordChangeModal from './PasswordChangeModal';
 
 const UserProfile = () => {
     const { userData, refreshUserData } = useUser();
@@ -20,8 +21,14 @@ const UserProfile = () => {
         );
     }
 
+    const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+
     const handlePasswordChange = () => {
-        console.log('password change button clicked');
+        setIsPasswordModalOpen(true);
+    };
+
+    const handleClosePasswordModal = () => {
+        setIsPasswordModalOpen(false);
     };
 
     return (
@@ -58,6 +65,10 @@ const UserProfile = () => {
                 </div>
             </div>
         </div>
+            <PasswordChangeModal 
+                isOpen={isPasswordModalOpen} 
+                onClose={handleClosePasswordModal} 
+            />
         </>
     );
 };

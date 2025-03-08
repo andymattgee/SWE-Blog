@@ -4,6 +4,8 @@
 import React from 'react';
 import {Link,Route,Routes,Navigate,useNavigate} from 'react-router-dom';
 import { UserProvider } from './context/UserContext';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "../public/styles/styles.css";
 
 
@@ -30,6 +32,7 @@ const App = () => {
   return (
     <UserProvider>
       <div>
+        <ToastContainer position="top-right" autoClose={3000} />
         <Routes>
         {token ? (
           // Routes accessible when the user is authenticated

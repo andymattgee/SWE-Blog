@@ -45,7 +45,13 @@ module.exports = {
         // Enable gzip compression
         compress: true,
         // liveReload: true,
-
+        // Proxy configuration for API requests
+        proxy: [{
+            context: ['/api'],
+            target: 'http://localhost:3333',
+            secure: false,
+            changeOrigin: true
+        }],
 
     },
     // Disable performance hints (e.g., asset size warnings)

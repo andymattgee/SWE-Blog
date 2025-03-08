@@ -14,6 +14,9 @@ router.post('/login', userController.login); // Handle user login
 // Route for user logout
 router.post('/logout', auth, userController.logout); // Handle user logout with authentication
 
+// Route for changing password
+router.post('/change-password', auth, userController.changePassword); // Handle password change with authentication
+
 // Export the router for use in the main application
 module.exports = router; // Export the user route
 
