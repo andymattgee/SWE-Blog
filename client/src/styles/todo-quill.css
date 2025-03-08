@@ -1,0 +1,90 @@
+/* Import Quill Snow theme styles */
+@import '~react-quill/dist/quill.snow.css';
+
+/* Base styles for the viewer */
+.todo-quill {
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* Lists */
+.todo-quill .ql-editor ul {
+    padding-left: 1.5em !important;
+    list-style-type: disc !important;
+}
+
+.todo-quill .ql-editor ol {
+    padding-left: 1.5em !important;
+    list-style-type: decimal !important;
+}
+
+.todo-quill .ql-editor li {
+    padding-left: 0.5em !important;
+    display: list-item !important;
+}
+
+/* Indentation */
+.todo-quill .ql-editor .ql-indent-1 { padding-left: 3em !important; }
+.todo-quill .ql-editor .ql-indent-2 { padding-left: 6em !important; }
+.todo-quill .ql-editor .ql-indent-3 { padding-left: 9em !important; }
+
+/* Headers */
+.todo-quill .ql-editor h1 {
+    font-size: 2em !important;
+    font-weight: bold !important;
+    margin: 0.67em 0 !important;
+}
+
+.todo-quill .ql-editor h2 {
+    font-size: 1.5em !important;
+    font-weight: bold !important;
+    margin: 0.83em 0 !important;
+}
+
+.todo-quill .ql-editor h3 {
+    font-size: 1.17em !important;
+    font-weight: bold !important;
+    margin: 1em 0 !important;
+}
+
+/* Alignment */
+.todo-quill .ql-editor .ql-align-center { text-align: center !important; }
+.todo-quill .ql-editor .ql-align-right { text-align: right !important; }
+.todo-quill .ql-editor .ql-align-justify { text-align: justify !important; }
+
+/* Text Formatting */
+.todo-quill .ql-editor strong { font-weight: bold !important; }
+.todo-quill .ql-editor em { font-style: italic !important; }
+.todo-quill .ql-editor u { text-decoration: underline !important; }
+
+/* Custom styles for the todo modal */
+.todo-quill {
+    height: 200px !important;
+    margin-bottom: 1rem;
+}
+
+.todo-quill .ql-toolbar {
+    border-top-left-radius: 0.375rem;
+    border-top-right-radius: 0.375rem;
+    background-color: #f9fafb;
+    border-color: #e5e7eb;
+}
+
+.todo-quill .ql-container {
+    border-bottom-left-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+    border-color: #e5e7eb;
+    background-color: white;
+}
+
+.todo-quill .ql-editor {
+    min-height: 150px;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+/* View mode styles */
+.todo-notes-view .ql-editor {
+    padding: 0 !important;
+    border: none !important;
+}

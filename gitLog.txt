@@ -47,3 +47,16 @@ Git commit messages, if extra window pops up:  cmd + S to save changes, cmd + W 
             current routes and controllers are in the same file instead of split
             UserController and UserRoute fixed, route has route definitions and controller has logic to handle async calls to DB
             Documentation/comments added to userController and userRoute pages, all backend pages now have docs and comments
+
+3/7/25
+    Testing Windsurf
+    < navbar edited to includes icons....more info here *****
+
+    Added Text Rich editor to entry form, files affected: Entries.jsx (NewEntryModal component,EditEntryModal component)
+    NPM installed react-quill, added to webpack.config.js and import statement, added quill.snow.css
+    Added quill-viewer.css and a lot more changes to get text editor working for entries but not functional! 
+    
+    Will move on to adding the same editing skills for details of task...
+
+
+

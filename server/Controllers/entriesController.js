@@ -1,4 +1,26 @@
 const Entry = require('../Models/entry'); // Import the Entry model
+const DOMPurify = require('isomorphic-dompurify'); // Import DOMPurify for HTML sanitization
+
+// Configure DOMPurify to allow specific HTML elements and attributes
+const purifyConfig = {
+    ALLOWED_TAGS: [
+        'p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+        'ol', 'ul', 'li', 'div', 'span', 'pre', 'blockquote'
+    ],
+    ALLOWED_ATTR: [
+        'style', 'class', 'spellcheck', 'data-gramm', 'data-placeholder',
+        'data-label', 'link', 'list', 'bullet', 'indent', 'align', 'direction',
+        'header', 'script', 'font', 'size'
+    ],
+    ALLOWED_CLASSES: [
+        'ql-editor', 'ql-blank', 'ql-indent-*', 'ql-align-*', 'ql-direction-*',
+        'ql-size-*', 'ql-font-*', 'ql-bg-*', 'ql-color-*', 'ql-list-*'
+    ],
+    ADD_TAGS: ['div'],
+    ADD_ATTR: ['align', 'style'],
+    KEEP_CONTENT: true,
+    ALLOW_DATA_ATTR: true
+};
 
 /**
  * Fetches all entries for the authenticated user.
@@ -46,7 +68,7 @@ const getEntry = async (req, res) => {
  * @param {Object} res - The response object
  */
 const addEntry = async (req, res) => {
-    console.log('enter addEntry block');
+    console.log('Received new entry request with body:', req.body);
     try {
         // Check for required fields in the request body
         if (!req.body.title || !req.body.professionalContent) {
@@ -54,16 +76,25 @@ const addEntry = async (req, res) => {
                 message: 'Missing required data from entry'
             });
         }
-        // Create a new entry object
+
+        // Log the content before sanitization
+        console.log('Professional content before sanitization:', req.body.professionalContent);
+        console.log('Personal content before sanitization:', req.body.personalContent);
+
+        // Create a new entry object with sanitized content
         const newEntry = {
             title: req.body.title,
-            professionalContent: req.body.professionalContent,
-            personalContent: req.body.personalContent,
+            professionalContent: DOMPurify.sanitize(req.body.professionalContent, { ...purifyConfig }),
+            personalContent: DOMPurify.sanitize(req.body.personalContent, { ...purifyConfig }),
             date: req.body.date,
             createdAt: req.body.createdAt,
             image: req.body.image,
             user: req.user._id, // Associate entry with authenticated user
         };
+
+        // Log the content after sanitization
+        console.log('Professional content after sanitization:', newEntry.professionalContent);
+        console.log('Personal content after sanitization:', newEntry.personalContent);
         const entry = await Entry.create(newEntry); // Save the new entry to the database
         return res.status(201).json({
             success: true,
@@ -118,7 +149,11 @@ const updateEntry = async (req, res) => {
         // Find and update the entry, ensuring it belongs to the authenticated user
         const updatedEntry = await Entry.findOneAndUpdate(
             { _id: id, user: req.user._id },
-            { title, professionalContent, personalContent },
+            { 
+                title,
+                professionalContent: DOMPurify.sanitize(professionalContent, { ...purifyConfig }),
+                personalContent: DOMPurify.sanitize(personalContent, { ...purifyConfig })
+            },
             { new: true, runValidators: true } // Return the updated entry and run validators
         );
         

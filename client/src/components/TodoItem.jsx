@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaEdit, FaTrash, FaExclamationCircle, FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import '../styles/todo-quill.css';
 
 // Component for displaying a single todo item
 const TodoItem = ({ todo, onEdit, onDelete, onToggleComplete }) => {
@@ -44,8 +45,8 @@ const TodoItem = ({ todo, onEdit, onDelete, onToggleComplete }) => {
                                 <span className="text-sm">Details</span>
                             </button>
                             {isExpanded && (
-                                <div className="text-sm text-gray-600 mt-1 ml-4">
-                                    {todo.notes}
+                                <div className="text-sm text-gray-600 mt-1 ml-4 todo-notes-view">
+                                    <div className="ql-editor" dangerouslySetInnerHTML={{ __html: todo.notes }} />
                                 </div>
                             )}
                         </div>

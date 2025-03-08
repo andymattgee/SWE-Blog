@@ -2,6 +2,19 @@
 
 const { get } = require('http');
 const Todo = require('../Models/todos'); // Import the Todo model
+const DOMPurify = require('isomorphic-dompurify'); // Import DOMPurify for HTML sanitization
+
+// Configure DOMPurify to allow specific HTML elements and attributes for Quill content
+const purifyConfig = {
+    ALLOWED_TAGS: [
+        'p', 'br', 'strong', 'em', 'u', 'ol', 'ul', 'li', 'div', 'span'
+    ],
+    ALLOWED_ATTR: ['style', 'class'],
+    ALLOWED_CLASSES: [
+        'ql-align-*', 'ql-direction-*', 'ql-indent-*',
+        'ql-list-*', 'ql-size-*', 'ql-font-*'
+    ]
+};
 
 /**
  * Fetches all todos for the authenticated user.
@@ -62,7 +75,7 @@ const addTodo = async (req, res) => {
         // Create a new todo object from the request body
         const newTodo = {
             task: req.body.task,
-            notes: req.body.notes,
+            notes: req.body.notes ? DOMPurify.sanitize(req.body.notes, purifyConfig) : '',
             priority: req.body.priority,
             deadlineDate: req.body.deadlineDate,
             user: req.user._id // Associate the todo with the logged-in user
@@ -151,7 +164,7 @@ const updateTodo = async (req, res) => {
     // Prepare the update data from the request body
     const updateData = {
         task: req.body.task,
-        notes: req.body.notes,
+        notes: req.body.notes ? DOMPurify.sanitize(req.body.notes, purifyConfig) : undefined,
         priority: req.body.priority,
         completed: req.body.completed,
         deadlineDate: req.body.deadlineDate

@@ -85,11 +85,22 @@ const Todos = () => {
     const handleSubmit = async (formData) => {
         try {
             const token = localStorage.getItem('token'); // Retrieve the token for authentication
+            // Ensure all fields are properly formatted
+            const cleanedData = {
+                task: formData.task.trim(),
+                notes: formData.notes || '',
+                priority: formData.priority || 'low',
+                deadlineDate: formData.deadlineDate || new Date().toISOString(),
+                completed: editingTodo ? editingTodo.completed : false
+            };
+            
+            console.log('Submitting data:', cleanedData);
+            
             if (editingTodo) {
                 // If editing an existing todo, send a PUT request
                 await axios.put(
                     `http://localhost:3333/api/todos/${editingTodo._id}`,
-                    formData,
+                    cleanedData,
                     {
                         headers: {
                             Accept: 'application/json',
@@ -101,7 +112,7 @@ const Todos = () => {
                 // If creating a new todo, send a POST request
                 await axios.post(
                     'http://localhost:3333/api/todos',
-                    formData,
+                    cleanedData,
                     {
                         headers: {
                             Accept: 'application/json',
@@ -173,6 +184,30 @@ const Todos = () => {
         }
     };
 
+    /**
+     * Handles editing a todo by preparing the data and opening the modal
+     * @param {Object} todo - The todo to be edited
+     */
+    const handleEdit = (todo) => {
+        // Log the current section and todo data
+        console.log('Current section:', activeSection);
+        console.log('Raw todo data:', todo);
+
+        // Create a clean copy with all required fields
+        const todoData = {
+            _id: todo._id,
+            task: todo.task,
+            notes: todo.notes,
+            priority: todo.priority,
+            deadlineDate: todo.deadlineDate,
+            completed: todo.completed
+        };
+
+        console.log('Clean todo data:', todoData);
+        setEditingTodo(todoData);
+        setIsModalOpen(true);
+    };
+
     return (
         <div className="min-h-screen bg-gray-100">
             <NavBar /> {/* Render the navigation bar */}
@@ -232,10 +267,7 @@ const Todos = () => {
                         <TodoItem
                             key={todo._id}
                             todo={todo}
-                            onEdit={(todo) => {
-                                setEditingTodo(todo); // Set the todo to be edited
-                                setIsModalOpen(true); // Open the modal for editing
-                            }}
+                            onEdit={handleEdit}
                             onDelete={confirmDelete} // Pass the confirmDelete function
                             onToggleComplete={handleToggleComplete} // Pass the toggle function
                         />
@@ -260,10 +292,7 @@ const Todos = () => {
                                     <TodoItem
                                         key={todo._id}
                                         todo={todo}
-                                        onEdit={(todo) => {
-                                            setEditingTodo(todo); // Set the todo to be edited
-                                            setIsModalOpen(true); // Open the modal for editing
-                                        }}
+                                        onEdit={handleEdit}
                                         onDelete={confirmDelete} // Pass the confirmDelete function
                                         onToggleComplete={handleToggleComplete} // Pass the toggle function
                                     />
