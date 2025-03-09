@@ -37,12 +37,10 @@ const Home = () => {
 
   return (
     <div className="min-h-screen relative [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
-      <div className='bg-transparent'>
-        <NavBar />
-      </div>
+      <NavBar />
 
       {/* Banner Section */}
-      <div className="relative h-[50vh] w-full mx-auto mt-8">
+      <div className="relative h-[50vh] w-full mx-auto mt-0">
         <img 
           src={computerGlasses} 
           alt="Computer Glasses" 

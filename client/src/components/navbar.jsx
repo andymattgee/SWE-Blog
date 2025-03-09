@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { FaBars, FaTimes, FaUser } from 'react-icons/fa';
 import axios from 'axios';
@@ -8,6 +8,20 @@ const Navbar = () => {
     // State to manage the open/closed state of the mobile menu
     const [isOpen, setIsOpen] = useState(false);
     const navigate = useNavigate(); // Hook to programmatically navigate
+    const menuRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (menuRef.current && !menuRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     /**
      * Handles user logout by sending a request to the server and clearing local storage.
@@ -51,7 +65,7 @@ const Navbar = () => {
 
     return (
         <>
-            <nav className="sticky top-0 left-0 w-full bg-white bg-opacity-90 shadow-md z-50">
+            <nav className="sticky top-0 left-0 w-full bg-white bg-opacity-0  shadow-md z-50">
                 <div className="container mx-auto px-4">
                     <div className="flex justify-between items-center h-16">
                         {/* Logo/Title */}
@@ -77,7 +91,10 @@ const Navbar = () => {
                 </div>
 
                 {/* Mobile Menu */}
-                <div className={`${isOpen ? 'block' : 'hidden'} bg-white bg-opacity-95 shadow-lg absolute right-0 w-1/6`}>
+                <div 
+                    ref={menuRef}
+                    className={`${isOpen ? 'block' : 'hidden'} bg-white bg-opacity-95 shadow-lg absolute right-0 w-1/6 rounded-lg border-2 border-gray-700`}
+                >
                     <div className="container mx-auto px-4 py-2">
                         <div className="flex flex-col items-center space-y-4 pb-4"> {/* Center items in the column */}
                             {/* Navigation Links */}
@@ -129,8 +146,7 @@ const Navbar = () => {
                     </div>
                 </div>
             </nav>
-            {/* Spacer div to prevent content overlap */}
-            <div className="h-16"></div>
+            {/* Remove spacer div since it's creating extra space */}
         </>
     );
 }
