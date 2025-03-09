@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import NavBar from '../components/navbar';
 import TodoItem from '../components/TodoItem';
 import TodoModal from '../components/TodoModal';
+
+// Set axios base URL
+axios.defaults.baseURL = 'http://localhost:3333';
 
 /**
  * The Todos component is the main page of the application that displays the user's
@@ -14,6 +18,7 @@ import TodoModal from '../components/TodoModal';
  */
 
 const Todos = () => {
+    const navigate = useNavigate();
     // State to hold todos categorized by their status
     const [todos, setTodos] = useState({
         today: [],
@@ -40,306 +45,349 @@ const Todos = () => {
     // State to hold the ID of the todo to be deleted
     const [todoToDelete, setTodoToDelete] = useState(null);
 
-    /**
-     * Retrieves the list of todos from the database and sets the state of the
-     * todos. This function is called on the first render to populate the list of todos.
-     */
+    // Function to categorize a todo based on its deadline
+    const categorizeTodo = (todo) => {
+        if (!todo || !todo.deadlineDate) return 'pending';
+
+        if (todo.completed) return 'completed';
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const deadline = new Date(todo.deadlineDate);
+        deadline.setHours(0, 0, 0, 0);
+
+        const deadlineTime = deadline.getTime();
+        const todayTime = today.getTime();
+
+        if (deadlineTime < todayTime) return 'overdue';
+        if (deadlineTime === todayTime) return 'today';
+        return 'pending';
+    };
+
+    // Function to update todos state
+    const updateTodosState = (newTodo, isDelete = false) => {
+        if (!newTodo) return;
+
+        setTodos(prevTodos => {
+            const newTodos = { ...prevTodos };
+            
+            // Remove the todo from all sections first
+            Object.keys(newTodos).forEach(section => {
+                newTodos[section] = newTodos[section].filter(todo => todo._id !== newTodo._id);
+            });
+
+            // If not deleting, add the todo to its appropriate section
+            if (!isDelete) {
+                const section = categorizeTodo(newTodo);
+                newTodos[section] = [...(newTodos[section] || []), newTodo];
+            }
+
+            return newTodos;
+        });
+    };
+
+    // Function to get todos with deduplication
     const getTodos = async () => {
         try {
-            // Retrieve the authentication token from local storage
             const token = localStorage.getItem('token');
-            
-            // Make a GET request to fetch todos from the API
-            const response = await axios.get('http://localhost:3333/api/todos', {
+            const response = await axios.get('/api/todos', {
                 headers: {
-                    Accept: 'application/json',
-                    Authorization: `Bearer ${token}` // Include the token in the request headers
+                    'Authorization': `Bearer ${token}`
                 }
             });
+
+            // Handle the nested data structure
+            const fetchedTodos = response.data?.data || {};
             
-            // Sort todos by creation date (newest first)
-            const sortedData = Object.keys(response.data.data).reduce((acc, key) => {
-                acc[key] = response.data.data[key].sort((a, b) => 
+            const categorizedTodos = {
+                today: [],
+                pending: [],
+                overdue: [],
+                completed: []
+            };
+
+            // Keep track of seen todo IDs to prevent duplicates
+            const seenTodoIds = new Set();
+
+            // Process each section's todos
+            Object.keys(fetchedTodos).forEach(section => {
+                if (Array.isArray(fetchedTodos[section])) {
+                    fetchedTodos[section].forEach(todo => {
+                        // Skip if we've already seen this todo
+                        if (seenTodoIds.has(todo._id)) return;
+                        seenTodoIds.add(todo._id);
+
+                        if (todo && todo.deadlineDate) {
+                            const category = categorizeTodo(todo);
+                            categorizedTodos[category].push(todo);
+                        } else {
+                            categorizedTodos.pending.push(todo);
+                        }
+                    });
+                }
+            });
+
+            // Sort todos by creation date in each category
+            Object.keys(categorizedTodos).forEach(category => {
+                categorizedTodos[category].sort((a, b) => 
                     new Date(b.createdAt) - new Date(a.createdAt)
                 );
-                return acc;
-            }, {});
-            
-            // Update the state with the sorted todos
-            setTodos(sortedData);
+            });
+
+            setTodos(categorizedTodos);
         } catch (error) {
-            console.error('Error fetching todos:', error); // Log any errors that occur during the fetch
+            console.error('Error fetching todos:', error);
+            if (error.response?.status === 401) {
+                navigate('/login');
+            }
         }
     };
 
-    // useEffect hook to call getTodos when the component mounts
+    // Initial data fetch
     useEffect(() => {
         getTodos();
-    }, []);
+    }, [navigate]);
 
-    /**
-     * Handles the submission of the todo form. It either creates a new todo or updates
-     * an existing one based on whether editingTodo is set.
-     * @param {Object} formData - The data from the form submission
-     */
-    const handleSubmit = async (formData) => {
+    // Function to get todos
+    const handleSubmit = async (todoData) => {
         try {
-            const token = localStorage.getItem('token'); // Retrieve the token for authentication
-            // Ensure all fields are properly formatted
-            const cleanedData = {
-                task: formData.task.trim(),
-                notes: formData.notes || '',
-                priority: formData.priority || 'low',
-                deadlineDate: formData.deadlineDate || new Date().toISOString(),
-                completed: editingTodo ? editingTodo.completed : false
+            const token = localStorage.getItem('token');
+            const config = {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
             };
-            
-            console.log('Submitting data:', cleanedData);
-            
-            if (editingTodo) {
-                // If editing an existing todo, send a PUT request
-                await axios.put(
-                    `http://localhost:3333/api/todos/${editingTodo._id}`,
-                    cleanedData,
-                    {
-                        headers: {
-                            Accept: 'application/json',
-                            Authorization: `Bearer ${token}`
-                        }
-                    }
+
+            // Ensure the date is properly formatted
+            const formattedData = {
+                ...todoData,
+                deadlineDate: new Date(todoData.deadlineDate).toISOString()
+            };
+
+            let response;
+            if (editingTodo && todoData._id) {
+                // Update existing todo
+                response = await axios.put(
+                    `/api/todos/${todoData._id}`,
+                    formattedData,
+                    config
                 );
             } else {
-                // If creating a new todo, send a POST request
-                await axios.post(
-                    'http://localhost:3333/api/todos',
-                    cleanedData,
-                    {
-                        headers: {
-                            Accept: 'application/json',
-                            Authorization: `Bearer ${token}`
-                        }
-                    }
-                );
+                // Create new todo - remove _id for new todos
+                const { _id, ...newTodoData } = formattedData;
+                response = await axios.post('/api/todos', newTodoData, config);
             }
-            getTodos(); // Refresh the todo list after submission
-            setEditingTodo(null); // Reset editingTodo state
-        } catch (error) {
-            console.error('Error saving todo:', error); // Log any errors that occur during save
-        }
-    };
 
-    /**
-     * Prepares to confirm the deletion of a todo by setting the ID of the todo to be deleted
-     * and showing the confirmation dialog.
-     * @param {string} id - The ID of the todo to delete
-     */
-    const confirmDelete = (id) => {
-        setTodoToDelete(id); // Set the ID of the todo to delete
-        setShowDeleteConfirm(true); // Show the confirmation dialog
-    };
-
-    /**
-     * Handles the deletion of a todo. Sends a DELETE request to the API and refreshes the todo list.
-     */
-    const handleDelete = async () => {
-        try {
-            const token = localStorage.getItem('token'); // Retrieve the token for authentication
-            await axios.delete(`http://localhost:3333/api/todos/${todoToDelete}`, {
-                headers: {
-                    Accept: 'application/json',
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            setShowDeleteConfirm(false); // Hide the confirmation dialog
-            setTodoToDelete(null); // Reset the todo to delete
-            getTodos(); // Refresh the todo list
-        } catch (error) {
-            console.error('Error deleting todo:', error); // Log any errors that occur during deletion
-        }
-    };
-
-    /**
-     * Toggles the completion status of a todo. Sends a PUT request to update the todo's status.
-     * @param {string} id - The ID of the todo to toggle
-     */
-    const handleToggleComplete = async (id) => {
-        try {
-            const token = localStorage.getItem('token'); // Retrieve the token for authentication
-            const todo = [...todos.today, ...todos.overdue, ...todos.pending, ...todos.completed]
-                .find(t => t._id === id); // Find the todo by ID
+            // Refresh the todos list after successful update
+            await getTodos();
             
-            await axios.put(
-                `http://localhost:3333/api/todos/${id}`,
-                { completed: !todo.completed }, // Toggle the completed status
-                {
-                    headers: {
-                        Accept: 'application/json',
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
-            getTodos(); // Refresh the todo list after toggling
+            // Close modal and reset editing state
+            setEditingTodo(null);
+            setIsModalOpen(false);
+            
         } catch (error) {
-            console.error('Error updating todo:', error); // Log any errors that occur during update
+            console.error('Error saving todo:', error);
+            if (error.response?.status === 401) {
+                console.log('User is not authenticated. Redirecting to login...');
+                navigate('/login');
+            }
         }
     };
 
-    /**
-     * Handles editing a todo by preparing the data and opening the modal
-     * @param {Object} todo - The todo to be edited
-     */
+    // Function to delete a todo
+    const handleDelete = async (todoId) => {
+        if (!todoId) return;
+        
+        try {
+            const token = localStorage.getItem('token');
+            const config = {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            };
+
+            await axios.delete(`/api/todos/${todoId}`, config);
+            await getTodos(); // Refresh the list after deletion
+
+            setShowDeleteConfirm(false);
+            setTodoToDelete(null);
+        } catch (error) {
+            console.error('Error deleting todo:', error);
+            if (error.response?.status === 401) {
+                navigate('/login');
+            }
+        }
+    };
+
+    // Function to toggle the completion status of a todo
+    const handleToggleComplete = async (todoId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const config = {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            const todo = Object.values(todos)
+                .flat()
+                .find(t => t._id === todoId);
+
+            if (!todo) return;
+
+            // Toggle the completed status
+            const updatedTodo = {
+                ...todo,
+                completed: !todo.completed,
+                // If marking as completed, set completion date
+                completedAt: !todo.completed ? new Date().toISOString() : null
+            };
+
+            await axios.put(
+                `/api/todos/${todoId}`,
+                updatedTodo,
+                config
+            );
+
+            // Refresh todos to update all sections
+            await getTodos();
+        } catch (error) {
+            console.error('Error toggling todo completion:', error);
+            if (error.response?.status === 401) {
+                navigate('/login');
+            }
+        }
+    };
+
+    // Function to edit a todo
     const handleEdit = (todo) => {
-        // Log the current section and todo data
-        console.log('Current section:', activeSection);
-        console.log('Raw todo data:', todo);
-
-        // Create a clean copy with all required fields
-        const todoData = {
-            _id: todo._id,
-            task: todo.task,
-            notes: todo.notes,
-            priority: todo.priority,
-            deadlineDate: todo.deadlineDate,
-            completed: todo.completed
-        };
-
-        console.log('Clean todo data:', todoData);
-        setEditingTodo(todoData);
+        setEditingTodo(todo);
         setIsModalOpen(true);
     };
 
-    return (
-        <div className="min-h-screen bg-gray-100">
-            <NavBar /> {/* Render the navigation bar */}
-            <div className="max-w-4xl mx-auto px-4 py-8">
-                <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-2xl font-bold text-center flex-1">Task List</h1> {/* Centered title */}
-                    <button
-                        onClick={() => {
-                            setEditingTodo(null); // Reset editing state for new todo
-                            setIsModalOpen(true); // Open the modal for adding a new todo
-                        }}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                    >
-                        Add Task
-                    </button>
-                </div>
+    // Function to confirm delete action
+    const confirmDelete = (todoId) => {
+        if (!todoId) return;
+        setTodoToDelete(todoId);
+        setShowDeleteConfirm(true);
+    };
 
-                <div className="mb-6">
-                    <div className="flex justify-center mb-4">
-                        {/* Buttons to switch between different sections of todos with increased width */}
+    // Render todo items for a section
+    const renderTodoItems = (sectionTodos) => {
+        return sectionTodos.map(todo => (
+            <TodoItem
+                key={`${todo._id}-${todo.updatedAt}`}
+                todo={todo}
+                onEdit={() => handleEdit(todo)}
+                onDelete={() => confirmDelete(todo._id)}
+                onToggleComplete={() => handleToggleComplete(todo._id)}
+            />
+        ));
+    };
+
+    return (
+        <div className="min-h-screen [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
+            <NavBar />
+            <div className="container mx-auto px-4 py-8">
+                <div className="flex flex-col items-center mb-8">
+                    <h1 className="text-4xl font-bold text-white mb-6">Task Manager</h1>
+                    <div className="flex space-x-4">
                         <button
                             onClick={() => setActiveSection('today')}
-                            className={`px-20 py-3 ${
+                            className={`px-6 py-2 rounded-lg ${
                                 activeSection === 'today'
-                                    ? 'bg-blue-500 text-white'
-                                    : 'bg-white'
-                            } border-r border-gray-200 rounded-l-lg`} // Increased padding for wider button
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                            } transition-colors duration-200 min-w-[120px]`}
                         >
                             Today ({todos.today.length})
                         </button>
                         <button
                             onClick={() => setActiveSection('pending')}
-                            className={`px-20 py-3 ${
+                            className={`px-6 py-2 rounded-lg ${
                                 activeSection === 'pending'
-                                    ? 'bg-yellow-500 text-white' // Change to yellow when selected
-                                    : 'bg-white'
-                            } border-r border-gray-200`} // Increased padding for wider button
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                            } transition-colors duration-200 min-w-[120px]`}
                         >
                             Pending ({todos.pending.length})
                         </button>
                         <button
                             onClick={() => setActiveSection('overdue')}
-                            className={`px-20 py-3 ${
+                            className={`px-6 py-2 rounded-lg ${
                                 activeSection === 'overdue'
-                                    ? 'bg-red-500 text-white'
-                                    : 'bg-white'
-                            } rounded-r-lg`} // Increased padding for wider button
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                            } transition-colors duration-200 min-w-[120px]`}
                         >
                             Overdue ({todos.overdue.length})
                         </button>
-                    </div>
-                </div>
-
-                <div className="space-y-2">
-                    {/* Render the list of todos based on the active section */}
-                    {todos[activeSection].map(todo => (
-                        <TodoItem
-                            key={todo._id}
-                            todo={todo}
-                            onEdit={handleEdit}
-                            onDelete={confirmDelete} // Pass the confirmDelete function
-                            onToggleComplete={handleToggleComplete} // Pass the toggle function
-                        />
-                    ))}
-                </div>
-
-                {/* Render completed tasks section if there are any */}
-                {todos.completed.length > 0 && (
-                    <div className="mt-8">
                         <button
-                            onClick={() => setShowCompleted(!showCompleted)} // Toggle visibility of completed tasks
-                            className="flex items-center gap-2 text-gray-600"
+                            onClick={() => setActiveSection('completed')}
+                            className={`px-6 py-2 rounded-lg ${
+                                activeSection === 'completed'
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                            } transition-colors duration-200 min-w-[120px]`}
                         >
-                            <span className="text-lg">
-                                {showCompleted ? '▼' : '▶'}
-                            </span>
-                            Completed Tasks ({todos.completed.length})
+                            Completed ({todos.completed.length})
                         </button>
-                        {showCompleted && (
-                            <div className="mt-4 space-y-2">
-                                {todos.completed.map(todo => (
-                                    <TodoItem
-                                        key={todo._id}
-                                        todo={todo}
-                                        onEdit={handleEdit}
-                                        onDelete={confirmDelete} // Pass the confirmDelete function
-                                        onToggleComplete={handleToggleComplete} // Pass the toggle function
-                                    />
-                                ))}
-                            </div>
-                        )}
                     </div>
-                )}
-            </div>
+                </div>
 
-            {/* Modal for adding/editing todos */}
-            <TodoModal
-                isOpen={isModalOpen}
-                onClose={() => {
-                    setIsModalOpen(false); // Close the modal
-                    setEditingTodo(null); // Reset editing state
-                }}
-                onSubmit={handleSubmit} // Pass the handleSubmit function
-                initialData={editingTodo} // Pass the current todo data for editing
-            />
+                <div className="flex justify-end mb-4">
+                    <button
+                        onClick={() => setIsModalOpen(true)}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                    >
+                        Add Task
+                    </button>
+                </div>
 
-            {/* Delete Confirmation Modal */}
-            {showDeleteConfirm && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg w-96">
-                        <h2 className="text-xl font-bold mb-4">Confirm Delete</h2>
-                        <p className="mb-6">Are you sure you want to delete this task?</p>
-                        <div className="flex justify-end gap-2">
-                            <button
-                                onClick={() => {
-                                    setShowDeleteConfirm(false); // Close the confirmation dialog
-                                    setTodoToDelete(null); // Reset the todo to delete
-                                }}
-                                className="px-4 py-2 text-gray-600 border rounded hover:bg-gray-100"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleDelete} // Call the handleDelete function
-                                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                            >
-                                Delete
-                            </button>
+                <div className="space-y-4">
+                    {renderTodoItems(todos[activeSection] || [])}
+                </div>
+
+                {/* Delete Confirmation Dialog */}
+                {showDeleteConfirm && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                        <div className="bg-gray-900 p-6 rounded-lg text-white border border-red-500">
+                            <h3 className="text-xl mb-4">Delete Task?</h3>
+                            <p className="mb-4">Are you sure you want to delete this task?</p>
+                            <div className="flex justify-end gap-4">
+                                <button
+                                    onClick={() => {
+                                        setShowDeleteConfirm(false);
+                                        setTodoToDelete(null);
+                                    }}
+                                    className="px-4 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={() => todoToDelete && handleDelete(todoToDelete)}
+                                    className="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg border border-red-400"
+                                >
+                                    Delete
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )}
+
+                <TodoModal
+                    isOpen={isModalOpen}
+                    onClose={() => {
+                        setIsModalOpen(false);
+                        setEditingTodo(null);
+                    }}
+                    onSubmit={handleSubmit}
+                    editingTodo={editingTodo}
+                />
+            </div>
         </div>
     );
 };

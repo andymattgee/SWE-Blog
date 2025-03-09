@@ -1,155 +1,149 @@
 import React, { useState, useEffect } from 'react';
 import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import '../styles/todo-quill.css';
 
-// Quill modules and formats configuration
-const quillModules = {
-    toolbar: [
-        ['bold', 'italic', 'underline'],
-        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-        [{ 'align': ['', 'center', 'right', 'justify'] }],
-        ['clean']
-    ],
-    clipboard: {
-        matchVisual: false
-    }
-};
-
-const quillFormats = [
-    'bold', 'italic', 'underline',
-    'list', 'bullet', 'ordered',
-    'align'
-];
-
-// Modal component for creating and editing todos
-const TodoModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
-        // State to hold form data
-    const [formData, setFormData] = useState({
+const TodoModal = ({ isOpen, onClose, onSubmit, editingTodo }) => {
+    // Initialize form data state with proper date formatting
+    const getInitialFormData = () => ({
         task: '',
         notes: '',
         priority: 'low',
-        deadlineDate: ''
+        deadlineDate: new Date().toISOString().split('T')[0],
+        _id: null
     });
 
-    // Effect to handle initialData changes
+    const [formData, setFormData] = useState(getInitialFormData());
+
+    // Quill editor configuration
+    const quillModules = {
+        toolbar: [
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            ['clean']
+        ]
+    };
+
+    const quillFormats = [
+        'bold', 'italic', 'underline', 'strike',
+        'list', 'bullet'
+    ];
+
+    // Update form data when editing a todo
     useEffect(() => {
-        if (initialData && isOpen) {
-            console.log('Received initial data:', initialData);
-            
-            // Format the date properly
-            let formattedDate = '';
-            if (initialData.deadlineDate) {
-                const date = new Date(initialData.deadlineDate);
-                if (!isNaN(date.getTime())) {
-                    formattedDate = date.toISOString().split('T')[0];
-                }
-            }
+        if (editingTodo) {
+            // Ensure we have a valid date
+            const deadlineDate = new Date(editingTodo.deadlineDate);
+            const formattedDate = !isNaN(deadlineDate.getTime()) 
+                ? deadlineDate.toISOString().split('T')[0]
+                : new Date().toISOString().split('T')[0];
 
             setFormData({
-                task: initialData.task || '',
-                notes: initialData.notes || '',
-                priority: initialData.priority || 'low',
-                deadlineDate: formattedDate
+                task: editingTodo.task || '',
+                notes: editingTodo.notes || '',
+                priority: editingTodo.priority || 'low',
+                deadlineDate: formattedDate,
+                _id: editingTodo._id
             });
-        } else if (!isOpen) {
-            // Reset form when modal closes
-            setFormData({
-                task: '',
-                notes: '',
-                priority: 'low',
-                deadlineDate: ''
-            });
+        } else {
+            // Reset form when creating a new todo
+            setFormData(getInitialFormData());
         }
-    }, [initialData, isOpen]);
+    }, [editingTodo, isOpen]);
 
     // Handle form submission
     const handleSubmit = (e) => {
-        e.preventDefault(); // Prevent default form submission
+        e.preventDefault();
         
-        // Ensure all fields are properly formatted
+        // Ensure we have a valid date
+        const deadlineDate = new Date(formData.deadlineDate);
+        if (isNaN(deadlineDate.getTime())) {
+            console.error('Invalid date');
+            return;
+        }
+
         const submissionData = {
             task: formData.task.trim(),
             notes: formData.notes || '',
             priority: formData.priority || 'low',
-            deadlineDate: formData.deadlineDate,
-            completed: initialData ? initialData.completed : false
+            deadlineDate: deadlineDate.toISOString(),
+            _id: formData._id
         };
 
-        console.log('Submitting form data:', submissionData);
-        onSubmit(submissionData); // Call the onSubmit function passed as a prop with the form data
-        onClose(); // Close the modal after submission
+        onSubmit(submissionData);
+        onClose();
     };
 
-    // If the modal is not open, return null to render nothing
+    // Handle modal close
+    const handleClose = () => {
+        setFormData(getInitialFormData());
+        onClose();
+    };
+
     if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg w-96">
-                <h2 className="text-xl font-bold mb-4">
-                    {initialData ? 'Edit Task' : 'Create New Task'} {/* Conditional title based on editing or creating */}
+            <div className="bg-gray-900 bg-opacity-90 p-6 rounded-lg w-96 text-white border border-purple-500 shadow-xl">
+                <h2 className="text-2xl font-bold mb-4 text-blue-400">
+                    {editingTodo ? 'Edit Task' : 'Create New Task'}
                 </h2>
                 <form onSubmit={handleSubmit}>
-                    {/* Task input field */}
                     <div className="mb-4">
-                        <label className="block text-sm font-medium mb-1">Task</label>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Task</label>
                         <input
                             type="text"
                             value={formData.task}
-                            onChange={(e) => setFormData({...formData, task: e.target.value})} // Update task in state
-                            className="w-full p-2 border rounded"
+                            onChange={(e) => setFormData({...formData, task: e.target.value})}
+                            className="w-full p-2 rounded bg-gray-800 border-gray-700 text-white focus:border-blue-500 focus:ring-blue-500"
                             required
                         />
                     </div>
-                    {/* Notes input field with Quill rich text editor */}
                     <div className="mb-4">
-                        <label className="block text-sm font-medium mb-1">Notes</label>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Notes</label>
                         <ReactQuill
                             theme="snow"
                             value={formData.notes}
-                            onChange={(content) => setFormData({...formData, notes: content})} // Update notes in state
+                            onChange={(content) => setFormData({...formData, notes: content})}
                             modules={quillModules}
                             formats={quillFormats}
-                            className="todo-quill"
+                            className="todo-quill dark-theme"
                         />
                     </div>
-                    {/* Priority selection */}
                     <div className="mb-4">
-                        <label className="block text-sm font-medium mb-1">Priority</label>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Priority</label>
                         <select
                             value={formData.priority}
-                            onChange={(e) => setFormData({...formData, priority: e.target.value})} // Update priority in state
-                            className="w-full p-2 border rounded"
+                            onChange={(e) => setFormData({...formData, priority: e.target.value})}
+                            className="w-full p-2 rounded bg-gray-800 border-gray-700 text-white focus:border-blue-500 focus:ring-blue-500"
                         >
                             <option value="low">Low</option>
                             <option value="high">High</option>
                         </select>
                     </div>
-                    {/* Deadline date input */}
                     <div className="mb-4">
-                        <label className="block text-sm font-medium mb-1">Deadline Date</label>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Deadline Date</label>
                         <input
                             type="date"
                             value={formData.deadlineDate}
-                            onChange={(e) => setFormData({...formData, deadlineDate: e.target.value})} // Update deadline date in state
-                            className="w-full p-2 border rounded"
+                            onChange={(e) => setFormData({...formData, deadlineDate: e.target.value})}
+                            className="w-full p-2 rounded bg-gray-800 border-gray-700 text-white focus:border-blue-500 focus:ring-blue-500"
                             required
                         />
                     </div>
-                    {/* Action buttons */}
-                    <div className="flex justify-end gap-2">
+                    <div className="flex justify-end gap-4 mt-6">
                         <button
                             type="button"
-                            onClick={onClose} // Close the modal without submitting
-                            className="px-4 py-2 text-gray-600 border rounded hover:bg-gray-100"
+                            onClick={handleClose}
+                            className="px-4 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg"
                         >
                             Cancel
                         </button>
                         <button
-                            type="submit" // Submit the form
-                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            type="submit"
+                            className="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg border border-blue-400"
                         >
-                            {initialData ? 'Update' : 'Create'} {/* Conditional button text based on editing or creating */}
+                            {editingTodo ? 'Save Changes' : 'Create Task'}
                         </button>
                     </div>
                 </form>
@@ -158,4 +152,4 @@ const TodoModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
     );
 };
 
-export default TodoModal; 
+export default TodoModal;

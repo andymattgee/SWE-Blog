@@ -14,13 +14,13 @@ const Signup = () => {
 
     const onSubmit = async data => {
         const { userName, password } = data; // Destructure only necessary fields
-        console.log('usename and password from client->',{ userName, password });
+        console.log('usename and password from client->', { userName, password });
         //from the robot
         try {
             const response = await fetch('http://localhost:3333/api/users/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({userName,password})
+                body: JSON.stringify({ userName, password })
             });
             const result = await response.json();
             if (response.ok) {
@@ -75,11 +75,12 @@ const Signup = () => {
                     </button>
                 </form>
 
-                {/* <button onClick={handleHomeButton}
-                    className="mt-20 text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-teal-500/50 dark:shadow-lg dark:shadow-teal-800/80 font-medium rounded-lg text-sm h-20 px-10 py-2.5 text-center me-2 mb-2 "
-                >
-                    Enter With Out Sign Up
-                </button> */}
+                <div className="mt-4 text-center">
+                    <Link to="/" className="text-white hover:text-blue-200 text-sm underline">
+                        Already a member? Login here
+                    </Link>
+                </div>
+
             </div>
 
         </div>
