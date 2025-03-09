@@ -4,7 +4,6 @@ import 'react-quill/dist/quill.snow.css';
 import '../styles/todo-quill.css';
 
 const TodoModal = ({ isOpen, onClose, onSubmit, editingTodo }) => {
-    // Initialize form data state with proper date formatting
     const getInitialFormData = () => ({
         task: '',
         notes: '',
@@ -15,7 +14,6 @@ const TodoModal = ({ isOpen, onClose, onSubmit, editingTodo }) => {
 
     const [formData, setFormData] = useState(getInitialFormData());
 
-    // Quill editor configuration
     const quillModules = {
         toolbar: [
             ['bold', 'italic', 'underline', 'strike'],
@@ -29,10 +27,8 @@ const TodoModal = ({ isOpen, onClose, onSubmit, editingTodo }) => {
         'list', 'bullet'
     ];
 
-    // Update form data when editing a todo
     useEffect(() => {
         if (editingTodo) {
-            // Ensure we have a valid date
             const deadlineDate = new Date(editingTodo.deadlineDate);
             const formattedDate = !isNaN(deadlineDate.getTime()) 
                 ? deadlineDate.toISOString().split('T')[0]
@@ -46,16 +42,13 @@ const TodoModal = ({ isOpen, onClose, onSubmit, editingTodo }) => {
                 _id: editingTodo._id
             });
         } else {
-            // Reset form when creating a new todo
             setFormData(getInitialFormData());
         }
     }, [editingTodo, isOpen]);
 
-    // Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
         
-        // Ensure we have a valid date
         const deadlineDate = new Date(formData.deadlineDate);
         if (isNaN(deadlineDate.getTime())) {
             console.error('Invalid date');
@@ -74,7 +67,6 @@ const TodoModal = ({ isOpen, onClose, onSubmit, editingTodo }) => {
         onClose();
     };
 
-    // Handle modal close
     const handleClose = () => {
         setFormData(getInitialFormData());
         onClose();
@@ -83,14 +75,17 @@ const TodoModal = ({ isOpen, onClose, onSubmit, editingTodo }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
             <div className="bg-gray-900 bg-opacity-90 p-6 rounded-lg w-96 text-white border border-purple-500 shadow-xl">
-                <h2 className="text-2xl font-bold mb-4 text-blue-400">
+                <h2 className="text-2xl font-bold mb-4 text-blue-400 flex justify-center">
                     {editingTodo ? 'Edit Task' : 'Create New Task'}
                 </h2>
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Task</label>
+                <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                    {/* Task Input */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">
+                            Task
+                        </label>
                         <input
                             type="text"
                             value={formData.task}
@@ -99,20 +94,32 @@ const TodoModal = ({ isOpen, onClose, onSubmit, editingTodo }) => {
                             required
                         />
                     </div>
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Notes</label>
-                        <ReactQuill
-                            theme="snow"
-                            value={formData.notes}
-                            onChange={(content) => setFormData({...formData, notes: content})}
-                            modules={quillModules}
-                            formats={quillFormats}
-                            className="todo-quill dark-theme"
-                        />
+
+                    {/* Notes Editor */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">
+                            Notes
+                        </label>
+                        <div className="relative" style={{ height: '225px', marginBottom: '20px' }}>
+                            <ReactQuill
+                                theme="snow"
+                                value={formData.notes}
+                                onChange={(content) => setFormData({...formData, notes: content})}
+                                modules={quillModules}
+                                formats={quillFormats}
+                                className="todo-quill dark-theme absolute inset-0"
+                                style={{ height: '100%' }}
+                            />
+                        </div>
                     </div>
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Priority</label>
+
+                    {/* Priority Selector */}
+                    <div>
+                        <label htmlFor="priority" className="block text-sm font-medium text-gray-300 mb-1">
+                            Priority Level
+                        </label>
                         <select
+                            id="priority"
                             value={formData.priority}
                             onChange={(e) => setFormData({...formData, priority: e.target.value})}
                             className="w-full p-2 rounded bg-gray-800 border-gray-700 text-white focus:border-blue-500 focus:ring-blue-500"
@@ -121,8 +128,12 @@ const TodoModal = ({ isOpen, onClose, onSubmit, editingTodo }) => {
                             <option value="high">High</option>
                         </select>
                     </div>
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Deadline Date</label>
+
+                    {/* Date Input */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">
+                            Deadline Date
+                        </label>
                         <input
                             type="date"
                             value={formData.deadlineDate}
@@ -131,7 +142,9 @@ const TodoModal = ({ isOpen, onClose, onSubmit, editingTodo }) => {
                             required
                         />
                     </div>
-                    <div className="flex justify-end gap-4 mt-6">
+
+                    {/* Form Buttons */}
+                    <div className="flex justify-end gap-4">
                         <button
                             type="button"
                             onClick={handleClose}
