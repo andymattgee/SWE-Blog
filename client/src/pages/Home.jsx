@@ -6,6 +6,8 @@ import stars from '../../public/videos/starryVideo.mp4'
 import mountains from '../../public/images/mountains.jpg';
 import computerGlasses from '../../public/images/computer_glasses.jpg';
 import mtsRed from '../../public/images/mts_Red.jpg';
+import bannerOne from '../../public/images/bannerOne.jpg';
+import bannerTwo from '../../public/images/bannerTwo.jpg';
 
 /**
  * The Home component is the main page of the application.
@@ -37,15 +39,13 @@ const Home = () => {
 
   return (
     <div className="min-h-screen relative [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
-      <div className='bg-transparent'>
-        <NavBar />
-      </div>
+      <NavBar />
 
       {/* Banner Section */}
-      <div className="relative h-[50vh] w-full mx-auto mt-8">
+      <div className="relative h-[50vh] w-full mx-auto mt-0">
         <img 
-          src={computerGlasses} 
-          alt="Computer Glasses" 
+          src={bannerOne} 
+          alt="Banner" 
           className="w-full h-full object-cover rounded-lg"
         />
         <div className="absolute bottom-0 left-0 right-0 p-4 bg-black bg-opacity-50">

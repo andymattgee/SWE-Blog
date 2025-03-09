@@ -66,25 +66,69 @@
 .todo-quill .ql-toolbar {
     border-top-left-radius: 0.375rem;
     border-top-right-radius: 0.375rem;
-    background-color: #f9fafb;
-    border-color: #e5e7eb;
+    background-color: #1f2937;
+    border-color: #374151;
 }
 
 .todo-quill .ql-container {
     border-bottom-left-radius: 0.375rem;
     border-bottom-right-radius: 0.375rem;
-    border-color: #e5e7eb;
-    background-color: white;
+    border-color: #374151;
+    background-color: #111827;
 }
 
 .todo-quill .ql-editor {
     min-height: 150px;
     font-size: 0.875rem;
     line-height: 1.25rem;
+    color: #e5e7eb !important;
+}
+
+/* Toolbar button colors */
+.todo-quill .ql-toolbar button {
+    color: #e5e7eb;
+}
+
+.todo-quill .ql-toolbar button:hover {
+    color: #60a5fa;
+}
+
+.todo-quill .ql-toolbar .ql-stroke {
+    stroke: #e5e7eb;
+}
+
+.todo-quill .ql-toolbar .ql-fill {
+    fill: #e5e7eb;
+}
+
+.todo-quill .ql-toolbar button:hover .ql-stroke {
+    stroke: #60a5fa;
+}
+
+.todo-quill .ql-toolbar button:hover .ql-fill {
+    fill: #60a5fa;
+}
+
+.todo-quill .ql-toolbar .ql-picker {
+    color: #e5e7eb;
+}
+
+.todo-quill .ql-toolbar .ql-picker-options {
+    background-color: #1f2937;
+    border-color: #374151;
+}
+
+.todo-quill .ql-toolbar .ql-picker-item:hover {
+    color: #60a5fa;
 }
 
 /* View mode styles */
 .todo-notes-view .ql-editor {
     padding: 0 !important;
     border: none !important;
+}
+
+/* Placeholder color */
+.todo-quill .ql-editor.ql-blank::before {
+    color: #6b7280 !important;
 }

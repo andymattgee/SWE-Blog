@@ -1,4 +1,5 @@
 const User = require('../Models/user'); // Import User model
+const bcrypt = require('bcryptjs'); // Import bcrypt for password comparison
 
 /**
  * Registers a new user.
@@ -54,9 +55,35 @@ const logout = async (req, res) => {
     }
 };
 
+/**
+ * Changes user's password after verifying current password.
+ * @param {Object} req - The request object containing passwords
+ * @param {Object} res - The response object for sending responses
+ */
+const changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        
+        // Verify current password
+        const isMatch = await bcrypt.compare(currentPassword, req.user.password);
+        if (!isMatch) {
+            return res.status(401).json({ error: 'Current password is incorrect' });
+        }
+
+        // Update password
+        req.user.password = newPassword;
+        await req.user.save();
+        res.status(200).json({ message: 'Password updated successfully' });
+    } catch (error) {
+        console.error('Password change error:', error);
+        res.status(400).json({ error: 'Unable to change password' });
+    }
+};
+
 // Export the controller functions for use in routes
 module.exports = {
     register,
     login,
-    logout
+    logout,
+    changePassword
 };

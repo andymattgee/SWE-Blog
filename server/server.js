@@ -9,9 +9,9 @@ const todoRoute = require('./Routes/todoRoute.js'); // Import todo routes
 const cors = require('cors'); // Import CORS middleware
 
 // Retrieve environment variables for configuration
-const PORT = process.env.PORT; // Port for the server to listen on
-const DB_URL = process.env.DB_URL; // MongoDB connection URL
-const DB_NAME = process.env.DB_NAME; // MongoDB database name
+const PORT = process.env.PORT || 3333; // Port for the server to listen on
+const DB_URL = process.env.DB_URL || 'mongodb://localhost:27017'; // MongoDB connection URL
+const DB_NAME = process.env.DB_NAME || 'swe-blog'; // MongoDB database name
 
 const app = express(); // Create an instance of the Express application
 

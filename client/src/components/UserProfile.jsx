@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from './navbar';
 import { useUser } from '../context/UserContext';
+import PasswordChangeModal from './PasswordChangeModal';
 
 const UserProfile = () => {
     const { userData, refreshUserData } = useUser();
@@ -20,44 +21,56 @@ const UserProfile = () => {
         );
     }
 
+    const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+
     const handlePasswordChange = () => {
-        console.log('password change button clicked');
+        setIsPasswordModalOpen(true);
+    };
+
+    const handleClosePasswordModal = () => {
+        setIsPasswordModalOpen(false);
     };
 
     return (
         <>
             <Navbar />
-            <div className="container mx-auto px-4 py-8">
-            <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
-                <h1 className="text-3xl font-bold text-blue-700 mb-6">User Profile</h1>
-                
-                <div className="space-y-4">
-                    <div className="flex justify-between items-center border-b pb-2">
-                        <span className="font-semibold">Name:</span>
-                        <span>{userData.userName}</span>
-                    </div>
-                    
-                    <div className="flex justify-between items-center border-b pb-2">
-                        <span className="font-semibold">Blog Entries:</span>
-                        <span>{userData.entriesCount}</span>
-                    </div>
-                    
-                    <div className="flex justify-between items-center border-b pb-2">
-                        <span className="font-semibold">Tasks:</span>
-                        <span>{userData.tasksCount}</span>
-                    </div>
+            <div className="min-h-screen [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
+                <div className="container mx-auto px-4 py-8">
+                    <div className="max-w-2xl mx-auto bg-opacity-80 bg-gray-900 rounded-lg shadow-lg p-6 text-white">
+                        <h1 className="text-3xl font-bold text-blue-400 mb-6">User Profile</h1>
+                        
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center border-b border-gray-700 pb-2">
+                                <span className="font-semibold">Name:</span>
+                                <span>{userData.userName}</span>
+                            </div>
+                            
+                            <div className="flex justify-between items-center border-b border-gray-700 pb-2">
+                                <span className="font-semibold">Blog Entries:</span>
+                                <span>{userData.entriesCount}</span>
+                            </div>
+                            
+                            <div className="flex justify-between items-center border-b border-gray-700 pb-2">
+                                <span className="font-semibold">Tasks:</span>
+                                <span>{userData.tasksCount}</span>
+                            </div>
 
-                    <div className="flex justify-center pt-4">
-                        <button 
-                            onClick={handlePasswordChange}
-                            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
-                        >
-                            Change Password
-                        </button>
+                            <div className="flex justify-center pt-4">
+                                <button 
+                                    onClick={handlePasswordChange}
+                                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 border border-blue-400"
+                                >
+                                    Change Password
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+            <PasswordChangeModal 
+                isOpen={isPasswordModalOpen} 
+                onClose={handleClosePasswordModal} 
+            />
         </>
     );
 };
