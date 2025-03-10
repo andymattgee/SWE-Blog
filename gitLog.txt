@@ -71,7 +71,7 @@ Git commit messages, if extra window pops up:  cmd + S to save changes, cmd + W 
     -Test Tasks CRUD functionality to make sure everything working properly
     DOCS ADDED to: Todos.JSX, TodoModal.jsx, TodoItem.jsx, UserProfile.jsx, PasswordChangeModal.jsx
     
-
+HAVE NOT PUSHED FEATURE/TODO YET or PRed
     
 
 
