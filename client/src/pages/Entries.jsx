@@ -821,7 +821,7 @@ const Entries = () => {
                 </div>
 
                 {/* Entries Container */}
-                <div className={`${isListView ? "flex flex-col items-center w-full" : "grid grid-cols-5 gap-4"}`}>
+                <div className={`${isListView ? "flex flex-col items-center w-full" : "grid grid-cols-4 gap-3"}`}>
                     {isListView ? (
                         // List View
                         <div className="w-full max-w-lg text-center">
