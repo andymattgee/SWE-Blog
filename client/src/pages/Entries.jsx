@@ -14,7 +14,7 @@
  * 
  * @component
  */
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from "axios";
 import { Link, useNavigate } from 'react-router-dom';
 import NavBar from '../components/navbar';
@@ -96,6 +96,24 @@ const processQuillContent = (content) => {
  * @returns {JSX.Element} The modal component
  */
 const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, editForm, setEditForm }) => {
+    const modalRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (modalRef.current && !modalRef.current.contains(event.target)) {
+                onClose();
+            }
+        };
+
+        if (entry) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [entry, onClose]);
+
     if (!entry) return null;
     
     const [imagePreview, setImagePreview] = useState(null);
@@ -160,7 +178,7 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
-            <div className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl">
+            <div ref={modalRef} className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold text-blue-400">{isEditing ? 'Edit Entry' : entry.title}</h2>
                     <button
