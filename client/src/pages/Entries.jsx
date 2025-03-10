@@ -24,6 +24,7 @@ import mountains from '../../public/images/mountains.jpg';
 import { BsGrid3X3Gap, BsListUl } from 'react-icons/bs';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import '../styles/todo-quill.css';
 import '../styles/quill-viewer.css';
 
 /* Custom styles for Quill editor containers */
@@ -75,53 +76,10 @@ const quillFormats = [
 const processQuillContent = (content) => {
     if (!content) return '';
     
-    // Log the raw content
-    console.log('Raw content:', content);
-    
-    // Create a temporary div to parse the HTML content
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = content;
-
-    // Log the parsed content
-    console.log('Parsed content:', tempDiv.innerHTML);
-
-    // Process lists
-    const listItems = tempDiv.querySelectorAll('li');
-    console.log('Found list items:', listItems.length);
-    listItems.forEach((li, index) => {
-        console.log(`List item ${index + 1}:`, {
-            parentTag: li.parentElement?.tagName,
-            classes: li.className,
-            content: li.innerHTML
-        });
-    });
-
-    // Process ordered and unordered lists
-    const lists = tempDiv.querySelectorAll('ol, ul');
-    console.log('Found lists:', lists.length);
-    lists.forEach((list, index) => {
-        console.log(`List ${index + 1}:`, {
-            type: list.tagName,
-            classes: list.className,
-            items: list.children.length
-        });
-    });
-
-    // Process headers
-    const headers = tempDiv.querySelectorAll('h1, h2, h3, h4, h5, h6');
-    console.log('Found headers:', headers.length);
-
-    // Handle alignment
-    const alignedElements = tempDiv.querySelectorAll('[class*="ql-align-"]');
-    console.log('Found aligned elements:', alignedElements.length);
-
-    // Handle indentation
-    const indentedElements = tempDiv.querySelectorAll('[class*="ql-indent-"]');
-    console.log('Found indented elements:', indentedElements.length);
-
+    // Simply return the content directly to preserve all HTML formatting
+    // The dangerouslySetInnerHTML in the component will handle rendering it
     return content;
 };
-
 
 /**
  * Modal Component for displaying and editing entry details
@@ -142,25 +100,25 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
 
     return (
         <div 
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
             onClick={onClose}
         >
             <div 
-                className="bg-blue-100 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+                className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Modal Header */}
                 <div className="flex justify-between items-start mb-4">
-                    <h2 className="text-2xl font-bold text-center flex-1">{entry.title}</h2>
+                    <h2 className="text-2xl font-bold text-center flex-1 text-blue-400">{entry.title}</h2>
                     <button
                         onClick={onClose}
-                        className="text-gray-500 hover:text-gray-700 mt-[-10px] mr-[-10px]"
+                        className="text-gray-400 hover:text-gray-200 mt-[-10px] mr-[-10px]"
                     >
                         ✕
                     </button>
                 </div>
                 {/* Date Display */}
-                <p className="text-center text-gray-600 mb-4">
+                <p className="text-center text-gray-400 mb-4">
                     {new Date(entry.createdAt).toLocaleDateString()}
                 </p>
                 
@@ -169,61 +127,67 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
                     // Edit Form
                     <form onSubmit={onEdit} className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Title</label>
+                            <label className="block text-sm font-medium text-gray-300 mb-1">Title</label>
                             <input
                                 type="text"
                                 value={editForm.title}
                                 onChange={(e) => setEditForm({...editForm, title: e.target.value})}
-                                className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
+                                className="w-full p-2 rounded bg-gray-800 border-gray-700 text-white focus:border-blue-500 focus:ring-blue-500"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Professional Content</label>
-                            <ReactQuill
-                                value={editForm.professionalContent}
-                                onChange={useCallback(
-                                    debounce((content) => {
-                                        console.log('Professional content HTML:', content);
-                                        setEditForm(prev => ({...prev, professionalContent: content}));
-                                    }, 300),
-                                    []
-                                )}
-                                className="mt-1 bg-white rounded-md"
-                                theme="snow"
-                                modules={quillModules}
-                                formats={quillFormats}
-                                preserveWhitespace={true}
-                            />
+                            <label className="block text-sm font-medium text-gray-300 mb-1">Professional Content</label>
+                            <div className="relative" style={{ height: '225px', marginBottom: '20px' }}>
+                                <ReactQuill
+                                    value={editForm.professionalContent}
+                                    onChange={useCallback(
+                                        debounce((content) => {
+                                            console.log('Professional content HTML:', content);
+                                            setEditForm(prev => ({...prev, professionalContent: content}));
+                                        }, 300),
+                                        []
+                                    )}
+                                    className="todo-quill dark-theme absolute inset-0"
+                                    theme="snow"
+                                    modules={quillModules}
+                                    formats={quillFormats}
+                                    style={{ height: '100%' }}
+                                    preserveWhitespace={true}
+                                />
+                            </div>
                         </div>
                         <div className="mt-12">
-                            <label className="block text-sm font-medium text-gray-700">Personal Content</label>
-                            <ReactQuill
-                                value={editForm.personalContent}
-                                onChange={useCallback(
-                                    debounce((content) => {
-                                        console.log('Personal content HTML:', content);
-                                        setEditForm(prev => ({...prev, personalContent: content}));
-                                    }, 300),
-                                    []
-                                )}
-                                className="mt-1 bg-white rounded-md"
-                                theme="snow"
-                                modules={quillModules}
-                                formats={quillFormats}
-                                preserveWhitespace={true}
-                            />
+                            <label className="block text-sm font-medium text-gray-300 mb-1">Personal Content</label>
+                            <div className="relative" style={{ height: '225px', marginBottom: '20px' }}>
+                                <ReactQuill
+                                    value={editForm.personalContent}
+                                    onChange={useCallback(
+                                        debounce((content) => {
+                                            console.log('Personal content HTML:', content);
+                                            setEditForm(prev => ({...prev, personalContent: content}));
+                                        }, 300),
+                                        []
+                                    )}
+                                    className="todo-quill dark-theme absolute inset-0"
+                                    theme="snow"
+                                    modules={quillModules}
+                                    formats={quillFormats}
+                                    style={{ height: '100%' }}
+                                    preserveWhitespace={true}
+                                />
+                            </div>
                         </div>
-                        <div className="flex justify-end space-x-2">
+                        <div className="flex justify-end space-x-4 mt-6">
                             <button
                                 type="button"
                                 onClick={() => setIsEditing(false)}
-                                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                                className="px-4 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg"
                             >
                                 Cancel
                             </button>
                             <button
                                 type="submit"
-                                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                                className="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg border border-blue-400"
                             >
                                 Save Changes
                             </button>
@@ -231,45 +195,34 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
                     </form>
                 ) : (
                     // View Mode
-                    <>
-                        <div className="mb-4">
-                            <h3 className="text-lg font-semibold text-center mb-2">Professional</h3>
-                            <div className="border bg-white p-4 rounded-md">
-                                <div className="text-gray-700 ql-snow">
-                                    <div className="ql-editor" 
-                                        dangerouslySetInnerHTML={{ __html: entry.professionalContent }}
-                                    />
-                                </div>
+                    <div className="space-y-4">
+                        <div>
+                            <h3 className="text-lg font-medium text-blue-400 mb-2">Professional Content</h3>
+                            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                                <div className="todo-quill dark-theme ql-editor" dangerouslySetInnerHTML={{ __html: processQuillContent(entry.professionalContent) }} />
                             </div>
                         </div>
-                        <div className="mb-4">
-                            <h3 className="text-lg font-semibold text-center mb-2">Personal</h3>
-                            <div className="border bg-white p-4 rounded-md">
-                                <div className="text-gray-700 ql-snow">
-                                    <div className="ql-editor" 
-                                        dangerouslySetInnerHTML={{ __html: entry.personalContent }}
-                                    />
-                                </div>
+                        <div className="mt-6">
+                            <h3 className="text-lg font-medium text-blue-400 mb-2">Personal Content</h3>
+                            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                                <div className="todo-quill dark-theme ql-editor" dangerouslySetInnerHTML={{ __html: processQuillContent(entry.personalContent) }} />
                             </div>
                         </div>
-                        <div className="flex justify-end space-x-2">
+                        <div className="flex justify-end space-x-4 mt-6">
                             <button
                                 onClick={() => setIsEditing(true)}
-                                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                                className="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg border border-blue-400"
                             >
                                 Edit
                             </button>
                             <button
-                                onClick={(e) => {
-                                    e.stopPropagation(); // Prevent event bubbling
-                                    onDelete(entry._id);
-                                }}
-                                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+                                onClick={() => onDelete(entry._id)}
+                                className="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg border border-red-400"
                             >
                                 Delete
                             </button>
                         </div>
-                    </>
+                    </div>
                 )}
             </div>
         </div>
@@ -286,20 +239,20 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
  */
 const DeleteConfirmationModal = ({ onConfirm, onCancel }) => {
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 max-w-sm w-full">
-                <h3 className="text-lg font-semibold mb-4">Confirm Deletion</h3>
-                <p className="text-gray-600 mb-6">Are you sure you want to delete this entry? This action cannot be undone.</p>
-                <div className="flex justify-end space-x-2">
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+            <div className="bg-gray-900 bg-opacity-90 rounded-lg p-6 text-white border border-purple-500 shadow-xl">
+                <h2 className="text-xl font-bold mb-4 text-blue-400">Confirm Deletion</h2>
+                <p className="mb-6 text-gray-300">Are you sure you want to delete this entry? This action cannot be undone.</p>
+                <div className="flex justify-end space-x-4">
                     <button
                         onClick={onCancel}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                        className="px-4 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg"
                     >
                         Cancel
                     </button>
                     <button
                         onClick={onConfirm}
-                        className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+                        className="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg border border-red-400"
                     >
                         Delete
                     </button>
@@ -319,176 +272,79 @@ const DeleteConfirmationModal = ({ onConfirm, onCancel }) => {
  * @returns {JSX.Element} The modal component
  */
 const NewEntryModal = ({ onClose, onSubmit, onExitAttempt }) => {
-    const [form, setForm] = useState({
+    const [formData, setFormData] = useState({
         title: '',
         professionalContent: '',
         personalContent: ''
     });
 
-    const handleChange = (name, value) => {
-        // For Quill content, ensure we preserve the HTML
-        if (name === 'professionalContent' || name === 'personalContent') {
-            console.log(`${name} HTML structure:`, value);
-            
-            // Create a temporary div to analyze the HTML structure
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = value;
-            
-            // Log all elements with Quill-specific classes
-            const quillElements = tempDiv.querySelectorAll('[class*="ql-"]');
-            console.log(`Found ${quillElements.length} Quill elements:`);
-            quillElements.forEach((el, i) => {
-                console.log(`Element ${i + 1}:`, {
-                    tag: el.tagName,
-                    classes: el.className,
-                    content: el.innerHTML.slice(0, 50) + '...',
-                    attributes: Array.from(el.attributes).map(attr => `${attr.name}="${attr.value}"`).join(' ')
-                });
-            });
-            
-            // Log list structure specifically
-            const lists = tempDiv.querySelectorAll('ul, ol');
-            lists.forEach((list, i) => {
-                console.log(`List ${i + 1}:`, {
-                    tag: list.tagName,
-                    classes: list.className,
-                    items: Array.from(list.children).map(item => ({
-                        tag: item.tagName,
-                        classes: item.className,
-                        content: item.innerHTML.slice(0, 50) + '...'
-                    }))
-                });
-            });
-            
-            setForm(prev => ({
-                ...prev,
-                [name]: value
-            }));
-        } else {
-            setForm(prev => ({
-                ...prev,
-                [name]: value
-            }));
-        }
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Create a temporary div to process the HTML
-        const processContent = (html) => {
-            if (!html) return '';
-            const div = document.createElement('div');
-            div.innerHTML = html;
-            // Log the HTML structure of lists
-            const lists = div.querySelectorAll('ul, ol');
-            lists.forEach((list, i) => {
-                console.log(`List ${i + 1} HTML:`, list.outerHTML);
-            });
-            return html;
-        };
-
-        const formData = {
-            title: form.title,
-            professionalContent: processContent(form.professionalContent) || '',
-            personalContent: processContent(form.personalContent) || ''
-        };
-        console.log('Submitting new entry with content:', formData);
         onSubmit(formData);
     };
 
-    const handleClose = () => {
-        // Only show confirmation if there's content in the form
-        if (form.title || form.professionalContent || form.personalContent) {
-            onExitAttempt();
-        } else {
-            onClose();
-        }
-    };
-
     return (
-        <div 
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-            onClick={handleClose}
-        >
-            <div 
-                className="bg-blue-100 rounded-lg p-8 max-w-5xl w-[90%] max-h-[90vh] flex flex-col"
-                onClick={(e) => e.stopPropagation()}
-            >
-                {/* Modal Header */}
-                <div className="flex justify-between items-start mb-4">
-                    <h2 className="text-2xl font-bold text-center flex-1">Create New Entry</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+            <div className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl">
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-2xl font-bold text-blue-400">Create New Entry</h2>
                     <button
-                        onClick={handleClose}
-                        className="text-gray-500 hover:text-gray-700 mt-[-10px] mr-[-10px]"
+                        onClick={onExitAttempt}
+                        className="text-gray-400 hover:text-gray-200"
                     >
                         ✕
                     </button>
                 </div>
-                
-                {/* Modal Content */}
-                <form onSubmit={handleSubmit} className="flex-1 flex flex-col min-h-0 overflow-y-auto">
+                <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
-                        <label className="block text-lg font-medium text-gray-700 mb-2">Title</label>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Title</label>
                         <input
                             type="text"
-                            name="title"
-                            value={form.title}
-                            onChange={(e) => handleChange('title', e.target.value)}
+                            value={formData.title}
+                            onChange={(e) => setFormData({...formData, title: e.target.value})}
+                            className="w-full p-2 rounded bg-gray-800 border-gray-700 text-white focus:border-blue-500 focus:ring-blue-500"
                             required
-                            className="mt-1 block w-full bg-white rounded-lg border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 p-3 text-lg"
                         />
                     </div>
-                    <div className="mb-6">
-                        <label className="block text-lg font-medium text-gray-700 mb-2">Professional Content</label>
-                        <div className="h-48">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Professional Content</label>
+                        <div className="relative" style={{ height: '225px', marginBottom: '20px' }}>
                             <ReactQuill
-                                value={form.professionalContent}
-                                onChange={useCallback(
-                                    debounce((content) => {
-                                        console.log('New entry professional content HTML:', content);
-                                        handleChange('professionalContent', content);
-                                    }, 300),
-                                    []
-                                )}
-                                className="mt-1 bg-white rounded-md h-full"
+                                value={formData.professionalContent}
+                                onChange={(content) => setFormData({...formData, professionalContent: content})}
+                                className="todo-quill dark-theme absolute inset-0"
                                 theme="snow"
                                 modules={quillModules}
                                 formats={quillFormats}
-                                preserveWhitespace={true}
+                                style={{ height: '100%' }}
                             />
                         </div>
                     </div>
-                    <div className="mb-8">
-                        <label className="block text-lg font-medium text-gray-700 mb-2">Personal Content</label>
-                        <div className="h-48">
+                    <div className="mt-12">
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Personal Content</label>
+                        <div className="relative" style={{ height: '225px', marginBottom: '20px' }}>
                             <ReactQuill
-                                value={form.personalContent}
-                                onChange={useCallback(
-                                    debounce((content) => {
-                                        console.log('New entry personal content HTML:', content);
-                                        handleChange('personalContent', content);
-                                    }, 300),
-                                    []
-                                )}
-                                className="mt-1 bg-white rounded-md h-full"
+                                value={formData.personalContent}
+                                onChange={(content) => setFormData({...formData, personalContent: content})}
+                                className="todo-quill dark-theme absolute inset-0"
                                 theme="snow"
                                 modules={quillModules}
                                 formats={quillFormats}
-                                preserveWhitespace={true}
+                                style={{ height: '100%' }}
                             />
                         </div>
                     </div>
-                    <div className="flex justify-end space-x-4 mt-auto pt-6 bg-blue-100">
+                    <div className="flex justify-end space-x-4 mt-6">
                         <button
                             type="button"
-                            onClick={handleClose}
-                            className="px-6 py-3 text-lg font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition duration-200"
+                            onClick={onExitAttempt}
+                            className="px-4 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="px-6 py-3 text-lg font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-200"
+                            className="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg border border-blue-400"
                         >
                             Create Entry
                         </button>
@@ -509,20 +365,20 @@ const NewEntryModal = ({ onClose, onSubmit, onExitAttempt }) => {
  */
 const ExitConfirmationModal = ({ onConfirm, onCancel }) => {
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
-            <div className="bg-white rounded-lg p-6 max-w-sm w-full">
-                <h3 className="text-lg font-semibold mb-4">Unsaved Changes</h3>
-                <p className="text-gray-600 mb-6">You have unsaved changes. Are you sure you want to exit? Your changes will be lost.</p>
-                <div className="flex justify-end space-x-2">
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+            <div className="bg-gray-900 bg-opacity-90 rounded-lg p-6 text-white border border-purple-500 shadow-xl">
+                <h2 className="text-xl font-bold mb-4 text-blue-400">Unsaved Changes</h2>
+                <p className="mb-6 text-gray-300">Are you sure you want to exit? Any unsaved changes will be lost.</p>
+                <div className="flex justify-end space-x-4">
                     <button
                         onClick={onCancel}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                        className="px-4 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg"
                     >
-                        Cancel
+                        Stay
                     </button>
                     <button
                         onClick={onConfirm}
-                        className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+                        className="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg border border-blue-400"
                     >
                         Exit
                     </button>
@@ -734,16 +590,16 @@ const Entries = () => {
         return (
             <div className="w-full flex items-center justify-center" key={_id}>
                 <div onClick={() => getEntry(_id)} className="w-full px-2 mb-4 cursor-pointer">
-                    <div className="p-[2px] rounded-lg bg-black">
-                        <article className="max-w-sm w-full bg-white rounded-lg shadow-lg overflow-hidden dark:bg-amber-50 hover:bg-cyan-600 transition duration-300 ease-in-out transform hover:scale-105 h-64">
+                    <div className="p-[2px] rounded-lg bg-purple-600">
+                        <article className="max-w-sm w-full bg-gray-900 rounded-lg shadow-lg overflow-hidden text-white hover:bg-purple-900 transition duration-300 ease-in-out transform hover:scale-105 h-64">
                             <div className="max-w-full">
-                                {mountains && <img src={mountains} alt="mountains" className="max-w-full h-auto" />}
+                                {mountains && <img src={mountains} alt="mountains" className="max-w-full h-auto opacity-80" />}
                             </div>
                             <div className="flex flex-col gap-1 mt-4 px-4">
-                                <h2 className="text-base font-semibold text-gray-800 dark:text-black truncate">{title}</h2>
+                                <h2 className="text-base font-semibold text-white truncate">{title}</h2>
                             </div>
                             <div className="mt-2 p-2 flex justify-center">
-                                <h3 className="text-sm text-gray-600 dark:text-gray-700">{formattedDate}</h3>
+                                <h3 className="text-sm text-gray-300">{formattedDate}</h3>
                             </div>
                         </article>
                     </div>
@@ -753,26 +609,17 @@ const Entries = () => {
     }).reverse();
 
     return (
-        <div style={{
-            background: 'linear-gradient(to bottom, white, #3498DB, #2C3E50)',
-            height: '100%',
-            minHeight: '100vh',
-            position: 'relative',
-            overflow: 'hidden'
-        }}>
+        <div className="min-h-screen [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
             <NavBar />
             <div className="px-6 flex flex-col items-center">
                 <br />
-                {/* <h1 className="text-4xl font-bold text-center mb-5"> Blog Entries</h1> */}
-
-                {/* <h5 className="text-left mb-2">Click entries to view details</h5> */}
                 
                 {/* Button Container */}
-                <div className="flex justify-between w-full mb-4"> {/* Flex container for buttons */}
+                <div className="flex justify-between w-full mb-4">
                     {/* View Toggle Icon */}
                     <button
                         onClick={() => setIsListView(!isListView)}
-                        className="bg-white hover:bg-gray-100 text-gray-800 p-2 rounded-full shadow-md transition-all duration-300 transform hover:scale-110"
+                        className="bg-gray-900 hover:bg-purple-900 text-white p-2 rounded-full shadow-md transition-all duration-300 transform hover:scale-110"
                         title={isListView ? 'Change to Grid View' : 'Change to List View'}
                     >
                         {isListView ? <BsGrid3X3Gap size={24} /> : <BsListUl size={24} />}
@@ -780,7 +627,7 @@ const Entries = () => {
 
                     {/* New Entry Button */}
                     <button
-                        className="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm w-1/6 px-3 py-1.5 text-center"
+                        className="text-white bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm w-1/6 px-3 py-1.5 text-center transition duration-300"
                         onClick={() => setIsNewEntryModalOpen(true)}>
                         Make New Entry
                     </button>
@@ -793,10 +640,10 @@ const Entries = () => {
                         <div className="w-full max-w-lg text-center">
                             <ul className="list-none w-full">
                                 {entries.slice().reverse().map((entry) => (
-                                    <li key={entry._id} className="mb-4 p-4 border border-gray-300 rounded-lg bg-white shadow-lg hover:bg-gray-100 hover:border-gray-400 transition duration-300 cursor-pointer" onClick={() => getEntry(entry._id)}>
+                                    <li key={entry._id} className="mb-4 p-4 border border-purple-500 rounded-lg bg-gray-900 text-white shadow-lg hover:bg-purple-900 transition duration-300 cursor-pointer" onClick={() => getEntry(entry._id)}>
                                         <div className="flex justify-between w-full">
                                             <span className="text-lg font-bold">{entry.title}</span>
-                                            <span className="text-sm text-gray-600 block">{new Date(entry.createdAt).toLocaleDateString()}</span>
+                                            <span className="text-sm text-gray-300 block">{new Date(entry.createdAt).toLocaleDateString()}</span>
                                         </div>
                                     </li>
                                 ))}
@@ -858,4 +705,3 @@ const Entries = () => {
 }
 
 export default Entries;
-
