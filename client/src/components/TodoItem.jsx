@@ -2,11 +2,25 @@ import React, { useState } from 'react';
 import { FaEdit, FaTrash, FaExclamationCircle, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import '../styles/todo-quill.css';
 
-// Component for displaying a single todo item
+/**
+ * TodoItem component displays a single todo item with its details.
+ * It allows users to mark the todo as completed, edit, or delete it.
+ *
+ * Props:
+ * - todo: Object containing the todo data.
+ * - onEdit: Function to handle editing the todo.
+ * - onDelete: Function to handle deleting the todo.
+ * - onToggleComplete: Function to handle marking the todo as completed.
+ */
 const TodoItem = ({ todo, onEdit, onDelete, onToggleComplete }) => {
+    // State to manage the expansion of the notes section
     const [isExpanded, setIsExpanded] = useState(false);
 
-    // Function to format the date for display
+    /**
+     * Formats the date for display in a readable format.
+     * @param {string} date - The date string to format.
+     * @returns {string} - Formatted date string.
+     */
     const formatDate = (date) => {
         return new Date(date).toLocaleDateString('en-US', {
             year: 'numeric',
@@ -16,7 +30,7 @@ const TodoItem = ({ todo, onEdit, onDelete, onToggleComplete }) => {
     };
 
     return (
-        <div className={`flex items-center justify-between p-4 mb-2 bg-gray-900 bg-opacity-80 rounded-lg shadow-lg border border-gray-700 ${todo.completed ? 'opacity-75' : ''}`}>
+        <div className={`flex items-center justify-between p-4 mb-2 bg-gray-900 bg-opacity-80 rounded-lg shadow-lg border border-gray-700 ${todo.completed ? 'opacity-75' : ''}`}>  
             <div className="flex items-center flex-1">
                 {/* Checkbox to mark the todo as completed */}
                 <input
@@ -27,7 +41,7 @@ const TodoItem = ({ todo, onEdit, onDelete, onToggleComplete }) => {
                 />
                 <div className="ml-4 flex-1">
                     {/* Display the task name with conditional styling for completed tasks */}
-                    <h3 className={`font-medium ${todo.completed ? 'line-through text-gray-500' : 'text-white'}`}>
+                    <h3 className={`font-medium ${todo.completed ? 'line-through text-gray-500' : 'text-white'}`}>  
                         {todo.task}
                     </h3>
                     {/* Display the due date */}
@@ -83,4 +97,4 @@ const TodoItem = ({ todo, onEdit, onDelete, onToggleComplete }) => {
     );
 };
 
-export default TodoItem; 
+export default TodoItem;

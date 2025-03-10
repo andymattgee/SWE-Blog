@@ -2,7 +2,17 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
+/**
+ * PasswordChangeModal component allows users to change their password.
+ * It provides a form to input the current password, new password, and
+ * confirmation of the new password.
+ *
+ * Props:
+ * - isOpen: Boolean to control modal visibility.
+ * - onClose: Function to close the modal.
+ */
 const PasswordChangeModal = ({ isOpen, onClose }) => {
+    // State variables for password fields and loading state
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -11,15 +21,24 @@ const PasswordChangeModal = ({ isOpen, onClose }) => {
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+    /**
+     * Clears the password input fields.
+     */
     const clearFields = () => {
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
     };
 
+    /**
+     * Handles the form submission for changing the password.
+     * Validates the input and sends a request to the server.
+     * @param {Event} e - The form submission event.
+     */
     const handleSubmit = async (e) => {
         e.preventDefault();
         
+        // Check if new passwords match
         if (newPassword !== confirmPassword) {
             toast.error('New passwords do not match');
             clearFields();
@@ -42,6 +61,7 @@ const PasswordChangeModal = ({ isOpen, onClose }) => {
 
             const data = await response.json();
             
+            // Check for response errors
             if (!response.ok) {
                 throw new Error(data.error || 'Failed to change password');
             }
@@ -57,6 +77,7 @@ const PasswordChangeModal = ({ isOpen, onClose }) => {
         }
     };
 
+    // If the modal is not open, return null to prevent rendering.
     if (!isOpen) return null;
 
     return (

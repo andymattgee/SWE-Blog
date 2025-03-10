@@ -64,9 +64,14 @@ Git commit messages, if extra window pops up:  cmd + S to save changes, cmd + W 
     - Added context to application to help store user information after login, then used for user profile page
 
     
-
+3/9/25
+    Continuing to use Windsurf (another account)
+    -Edit create new task modal so priority appears as a label
+    -Edited Text Rich Editor so it no longer overlaps with other components
+    -Test Tasks CRUD functionality to make sure everything working properly
+    DOCS ADDED to: Todos.JSX, TodoModal.jsx, TodoItem.jsx, UserProfile.jsx, PasswordChangeModal.jsx
     
-
+HAVE NOT PUSHED FEATURE/TODO YET or PRed
     
 
 

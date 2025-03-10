@@ -5,7 +5,7 @@ import NavBar from '../components/navbar';
 import TodoItem from '../components/TodoItem';
 import TodoModal from '../components/TodoModal';
 
-// Set axios base URL
+// Set axios base URL for API requests
 axios.defaults.baseURL = 'http://localhost:3333';
 
 /**
@@ -16,9 +16,9 @@ axios.defaults.baseURL = 'http://localhost:3333';
  * The component also renders a button to create a new todo, which opens a modal
  * for adding or editing tasks.
  */
-
 const Todos = () => {
     const navigate = useNavigate();
+
     // State to hold todos categorized by their status
     const [todos, setTodos] = useState({
         today: [],
@@ -26,26 +26,31 @@ const Todos = () => {
         overdue: [],
         completed: []
     });
-    
+
     // State to control the visibility of the modal for adding/editing todos
     const [isModalOpen, setIsModalOpen] = useState(false);
-    
+
     // State to hold the todo currently being edited
     const [editingTodo, setEditingTodo] = useState(null);
-    
+
     // State to track which section of todos is currently active (today, pending, overdue)
     const [activeSection, setActiveSection] = useState('today');
-    
+
     // State to control the visibility of completed tasks
     const [showCompleted, setShowCompleted] = useState(false);
-    
+
     // State to manage delete confirmation dialog
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-    
+
     // State to hold the ID of the todo to be deleted
     const [todoToDelete, setTodoToDelete] = useState(null);
 
-    // Function to categorize a todo based on its deadline
+    /**
+     * Function to categorize a todo based on its deadline.
+     * Determines whether the todo is overdue, due today, or pending.
+     * @param {Object} todo - The todo item to categorize.
+     * @returns {string} - The category of the todo.
+     */
     const categorizeTodo = (todo) => {
         if (!todo || !todo.deadlineDate) return 'pending';
 
@@ -53,7 +58,7 @@ const Todos = () => {
 
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        
+
         const deadline = new Date(todo.deadlineDate);
         deadline.setHours(0, 0, 0, 0);
 
@@ -65,13 +70,16 @@ const Todos = () => {
         return 'pending';
     };
 
-    // Function to update todos state
+    /**
+     * Function to update the todos state after adding, editing, or deleting a todo.
+     * @param {Object} newTodo - The new or updated todo item.
+     * @param {boolean} isDelete - Flag indicating if the todo is being deleted.
+     */
     const updateTodosState = (newTodo, isDelete = false) => {
         if (!newTodo) return;
 
         setTodos(prevTodos => {
-            const newTodos = { ...prevTodos };
-            
+            const newTodos = { ...prevTodos };  
             // Remove the todo from all sections first
             Object.keys(newTodos).forEach(section => {
                 newTodos[section] = newTodos[section].filter(todo => todo._id !== newTodo._id);
@@ -87,7 +95,10 @@ const Todos = () => {
         });
     };
 
-    // Function to get todos with deduplication
+    /**
+     * Function to fetch todos from the server and categorize them.
+     * Handles deduplication of todos and updates the state accordingly.
+     */
     const getTodos = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -99,7 +110,6 @@ const Todos = () => {
 
             // Handle the nested data structure
             const fetchedTodos = response.data?.data || {};
-            
             const categorizedTodos = {
                 today: [],
                 pending: [],
@@ -144,12 +154,15 @@ const Todos = () => {
         }
     };
 
-    // Initial data fetch
+    // Initial data fetch on component mount
     useEffect(() => {
         getTodos();
     }, [navigate]);
 
-    // Function to get todos
+    /**
+     * Function to handle form submission for adding or editing todos.
+     * @param {Object} todoData - The data of the todo to be submitted.
+     */
     const handleSubmit = async (todoData) => {
         try {
             const token = localStorage.getItem('token');
@@ -182,11 +195,9 @@ const Todos = () => {
 
             // Refresh the todos list after successful update
             await getTodos();
-            
             // Close modal and reset editing state
             setEditingTodo(null);
             setIsModalOpen(false);
-            
         } catch (error) {
             console.error('Error saving todo:', error);
             if (error.response?.status === 401) {
@@ -196,7 +207,10 @@ const Todos = () => {
         }
     };
 
-    // Function to delete a todo
+    /**
+     * Function to delete a todo by its ID.
+     * @param {string} todoId - The ID of the todo to be deleted.
+     */
     const handleDelete = async (todoId) => {
         if (!todoId) return;
         
@@ -221,7 +235,10 @@ const Todos = () => {
         }
     };
 
-    // Function to toggle the completion status of a todo
+    /**
+     * Function to toggle the completion status of a todo.
+     * @param {string} todoId - The ID of the todo to toggle completion.
+     */
     const handleToggleComplete = async (todoId) => {
         try {
             const token = localStorage.getItem('token');
@@ -262,20 +279,30 @@ const Todos = () => {
         }
     };
 
-    // Function to edit a todo
+    /**
+     * Function to edit a todo.
+     * @param {Object} todo - The todo item to edit.
+     */
     const handleEdit = (todo) => {
         setEditingTodo(todo);
         setIsModalOpen(true);
     };
 
-    // Function to confirm delete action
+    /**
+     * Function to confirm delete action.
+     * @param {string} todoId - The ID of the todo to delete.
+     */
     const confirmDelete = (todoId) => {
         if (!todoId) return;
         setTodoToDelete(todoId);
         setShowDeleteConfirm(true);
     };
 
-    // Render todo items for a section
+    /**
+     * Function to render todo items for a section.
+     * @param {Array} sectionTodos - The todos to render.
+     * @returns {JSX.Element[]} - The rendered todo items.
+     */
     const renderTodoItems = (sectionTodos) => {
         return sectionTodos.map(todo => (
             <TodoItem
