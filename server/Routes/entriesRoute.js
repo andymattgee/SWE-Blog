@@ -3,6 +3,7 @@ const express = require('express'); // Import Express framework
 const router = express.Router(); // Create a new router instance
 const auth = require('../Middleware/auth'); // Import authentication middleware
 const entriesController = require('../Controllers/entriesController'); // Import entries controller
+const upload = require('../middleware/upload'); // Import upload middleware
 
 // Define routes for entry operations
 
@@ -13,13 +14,13 @@ router.get('/', auth, entriesController.getEntries);
 router.get('/:id', auth, entriesController.getEntry);
 
 // POST a new entry for the authenticated user
-router.post('/', auth, entriesController.addEntry);
+router.post('/', auth, upload.single('image'), entriesController.addEntry);
 
 // DELETE a specific entry by ID for the authenticated user
 router.delete('/:id', auth, entriesController.deleteEntry);
 
 // PUT (update) a specific entry by ID for the authenticated user
-router.put('/:id', auth, entriesController.updateEntry);
+router.put('/:id', auth, upload.single('image'), entriesController.updateEntry);
 
 // Export the router for use in the main application
 module.exports = router; // Export the entries route

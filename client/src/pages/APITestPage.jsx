@@ -13,61 +13,70 @@ const APITestPage = () => {
     const jokeURL = "https://icanhazdadjoke.com/";
     //get request with axios
     const handleJokeClick = () => {
-        axios.get(jokeURL,
-            { headers: { Accept: 'application/json' } })
-            .then(res => {
-                // console.log('res joke ->', res.data.joke);
-                setJoke(res.data.joke);
-            })
-    }
+        axios.get(jokeURL, {
+            headers: {
+                Accept: 'application/json'
+            }
+        }).then(res => {
+            setJoke(res.data.joke);
+        }).catch(error => {
+            console.error('Error fetching joke:', error);
+            setJoke('Failed to fetch joke. Please try again.');
+        });
+    };
 
     const getTop10Players = () => {
-        console.log('nba button clicked');
-        axios.get("https://nba-stats-db.herokuapp.com/api/playerdata/topscorers/total/season/2023/",
-            { headers: { Accept: 'application/json' } })
-            .then(res => {
-                // console.log('res NBA ->', res.data.results);
-                const playerList = res.data.results;
-                // const top40 = playerList.forEach((obj,idx) => console.log(obj))
-                const topTen = playerList.filter((el, idx) => idx < 10);
-                console.log('top10 ->', topTen);
-                const filteredList = topTen.map(({ player_name, age, id, team }) => {
-                    return {
-                        name: player_name,
-                        age,
-                        team,
-                        id,
-                    }
-                });
-                console.log("filtered list ->", filteredList);
-                setNbaStat(filteredList);
-            })
+        axios.get("https://nba-stats-db.herokuapp.com/api/playerdata/topscorers/total/season/2023/", {
+            headers: {
+                Accept: 'application/json'
+            }
+        }).then(res => {
+            const playerList = res.data.results;
+            const topTen = playerList.filter((el, idx) => idx < 10);
+            const filteredList = topTen.map(({ player_name, age, id, team }) => ({
+                name: player_name,
+                age,
+                team,
+                id
+            }));
+            setNbaStat(filteredList);
+        }).catch(error => {
+            console.error('Error fetching NBA stats:', error);
+            setNbaStat([]);
+        });
     };
+
+    const handleDropDownChange = event => {
+        setSelectedValue(event.target.value);
+    };
+
+    const getSinglePlayerData = () => {
+        if (!selectedValue) return;
+        
+        try {
+            axios.get(`http://b8c40s8.143.198.70.30.sslip.io/api/PlayerDataTotals/name/${selectedValue}`, {
+                headers: {
+                    Accept: 'application/json'
+                }
+            }).then(res => {
+                if (res.status === 200) {
+                    setSelectedPlayer(res.data);
+                }
+            }).catch(error => {
+                console.error('Error fetching player data:', error);
+                setSelectedPlayer([]);
+            });
+        } catch (error) {
+            console.error('Error in request:', error);
+            setSelectedPlayer([]);
+        }
+    };
+
     const playerList = nbaStat.map(({ name, age, team }, idx) =>
         <div key={idx}>
             <p>{idx + 1}. {name} - Age: {age} - Team: {team}</p>
         </div>
     );
-    const handleDropDownChange = (event) => {
-        setSelectedValue(event.target.value);
-         console.log('selected value ->', selectedValue);
-    };
-    const getSinglePlayerData = () => {
-        console.log('selected player ->', selectedValue);
-        try {
-        axios.get(`http://b8c40s8.143.198.70.30.sslip.io/api/PlayerDataTotals/name/${selectedValue}`,
-            { headers: { Accept: 'application/json' } })
-            .then(res => {
-                if(res.status === 200) console.log('player data->', res.data);
-                setSelectedPlayer(res.data);
-            })
-            .catch(error => {
-                console.log('error ->', error.message);
-            });
-        } catch (error) {
-            console.log('error ->', error.message);
-        }
-    }
     const singlePlayerData = selectedPlayer.map(({ assists, blocks, age, team , points, season, games, playerName}, idx) =>
         <div key={idx}>
             <p>{season}: Team: {team} - Age: {age} - # Games: {games} - Points: {points} - Assists: {assists} - Blocks: {blocks}  </p>

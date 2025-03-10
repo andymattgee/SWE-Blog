@@ -27,6 +27,22 @@ app.use(express.json());
 // Middleware to handle CORS (Cross-Origin Resource Sharing) errors
 app.use(cors());
 
+// Ensure uploads directory exists
+const path = require('path');
+const fs = require('fs');
+const uploadsDir = path.join(__dirname, 'uploads');
+const imagesDir = path.join(uploadsDir, 'images');
+
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+}
+if (!fs.existsSync(imagesDir)) {
+    fs.mkdirSync(imagesDir, { recursive: true });
+}
+
+// Serve static files from the uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Define routes for the application
 app.use('/api/users', userRoute); // User-related routes
 app.use('/entries', entriesRoute); // Blog entries routes
@@ -37,29 +53,30 @@ app.use('*', (req, res) => {
     res.sendStatus(404); // Send a 404 status code for not found
 });
 
-// Global error handler for the application
+// Error handling middleware
 app.use((err, req, res, next) => {
-    const defaultErr = {
+    const errorObj = {
         log: 'Express error handler caught unknown middleware error',
         status: 500,
-        message: { err: 'An error occurred / Global Error handler' },
+        message: { err: 'An error occurred' },
     };
-    const errorObj = Object.assign({}, defaultErr, err); // Merge default error with the actual error
-    console.log(errorObj.log); // Log the error message
-    return res.status(errorObj.status).json(errorObj.message); // Send error response
+    const errorLog = Object.assign({}, errorObj, err);
+    console.error('Server error:', errorLog.log);
+    return res.status(errorLog.status).json(errorLog.message);
 });
 
-// Connect to MongoDB and start the server
+// Connect to MongoDB and start server
 mongoose
-    .connect(DB_URL, { dbName: DB_NAME }) // Connect to the database
+    .connect(DB_URL, { dbName: DB_NAME }) 
     .then(() => {
-        console.log('Connected to MongoDB...'); // Log success message
+        console.info('Connected to MongoDB');
         app.listen(PORT, () => {
-            console.log(`Listening on port ${PORT}...`); // Start the server and log the port
-        });  
+            console.info(`Server listening on port ${PORT}`);
+        });
     })
-    .catch((err) => {
-        console.error('Error connecting to MongoDB:', err.message); // Log any connection errors
+    .catch(err => {
+        console.error('MongoDB connection error:', err);
+        process.exit(1);
     });
 
 module.exports = app; // Export the app for testing or further configuration

@@ -3,7 +3,7 @@ import { Link, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import { useForm } from "react-hook-form";
 import LogLocalStorage from '../components/LogLocalStorage';
 import { useUser } from '../context/UserContext';
-
+import axios from 'axios';
 
 const Login = () => {
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
@@ -17,39 +17,29 @@ const Login = () => {
     navigate("/Signup")
   };
   const onSubmit = async (data) => {
-    // console.log('data.username ->', data.username);
-    // console.log('data.password ->', data.password)
-
-    //from the robot
     try {
-      const response = await fetch('http://localhost:3333/api/users/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+      const response = await axios.post('http://localhost:3333/api/users/login', {
+        username: data.userName,
+        password: data.password
       });
-      const result = await response.json();
-      if (response.ok) {
-        console.log('Login successful:', result);
-        // Save token to localStorage
+      const result = response.data;
+      if (result.success) {
         localStorage.setItem('token', result.token);
-        
-        // Store user data in context
         const userData = {
           userName: result.user.userName,
           entriesCount: 0,
           tasksCount: 0
         };
-
         updateUserData(userData);
         navigate("/Home");
       } else {
         console.error('Login failed:', result);
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Login error:', error);
     }
 
-    reset({username:'', password: ''});
+    reset({userName:'', password: ''});
 }
 
   return (
@@ -68,7 +58,7 @@ const Login = () => {
                             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
                             {...register("userName", { required: true })}
                         />
-                        {errors.username && <span className="text-red-500">Username is required</span>}
+                        {errors.userName && <span className="text-red-500">Username is required</span>}
                     </div>
                     <div className="mb-4">
                         <label htmlFor="password" className="block text-gray-300 font-medium mb-1">Password</label>
@@ -100,4 +90,3 @@ const Login = () => {
 }
 
 export default Login
-

@@ -1,15 +1,25 @@
 import React from 'react';
 import NavBar from '../components/navbar';
 import { useForm } from 'react-hook-form';
+import axios from 'axios';
 
 const ContactPage = () => {
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
+  const [message, setMessage] = React.useState('');
 
-  const onSubmit = async data => {
-    console.log('submitted');
-    console.log('data ->', data);
-    reset({Name:'',Email:'',Message:''});
-  }
+  const onSubmit = async (data) => {
+    try {
+      const result = await axios.post('/api/contact', data);
+      if (result.data.success) {
+        reset();
+        setMessage('Message sent successfully!');
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setMessage('Failed to send message. Please try again.');
+    }
+  };
+
   return (
     <div>
       <NavBar />
@@ -55,7 +65,7 @@ const ContactPage = () => {
                     >
                         Submit Contact Info
                     </button>
-
+          {message && <p className="text-white mt-4">{message}</p>}
         </form>
       </div>
     </div>

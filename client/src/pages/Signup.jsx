@@ -1,42 +1,32 @@
 import React from 'react';
 import { Link, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import { useForm } from "react-hook-form";
-
+import axios from 'axios';
 
 const Signup = () => {
     const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
+    const [error, setError] = React.useState(null);
 
     const handleHomeButton = () => {
         navigate("/Home")
     };
 
-
-    const onSubmit = async data => {
-        const { userName, password } = data; // Destructure only necessary fields
-        console.log('usename and password from client->', { userName, password });
-        //from the robot
+    const onSubmit = async (data) => {
         try {
-            const response = await fetch('http://localhost:3333/api/users/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userName, password })
+            const result = await axios.post('http://localhost:3333/api/users/signup', {
+                userName: data.userName,
+                password: data.password
             });
-            const result = await response.json();
-            if (response.ok) {
-                console.log('Signup successful:', result);
-                // Save token to localStorage or context
-                localStorage.setItem('token', result.token);
-                navigate("/Home");
-            } else {
-                console.error('Signup failed:', result);
+
+            if (result.data.success) {
+                navigate('/');
             }
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Signup error:', error);
+            setError('Error creating account');
         }
-
-        reset({ username: '', password: '' });
-    }
+    };
 
     return (
 
@@ -67,6 +57,7 @@ const Signup = () => {
                         />
                         {errors.password && <span className="text-red-500">Password is required</span>}
                     </div>
+                    {error && <span className="text-red-500">{error}</span>}
                     <button
                         type="submit"
                         className="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"

@@ -7,13 +7,13 @@ const bcrypt = require('bcryptjs'); // Import bcrypt for password comparison
  * @param {Object} res - The response object for sending responses
  */
 const register = async (req, res) => {
-    console.log('req body ->', req.body); // Log the request body
-    const user = new User(req.body); // Create a new user instance
     try {
+        const user = new User(req.body); // Create a new user instance
         await user.save(); // Save the user to the database
         const token = await user.generateAuthToken(); // Generate an authentication token
         res.status(201).send({ user, token }); // Respond with user data and token
     } catch (error) {
+        console.error('Error registering user:', error);
         res.status(400).send(error); // Handle registration errors
     }
 };
@@ -25,7 +25,6 @@ const register = async (req, res) => {
  */
 const login = async (req, res) => {
     try {
-        console.log('req.body from login ->', req.body); // Log the request body
         const user = await User.findByCredentials(req.body.userName, req.body.password); // Authenticate user
         if (!user) {
             return res.status(401).json({ error: 'Invalid username or password' }); // Handle invalid credentials
@@ -33,6 +32,7 @@ const login = async (req, res) => {
         const token = await user.generateAuthToken(); // Generate an authentication token
         res.send({ user, token }); // Respond with user data and token
     } catch (error) {
+        console.error('Error logging in user:', error);
         res.status(400).send({ error: 'Unable to login' }); // Handle login errors
     }
 };
@@ -51,6 +51,7 @@ const logout = async (req, res) => {
         await req.user.save(); // Save the updated user
         res.send(); // Respond with success
     } catch (error) {
+        console.error('Error logging out user:', error);
         res.status(500).send(error); // Handle logout errors
     }
 };

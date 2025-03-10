@@ -27,25 +27,27 @@ const Navbar = () => {
      * Handles user logout by sending a request to the server and clearing local storage.
      */
     const logout = async () => {
-        const token = localStorage.getItem('token'); // Retrieve the authentication token
+        const token = localStorage.getItem('token');
         if (!token) {
-            console.log('no token, returning to login/sign up page');
-            navigate('/'); // Navigate to the home page if no token is found
+            navigate('/');
             return;
         }
     
         try {
-            console.log('user with token, start log out process...');
-            // Send a POST request to log out the user
             await axios.post('http://localhost:3333/api/users/logout', {}, {
                 headers: {
-                    Authorization: `Bearer ${token}` // Include the token in the request headers
+                    Authorization: `Bearer ${token}`
                 }
             });
-            localStorage.clear(); // Clear local storage
-            navigate('/'); // Navigate to the home page after logout
+            
+            localStorage.removeItem('token');
+            localStorage.removeItem('userData');
+            window.location.href = '/';
         } catch (error) {
-            console.error('Error logging out:', error); // Log any errors that occur during logout
+            console.error('Error logging out:', error);
+            localStorage.removeItem('token');
+            localStorage.removeItem('userData');
+            window.location.href = '/';
         }
     }
 
