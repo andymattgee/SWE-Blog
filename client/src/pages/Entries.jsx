@@ -14,7 +14,7 @@
  * 
  * @component
  */
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from "axios";
 import { Link, useNavigate } from 'react-router-dom';
 import NavBar from '../components/navbar';
@@ -96,36 +96,101 @@ const processQuillContent = (content) => {
  * @returns {JSX.Element} The modal component
  */
 const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, editForm, setEditForm }) => {
+    const modalRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (modalRef.current && !modalRef.current.contains(event.target)) {
+                onClose();
+            }
+        };
+
+        if (entry) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [entry, onClose]);
+
     if (!entry) return null;
+    
+    const [imagePreview, setImagePreview] = useState(null);
+    const [newImage, setNewImage] = useState(null);
+    
+    // Define callbacks at the top level of the component
+    const handleProfessionalContentChange = useCallback(
+        debounce((content) => {
+            setEditForm(prev => ({...prev, professionalContent: content}));
+        }, 300),
+        [setEditForm]
+    );
+
+    const handlePersonalContentChange = useCallback(
+        debounce((content) => {
+            setEditForm(prev => ({...prev, personalContent: content}));
+        }, 300),
+        [setEditForm]
+    );
+    
+    useEffect(() => {
+        // Reset image preview when editing mode changes or entry changes
+        if (entry.image) {
+            setImagePreview(null);
+        }
+    }, [isEditing, entry]);
+    
+    const handleImageChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            const selectedImage = e.target.files[0];
+            setNewImage(selectedImage);
+            
+            // Create preview URL
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setImagePreview(e.target.result);
+            };
+            reader.readAsDataURL(selectedImage);
+        }
+    };
+    
+    const handleRemoveImage = () => {
+        setNewImage(null);
+        setImagePreview('removed');
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('title', editForm.title);
+        formData.append('professionalContent', editForm.professionalContent);
+        formData.append('personalContent', editForm.personalContent);
+        
+        if (newImage) {
+            formData.append('image', newImage);
+        } else if (imagePreview === 'removed') {
+            formData.append('image', null);
+        }
+        
+        onEdit(entry._id, formData);
+    };
 
     return (
-        <div 
-            className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
-            onClick={onClose}
-        >
-            <div 
-                className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl"
-                onClick={(e) => e.stopPropagation()}
-            >
-                {/* Modal Header */}
-                <div className="flex justify-between items-start mb-4">
-                    <h2 className="text-2xl font-bold text-center flex-1 text-blue-400">{entry.title}</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+            <div ref={modalRef} className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl">
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-2xl font-bold text-blue-400">{isEditing ? 'Edit Entry' : entry.title}</h2>
                     <button
                         onClick={onClose}
-                        className="text-gray-400 hover:text-gray-200 mt-[-10px] mr-[-10px]"
+                        className="text-gray-400 hover:text-gray-200"
                     >
                         ✕
                     </button>
                 </div>
-                {/* Date Display */}
-                <p className="text-center text-gray-400 mb-4">
-                    {new Date(entry.createdAt).toLocaleDateString()}
-                </p>
-                
-                {/* Modal Content */}
                 {isEditing ? (
-                    // Edit Form
-                    <form onSubmit={onEdit} className="space-y-4">
+                    // Edit Mode
+                    <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-1">Title</label>
                             <input
@@ -135,18 +200,58 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
                                 className="w-full p-2 rounded bg-gray-800 border-gray-700 text-white focus:border-blue-500 focus:ring-blue-500"
                             />
                         </div>
+                        
+                        <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-1">Image</label>
+                            <div className="flex items-center space-x-4">
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                    className="hidden"
+                                    id="edit-image-upload"
+                                />
+                                <label 
+                                    htmlFor="edit-image-upload" 
+                                    className="px-4 py-2 bg-gray-800 text-white rounded cursor-pointer hover:bg-gray-700 border border-gray-700"
+                                >
+                                    {entry.image || imagePreview ? 'Change Image' : 'Add Image'}
+                                </label>
+                                {(entry.image || imagePreview) && imagePreview !== 'removed' && (
+                                    <button
+                                        type="button"
+                                        onClick={handleRemoveImage}
+                                        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                                    >
+                                        Remove
+                                    </button>
+                                )}
+                            </div>
+                            {imagePreview && imagePreview !== 'removed' ? (
+                                <div className="mt-2">
+                                    <img 
+                                        src={imagePreview} 
+                                        alt="Preview" 
+                                        className="max-h-40 rounded border border-gray-700" 
+                                    />
+                                </div>
+                            ) : entry.image && imagePreview !== 'removed' ? (
+                                <div className="mt-2">
+                                    <img 
+                                        src={`http://localhost:3333/uploads/images/${entry.image.split('/').pop()}`} 
+                                        alt={entry.title} 
+                                        className="max-h-40 rounded border border-gray-700" 
+                                    />
+                                </div>
+                            ) : null}
+                        </div>
+                        
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-1">Professional Content</label>
                             <div className="relative" style={{ height: '225px', marginBottom: '20px' }}>
                                 <ReactQuill
                                     value={editForm.professionalContent}
-                                    onChange={useCallback(
-                                        debounce((content) => {
-                                            console.log('Professional content HTML:', content);
-                                            setEditForm(prev => ({...prev, professionalContent: content}));
-                                        }, 300),
-                                        []
-                                    )}
+                                    onChange={handleProfessionalContentChange}
                                     className="todo-quill dark-theme absolute inset-0"
                                     theme="snow"
                                     modules={quillModules}
@@ -161,13 +266,7 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
                             <div className="relative" style={{ height: '225px', marginBottom: '20px' }}>
                                 <ReactQuill
                                     value={editForm.personalContent}
-                                    onChange={useCallback(
-                                        debounce((content) => {
-                                            console.log('Personal content HTML:', content);
-                                            setEditForm(prev => ({...prev, personalContent: content}));
-                                        }, 300),
-                                        []
-                                    )}
+                                    onChange={handlePersonalContentChange}
                                     className="todo-quill dark-theme absolute inset-0"
                                     theme="snow"
                                     modules={quillModules}
@@ -196,6 +295,18 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
                 ) : (
                     // View Mode
                     <div className="space-y-4">
+                        {entry.image && (
+                            <div>
+                                <h3 className="text-lg font-medium text-blue-400 mb-2">Image</h3>
+                                <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                                    <img 
+                                        src={`http://localhost:3333/uploads/images/${entry.image.split('/').pop()}`} 
+                                        alt={entry.title} 
+                                        className="max-w-full max-h-80 mx-auto rounded" 
+                                    />
+                                </div>
+                            </div>
+                        )}
                         <div>
                             <h3 className="text-lg font-medium text-blue-400 mb-2">Professional Content</h3>
                             <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
@@ -275,8 +386,30 @@ const NewEntryModal = ({ onClose, onSubmit, onExitAttempt }) => {
     const [formData, setFormData] = useState({
         title: '',
         professionalContent: '',
-        personalContent: ''
+        personalContent: '',
+        image: null
     });
+    
+    const [imagePreview, setImagePreview] = useState(null);
+    
+    const handleImageChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            const selectedImage = e.target.files[0];
+            setFormData({...formData, image: selectedImage});
+            
+            // Create preview URL
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setImagePreview(e.target.result);
+            };
+            reader.readAsDataURL(selectedImage);
+        }
+    };
+    
+    const handleRemoveImage = () => {
+        setFormData({...formData, image: null});
+        setImagePreview(null);
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -306,6 +439,44 @@ const NewEntryModal = ({ onClose, onSubmit, onExitAttempt }) => {
                             required
                         />
                     </div>
+                    
+                    <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Image</label>
+                        <div className="flex items-center space-x-4">
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                                className="hidden"
+                                id="image-upload"
+                            />
+                            <label 
+                                htmlFor="image-upload" 
+                                className="px-4 py-2 bg-gray-800 text-white rounded cursor-pointer hover:bg-gray-700 border border-gray-700"
+                            >
+                                Choose Image
+                            </label>
+                            {imagePreview && (
+                                <button
+                                    type="button"
+                                    onClick={handleRemoveImage}
+                                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                                >
+                                    Remove
+                                </button>
+                            )}
+                        </div>
+                        {imagePreview && (
+                            <div className="mt-2">
+                                <img 
+                                    src={imagePreview} 
+                                    alt="Preview" 
+                                    className="max-h-40 rounded border border-gray-700" 
+                                />
+                            </div>
+                        )}
+                    </div>
+                    
                     <div>
                         <label className="block text-sm font-medium text-gray-300 mb-1">Professional Content</label>
                         <div className="relative" style={{ height: '225px', marginBottom: '20px' }}>
@@ -453,9 +624,6 @@ const Entries = () => {
                 }
             });
             setSelectedEntry(data[0]);
-            // Log the HTML content received
-            console.log('Received Professional Content:', data[0].professionalContent);
-            console.log('Received Personal Content:', data[0].personalContent);
             
             // Initialize edit form with current entry data
             setEditForm({
@@ -478,27 +646,25 @@ const Entries = () => {
      * @param {Event} e - The form submission event
      * @throws {Error} If the API request fails
      */
-    const handleEdit = async (e) => {
-        e.preventDefault();
+    const handleEdit = async (id, formData) => {
         try {
             const token = localStorage.getItem('token');
-            // Ensure we're sending the raw HTML content
-            const formData = {
-                title: editForm.title,
-                professionalContent: editForm.professionalContent || '',
-                personalContent: editForm.personalContent || ''
-            };
-            await axios.put(`http://localhost:3333/entries/${selectedEntry._id}`, formData, {
+            
+            const response = await axios.put(`http://localhost:3333/entries/${id}`, formData, {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
                 }
             });
-            setIsEditing(false);
-            getEntries();
-            getEntry(selectedEntry._id);
+            
+            if (response.data.success) {
+                getEntries(); // Refresh entries list
+                setIsEditing(false);
+                setIsModalOpen(false); // Close the modal using the state setter
+            }
         } catch (error) {
             console.error('Error updating entry:', error);
-            setError('Error updating entry');
+            setError('Error updating entry. Please try again.');
         }
     };
 
@@ -535,23 +701,36 @@ const Entries = () => {
      * @param {Object} formData - The form data for the new entry
      * @throws {Error} If the API request fails
      */
-    const handleNewEntrySubmit = async (formData) => {
+    const handleAddEntry = async (formData) => {
         try {
-            // Log the HTML content being sent
-            console.log('Professional Content HTML:', formData.professionalContent);
-            console.log('Personal Content HTML:', formData.personalContent);
-            
             const token = localStorage.getItem('token');
-            const response = await axios.post('http://localhost:3333/entries', formData, {
+            
+            // Create a FormData object for the multipart/form-data request
+            const form = new FormData();
+            form.append('title', formData.title);
+            form.append('professionalContent', formData.professionalContent || '');
+            form.append('personalContent', formData.personalContent || '');
+            
+            // Append image if it exists
+            if (formData.image) {
+                form.append('image', formData.image);
+            }
+            
+            const response = await axios.post('http://localhost:3333/entries', form, {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
                 }
             });
-            setIsNewEntryModalOpen(false);
-            getEntries();
+            
+            if (response.data.success) {
+                getEntries(); // Refresh entries list
+                setIsNewEntryModalOpen(false);
+                setIsExitConfirmationOpen(false);
+            }
         } catch (error) {
-            console.error('Error creating entry:', error);
-            setError('Error creating entry');
+            console.error('Error adding entry:', error);
+            setError('Error adding entry. Please try again.');
         }
     };
 
@@ -580,26 +759,34 @@ const Entries = () => {
      * 
      * @returns {Array<JSX.Element>} Array of entry cards
      */
-    const newEntries = entries.map(({ _id, title, createdAt }) => {
-        const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-        });
-
+    const gridItems = entries.map((entry) => {
+        const formattedDate = new Date(entry.createdAt).toLocaleDateString();
         return (
-            <div className="w-full flex items-center justify-center" key={_id}>
-                <div onClick={() => getEntry(_id)} className="w-full px-2 mb-4 cursor-pointer">
-                    <div className="p-[2px] rounded-lg bg-purple-600">
-                        <article className="max-w-sm w-full bg-gray-900 rounded-lg shadow-lg overflow-hidden text-white hover:bg-purple-900 transition duration-300 ease-in-out transform hover:scale-105 h-64">
-                            <div className="max-w-full">
-                                {mountains && <img src={mountains} alt="mountains" className="max-w-full h-auto opacity-80" />}
-                            </div>
-                            <div className="flex flex-col gap-1 mt-4 px-4">
-                                <h2 className="text-base font-semibold text-white truncate">{title}</h2>
-                            </div>
-                            <div className="mt-2 p-2 flex justify-center">
-                                <h3 className="text-sm text-gray-300">{formattedDate}</h3>
+            <div key={entry._id} className="col-span-1" onClick={() => getEntry(entry._id)}>
+                <div className="h-full">
+                    <div className="bg-gray-900 border border-purple-500 rounded-lg shadow-lg overflow-hidden h-full transition duration-300 hover:bg-purple-900 hover:shadow-xl cursor-pointer">
+                        <article className="h-full flex flex-col">
+                            {entry.image ? (
+                                <div className="h-40 overflow-hidden">
+                                    <img 
+                                        src={`http://localhost:3333/uploads/images/${entry.image.split('/').pop()}`} 
+                                        alt={entry.title}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                            ) : (
+                                <div className="h-40 bg-gradient-to-br from-purple-900 to-blue-900 flex items-center justify-center">
+                                    <span className="text-4xl text-white opacity-30">✍️</span>
+                                </div>
+                            )}
+                            <div className="p-4 flex-grow flex flex-col">
+                                <h3 className="text-lg font-bold text-white mb-2 line-clamp-2">{entry.title}</h3>
+                                <div className="text-gray-300 text-sm line-clamp-3 flex-grow">
+                                    <div dangerouslySetInnerHTML={{ __html: processQuillContent(entry.professionalContent) }} />
+                                </div>
+                                <div className="mt-2 p-2 flex justify-center">
+                                    <h3 className="text-sm text-gray-300">{formattedDate}</h3>
+                                </div>
                             </div>
                         </article>
                     </div>
@@ -634,15 +821,24 @@ const Entries = () => {
                 </div>
 
                 {/* Entries Container */}
-                <div className={`${isListView ? "flex flex-col items-center w-full" : "grid grid-cols-5 gap-4"}`}>
+                <div className={`${isListView ? "flex flex-col items-center w-full" : "grid grid-cols-4 gap-3"}`}>
                     {isListView ? (
                         // List View
                         <div className="w-full max-w-lg text-center">
                             <ul className="list-none w-full">
                                 {entries.slice().reverse().map((entry) => (
                                     <li key={entry._id} className="mb-4 p-4 border border-purple-500 rounded-lg bg-gray-900 text-white shadow-lg hover:bg-purple-900 transition duration-300 cursor-pointer" onClick={() => getEntry(entry._id)}>
-                                        <div className="flex justify-between w-full">
-                                            <span className="text-lg font-bold">{entry.title}</span>
+                                        <div className="flex justify-between items-center w-full">
+                                            <div className="flex items-center space-x-3">
+                                                {entry.image && (
+                                                    <img 
+                                                        src={`http://localhost:3333/uploads/images/${entry.image.split('/').pop()}`} 
+                                                        alt={entry.title}
+                                                        className="w-10 h-10 rounded object-cover"
+                                                    />
+                                                )}
+                                                <span className="text-lg font-bold">{entry.title}</span>
+                                            </div>
                                             <span className="text-sm text-gray-300 block">{new Date(entry.createdAt).toLocaleDateString()}</span>
                                         </div>
                                     </li>
@@ -651,7 +847,7 @@ const Entries = () => {
                         </div>
                     ) : (
                         // Grid View
-                        newEntries
+                        gridItems
                     )}
                 </div>
             </div>
@@ -677,7 +873,7 @@ const Entries = () => {
             {isNewEntryModalOpen && (
                 <NewEntryModal
                     onClose={() => setIsNewEntryModalOpen(false)}
-                    onSubmit={handleNewEntrySubmit}
+                    onSubmit={handleAddEntry}
                     onExitAttempt={() => setIsExitConfirmationOpen(true)}
                 />
             )}

@@ -38,6 +38,7 @@ const getEntries = async (req, res) => {
         });
     } catch (error) {
         // Handle errors during fetching
+        console.error('Error fetching entries:', error);
         res.status(500).json({ message: 'Error fetching entries' });
     }
 };
@@ -58,6 +59,7 @@ const getEntry = async (req, res) => {
         res.status(200).json([entry]); // Respond with the found entry
     } catch (error) {
         // Handle errors during fetching
+        console.error('Error fetching entry:', error);
         res.status(500).json({ message: 'Error fetching entry' });
     }
 };
@@ -68,7 +70,6 @@ const getEntry = async (req, res) => {
  * @param {Object} res - The response object
  */
 const addEntry = async (req, res) => {
-    console.log('Received new entry request with body:', req.body);
     try {
         // Check for required fields in the request body
         if (!req.body.title || !req.body.professionalContent) {
@@ -77,9 +78,12 @@ const addEntry = async (req, res) => {
             });
         }
 
-        // Log the content before sanitization
-        console.log('Professional content before sanitization:', req.body.professionalContent);
-        console.log('Personal content before sanitization:', req.body.personalContent);
+        // Handle image file if uploaded
+        let imagePath = null;
+        if (req.file) {
+            // Create the path to the uploaded image
+            imagePath = `/uploads/images/${req.file.filename}`;
+        }
 
         // Create a new entry object with sanitized content
         const newEntry = {
@@ -88,20 +92,19 @@ const addEntry = async (req, res) => {
             personalContent: DOMPurify.sanitize(req.body.personalContent, { ...purifyConfig }),
             date: req.body.date,
             createdAt: req.body.createdAt,
-            image: req.body.image,
+            image: imagePath,
             user: req.user._id, // Associate entry with authenticated user
         };
 
-        // Log the content after sanitization
-        console.log('Professional content after sanitization:', newEntry.professionalContent);
-        console.log('Personal content after sanitization:', newEntry.personalContent);
         const entry = await Entry.create(newEntry); // Save the new entry to the database
         return res.status(201).json({
             success: true,
             message: `${entry.title} created inside DB`,
+            entry: entry
         });        
     } catch (error) {
         // Handle errors during adding
+        console.error('Error adding entry to DB:', error);
         return res.status(500).json({
             message: 'Error adding entry to DB',
             errorMessage: error.message
@@ -129,6 +132,7 @@ const deleteEntry = async (req, res) => {
         });
     } catch (error) {
         // Handle errors during deletion
+        console.error('Error deleting entry in DB:', error);
         return res.status(500).json({
             message: 'Error deleting entry in DB',
             errorMessage: error.message
@@ -143,33 +147,48 @@ const deleteEntry = async (req, res) => {
  */
 const updateEntry = async (req, res) => {
     const { id } = req.params; // Extract the entry ID from the request parameters
-    const { title, professionalContent, personalContent } = req.body; // Extract fields to update
-
     try {
-        // Find and update the entry, ensuring it belongs to the authenticated user
-        const updatedEntry = await Entry.findOneAndUpdate(
-            { _id: id, user: req.user._id },
-            { 
-                title,
-                professionalContent: DOMPurify.sanitize(professionalContent, { ...purifyConfig }),
-                personalContent: DOMPurify.sanitize(personalContent, { ...purifyConfig })
-            },
-            { new: true, runValidators: true } // Return the updated entry and run validators
-        );
-        
-        if (!updatedEntry) {
-            return res.status(404).json({ message: `Entry ${id} not found` });
+        // Find the entry by ID and user ID
+        const entry = await Entry.findOne({ _id: id, user: req.user._id });
+        if (!entry) {
+            return res.status(404).json({
+                message: 'Entry not found'
+            });
         }
-        
-        res.status(200).json({
+
+        // Handle image file if uploaded
+        let imagePath = entry.image; // Keep existing image by default
+        if (req.file) {
+            // Create the path to the uploaded image
+            imagePath = `/uploads/images/${req.file.filename}`;
+        } else if (req.body.image === null) {
+            // If image is explicitly set to null, remove the image
+            imagePath = null;
+        }
+
+        // Update the entry with sanitized content
+        const updatedEntry = await Entry.findByIdAndUpdate(
+            id,
+            {
+                title: req.body.title,
+                professionalContent: DOMPurify.sanitize(req.body.professionalContent, { ...purifyConfig }),
+                personalContent: DOMPurify.sanitize(req.body.personalContent, { ...purifyConfig }),
+                date: req.body.date,
+                image: imagePath
+            },
+            { new: true } // Return the updated document
+        );
+
+        return res.status(200).json({
             success: true,
-            message: `${updatedEntry.title} updated successfully`,
-            data: updatedEntry // Respond with the updated entry data
+            message: 'Entry updated successfully',
+            entry: updatedEntry
         });
     } catch (error) {
         // Handle errors during updating
-        res.status(500).json({
-            message: 'Error updating entry in DB',
+        console.error('Error updating entry:', error);
+        return res.status(500).json({
+            message: 'Error updating entry',
             errorMessage: error.message
         });
     }
