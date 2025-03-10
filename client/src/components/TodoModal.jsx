@@ -3,7 +3,22 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import '../styles/todo-quill.css';
 
+/**
+ * TodoModal component handles the creation and editing of todos.
+ * It displays a modal with a form to input task details including task name,
+ * notes, priority, and deadline date.
+ *
+ * Props:
+ * - isOpen: Boolean to control modal visibility.
+ * - onClose: Function to close the modal.
+ * - onSubmit: Function to handle the submission of the form.
+ * - editingTodo: Object containing the todo data to be edited, if applicable.
+ */
 const TodoModal = ({ isOpen, onClose, onSubmit, editingTodo }) => {
+    /**
+     * Initializes form data for the todo.
+     * @returns {Object} Initial form data for task input.
+     */
     const getInitialFormData = () => ({
         task: '',
         notes: '',
@@ -14,6 +29,9 @@ const TodoModal = ({ isOpen, onClose, onSubmit, editingTodo }) => {
 
     const [formData, setFormData] = useState(getInitialFormData());
 
+    /**
+     * Configuration for the Quill text editor toolbar.
+     */
     const quillModules = {
         toolbar: [
             ['bold', 'italic', 'underline', 'strike'],
@@ -22,11 +40,18 @@ const TodoModal = ({ isOpen, onClose, onSubmit, editingTodo }) => {
         ]
     };
 
+    /**
+     * Formats supported by the Quill text editor.
+     */
     const quillFormats = [
         'bold', 'italic', 'underline', 'strike',
         'list', 'bullet'
     ];
 
+    /**
+     * useEffect to handle the loading of editingTodo data when the modal opens.
+     * It sets the form data based on the todo being edited.
+     */
     useEffect(() => {
         if (editingTodo) {
             const deadlineDate = new Date(editingTodo.deadlineDate);
@@ -46,9 +71,13 @@ const TodoModal = ({ isOpen, onClose, onSubmit, editingTodo }) => {
         }
     }, [editingTodo, isOpen]);
 
+    /**
+     * Handles the form submission for creating or updating a todo.
+     * @param {Event} e - The form submission event.
+     */
     const handleSubmit = (e) => {
         e.preventDefault();
-        
+
         const deadlineDate = new Date(formData.deadlineDate);
         if (isNaN(deadlineDate.getTime())) {
             console.error('Invalid date');
@@ -67,11 +96,15 @@ const TodoModal = ({ isOpen, onClose, onSubmit, editingTodo }) => {
         onClose();
     };
 
+    /**
+     * Handles closing the modal and resetting form data.
+     */
     const handleClose = () => {
         setFormData(getInitialFormData());
         onClose();
     };
 
+    // If the modal is not open, return null to prevent rendering.
     if (!isOpen) return null;
 
     return (
