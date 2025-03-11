@@ -69,9 +69,30 @@ Git commit messages, if extra window pops up:  cmd + S to save changes, cmd + W 
     -Edit create new task modal so priority appears as a label
     -Edited Text Rich Editor so it no longer overlaps with other components
     -Test Tasks CRUD functionality to make sure everything working properly
+
+    pic upload functional
+    currently pics loaded onto local machine
+    eventually use s3 bucket or some online bucket
+    edit image functional
+    image displayed on individual entry
+    image displayed on grids and list view for preview
+    image saved in server side uploads/images
+
     DOCS ADDED to: Todos.JSX, TodoModal.jsx, TodoItem.jsx, UserProfile.jsx, PasswordChangeModal.jsx
     
-HAVE NOT PUSHED FEATURE/TODO YET or PRed
+3/10/25
+    Continuing to use Windsurf
+    -Fixed issue with entry image upload
+    - Added toaster notifications for edit,add,delete entry, add pic to entry.
+    - Comments to server/upload middleware
+    - Changes to Home page w new sections for about me, technologies I work with, projects (templates)
+    - Footer component, created, only added to home page this time
+    - Look to add animations, something like GSAP? 
+
+3/11/25
+    API or front page, idea to use ChatGPT API: news page
+    upon rendering, you get news about current events, sports, AI, tech, etc.
+
     
 
 

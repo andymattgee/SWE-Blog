@@ -18,12 +18,14 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from "axios";
 import { Link, useNavigate } from 'react-router-dom';
 import NavBar from '../components/navbar';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import fallImage from '../../public/images/fall-bg.jpg';
 import beachIMG from '../../public/images/beach.jpg';
 import mountains from '../../public/images/mountains.jpg';
 import { BsGrid3X3Gap, BsListUl } from 'react-icons/bs';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
 import '../styles/todo-quill.css';
 import '../styles/quill-viewer.css';
 
@@ -150,6 +152,7 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
             const reader = new FileReader();
             reader.onload = (e) => {
                 setImagePreview(e.target.result);
+                toast.info('Image selected. Save the entry to upload it.');
             };
             reader.readAsDataURL(selectedImage);
         }
@@ -401,6 +404,7 @@ const NewEntryModal = ({ onClose, onSubmit, onExitAttempt }) => {
             const reader = new FileReader();
             reader.onload = (e) => {
                 setImagePreview(e.target.result);
+                toast.info('Image selected. Save the entry to upload it.');
             };
             reader.readAsDataURL(selectedImage);
         }
@@ -658,12 +662,14 @@ const Entries = () => {
             });
             
             if (response.data.success) {
+                toast.success('Entry updated successfully!');
                 getEntries(); // Refresh entries list
                 setIsEditing(false);
                 setIsModalOpen(false); // Close the modal using the state setter
             }
         } catch (error) {
             console.error('Error updating entry:', error);
+            toast.error('Error updating entry. Please try again.');
             setError('Error updating entry. Please try again.');
         }
     };
@@ -679,17 +685,21 @@ const Entries = () => {
     const handleDelete = async (id) => {
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`http://localhost:3333/entries/${id}`, {
+            const response = await axios.delete(`http://localhost:3333/entries/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
-            setIsModalOpen(false);
-            setIsDeleteModalOpen(false);
-            getEntries();
+
+            if (response.data.success) {
+                toast.success('Entry deleted successfully!');
+                getEntries();
+                setIsModalOpen(false);
+                setIsDeleteModalOpen(false); // Close the delete confirmation modal
+            }
         } catch (error) {
             console.error('Error deleting entry:', error);
-            setError('Error deleting entry');
+            toast.error('Error deleting entry. Please try again.');
         }
     };
 
@@ -724,13 +734,14 @@ const Entries = () => {
             });
             
             if (response.data.success) {
+                toast.success('Entry created successfully!');
                 getEntries(); // Refresh entries list
                 setIsNewEntryModalOpen(false);
                 setIsExitConfirmationOpen(false);
             }
         } catch (error) {
             console.error('Error adding entry:', error);
-            setError('Error adding entry. Please try again.');
+            toast.error('Error adding entry. Please try again.');
         }
     };
 
@@ -798,6 +809,18 @@ const Entries = () => {
     return (
         <div className="min-h-screen [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
             <NavBar />
+            <ToastContainer 
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+            />
             <div className="px-6 flex flex-col items-center">
                 <br />
                 
