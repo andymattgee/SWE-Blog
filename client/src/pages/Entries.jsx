@@ -25,7 +25,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import fallImage from '../../public/images/fall-bg.jpg';
 import beachIMG from '../../public/images/beach.jpg';
 import mountains from '../../public/images/mountains.jpg';
-import { BsGrid3X3Gap, BsListUl } from 'react-icons/bs';
+import { BsGrid3X3Gap, BsListUl, BsPlusLg } from 'react-icons/bs';
+import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import '../styles/todo-quill.css';
 import '../styles/quill-viewer.css';
 
@@ -183,7 +184,7 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
         <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
             <div ref={modalRef} className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl">
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold text-blue-400">{isEditing ? 'Edit Entry' : entry.title}</h2>
+                    <h2 className="text-2xl font-bold text-blue-400 mx-auto">{isEditing ? 'Edit Entry' : entry.title}</h2>
                     <button
                         onClick={onClose}
                         className="text-gray-400 hover:text-gray-200"
@@ -250,7 +251,7 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
                         </div>
                         
                         <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-1">Professional Content</label>
+                            <label className="block text-sm font-medium text-gray-300 mb-1 text-center">Professional Content</label>
                             <div className="relative" style={{ height: '225px', marginBottom: '20px' }}>
                                 <ReactQuill
                                     value={editForm.professionalContent}
@@ -265,7 +266,7 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
                             </div>
                         </div>
                         <div className="mt-12">
-                            <label className="block text-sm font-medium text-gray-300 mb-1">Personal Content</label>
+                            <label className="block text-sm font-medium text-gray-300 mb-1 text-center">Personal Content</label>
                             <div className="relative" style={{ height: '225px', marginBottom: '20px' }}>
                                 <ReactQuill
                                     value={editForm.personalContent}
@@ -300,7 +301,6 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
                     <div className="space-y-4">
                         {entry.image && (
                             <div>
-                                <h3 className="text-lg font-medium text-blue-400 mb-2">Image</h3>
                                 <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
                                     <img 
                                         src={`http://localhost:3333/uploads/images/${entry.image.split('/').pop()}`} 
@@ -311,13 +311,13 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
                             </div>
                         )}
                         <div>
-                            <h3 className="text-lg font-medium text-blue-400 mb-2">Professional Content</h3>
+                            <h3 className="text-lg font-medium text-blue-400 mb-2 text-center">Professional Content</h3>
                             <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
                                 <div className="todo-quill dark-theme ql-editor" dangerouslySetInnerHTML={{ __html: processQuillContent(entry.professionalContent) }} />
                             </div>
                         </div>
                         <div className="mt-6">
-                            <h3 className="text-lg font-medium text-blue-400 mb-2">Personal Content</h3>
+                            <h3 className="text-lg font-medium text-blue-400 mb-2 text-center">Personal Content</h3>
                             <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
                                 <div className="todo-quill dark-theme ql-editor" dangerouslySetInnerHTML={{ __html: processQuillContent(entry.personalContent) }} />
                             </div>
@@ -325,15 +325,17 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
                         <div className="flex justify-end space-x-4 mt-6">
                             <button
                                 onClick={() => setIsEditing(true)}
-                                className="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg border border-blue-400"
+                                className="p-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg border border-blue-400"
+                                title="Edit"
                             >
-                                Edit
+                                <FaEdit size={20} />
                             </button>
                             <button
                                 onClick={() => onDelete(entry._id)}
-                                className="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg border border-red-400"
+                                className="p-2 text-white bg-red-600 hover:bg-red-700 rounded-lg border border-red-400"
+                                title="Delete"
                             >
-                                Delete
+                                <FaTrashAlt size={20} />
                             </button>
                         </div>
                     </div>
@@ -482,7 +484,7 @@ const NewEntryModal = ({ onClose, onSubmit, onExitAttempt }) => {
                     </div>
                     
                     <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Professional Content</label>
+                        <label className="block text-sm font-medium text-gray-300 mb-1 text-center">Professional Content</label>
                         <div className="relative" style={{ height: '225px', marginBottom: '20px' }}>
                             <ReactQuill
                                 value={formData.professionalContent}
@@ -496,7 +498,7 @@ const NewEntryModal = ({ onClose, onSubmit, onExitAttempt }) => {
                         </div>
                     </div>
                     <div className="mt-12">
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Personal Content</label>
+                        <label className="block text-sm font-medium text-gray-300 mb-1 text-center">Personal Content</label>
                         <div className="relative" style={{ height: '225px', marginBottom: '20px' }}>
                             <ReactQuill
                                 value={formData.personalContent}
@@ -837,9 +839,10 @@ const Entries = () => {
 
                     {/* New Entry Button */}
                     <button
-                        className="text-white bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm w-1/6 px-3 py-1.5 text-center transition duration-300"
-                        onClick={() => setIsNewEntryModalOpen(true)}>
-                        Make New Entry
+                        className="text-white bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm p-3 text-center transition duration-300"
+                        onClick={() => setIsNewEntryModalOpen(true)}
+                        title="Make New Entry">
+                        <BsPlusLg size={20} />
                     </button>
                 </div>
 
