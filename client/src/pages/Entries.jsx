@@ -299,6 +299,9 @@ const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, edit
                 ) : (
                     // View Mode
                     <div className="space-y-4">
+                        <div className="text-center text-gray-300 text-sm mb-4">
+                            {new Date(entry.createdAt).toLocaleDateString()}
+                        </div>
                         {entry.image && (
                             <div>
                                 <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
@@ -793,12 +796,12 @@ const Entries = () => {
                                 </div>
                             )}
                             <div className="p-4 flex-grow flex flex-col">
-                                <h3 className="text-lg font-bold text-white mb-2 line-clamp-2">{entry.title}</h3>
+                                <div className="flex justify-between items-center mb-2">
+                                    <h3 className="text-lg font-bold text-white truncate pr-2">{entry.title}</h3>
+                                    <span className="text-xs text-gray-300 whitespace-nowrap">{formattedDate}</span>
+                                </div>
                                 <div className="text-gray-300 text-sm line-clamp-3 flex-grow">
                                     <div dangerouslySetInnerHTML={{ __html: processQuillContent(entry.professionalContent) }} />
-                                </div>
-                                <div className="mt-2 p-2 flex justify-center">
-                                    <h3 className="text-sm text-gray-300">{formattedDate}</h3>
                                 </div>
                             </div>
                         </article>
