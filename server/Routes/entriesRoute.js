@@ -3,7 +3,7 @@ const express = require('express'); // Import Express framework
 const router = express.Router(); // Create a new router instance
 const auth = require('../Middleware/auth'); // Import authentication middleware
 const entriesController = require('../Controllers/entriesController'); // Import entries controller
-const upload = require('../middleware/upload'); // Import upload middleware
+const upload = require('../Middleware/upload'); // Import upload middleware
 
 // Define routes for entry operations
 

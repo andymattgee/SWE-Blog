@@ -1,50 +1,79 @@
-const jwt = require('jsonwebtoken'); // Import jsonwebtoken for verifying tokens
-const User = require('../Models/user'); // Import the User model
+const jwt = require('jsonwebtoken');
+const User = require('../Models/user');
+require('dotenv').config();
 
 /**
- * Middleware function to authenticate users based on JWT.
- * It checks for a valid token in the Authorization header,
- * verifies the token, and attaches the user to the request object.
- * If authentication fails, it sends a 401 Unauthorized response.
- * 
+ * Authentication middleware for verifying JWT tokens.
+ * This middleware extracts the JWT token from the Authorization header,
+ * verifies it, and attaches the authenticated user to the request object.
+ *
  * @param {Object} req - The request object
  * @param {Object} res - The response object
  * @param {Function} next - The next middleware function
  */
 const auth = async (req, res, next) => {
-  try {
-    // Extract the token from the Authorization header
-    const token = req.header('Authorization').replace('Bearer ', '');
-    
-    // Check if the token is present
-    if (!token) {
-      throw new Error('No token found');
+    try {
+        // Extract the token from the Authorization header
+        const authHeader = req.headers.authorization;
+        console.log('Auth middleware - Authorization header:', authHeader ? 'Present' : 'Missing');
+        
+        if (!authHeader) {
+            return res.status(401).json({
+                message: 'Authentication failed. No token provided.'
+            });
+        }
+        
+        // Extract the token (remove 'Bearer ' prefix if present)
+        const token = authHeader.startsWith('Bearer ') ? authHeader.substring(7) : authHeader;
+        console.log('Auth middleware - Token found:', token.substring(0, 10) + '...');
+        
+        if (!token) {
+            return res.status(401).json({
+                message: 'Authentication failed. No token provided.'
+            });
+        }
+        
+        // Verify the token using the JWT_SECRET from environment variables
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        console.log('Auth middleware - Token decoded, user ID:', decoded._id);
+        
+        // Find the user by ID from the decoded token
+        const user = await User.findById(decoded._id);
+        
+        if (!user) {
+            console.log('Auth middleware - User not found for ID:', decoded._id);
+            return res.status(401).json({
+                message: 'Authentication failed. User not found.'
+            });
+        }
+        
+        // Attach the authenticated user to the request object
+        req.user = user;
+        console.log('Auth middleware - User authenticated:', user.username);
+        
+        // Proceed to the next middleware or route handler
+        next();
+    } catch (error) {
+        console.error('Auth middleware - Error:', error.message);
+        console.error('Auth middleware - Error stack:', error.stack);
+        
+        // Handle specific JWT errors
+        if (error.name === 'JsonWebTokenError') {
+            return res.status(401).json({
+                message: 'Authentication failed. Invalid token.'
+            });
+        } else if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({
+                message: 'Authentication failed. Token expired.'
+            });
+        }
+        
+        // Handle other errors
+        return res.status(500).json({
+            message: 'Authentication failed. Server error.',
+            error: error.message
+        });
     }
-    
-    // Verify the token and decode the payload
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default_jwt_secret');
-
-    // Check if the decoded token contains a valid user ID
-    if (!decoded._id) {
-      throw new Error('Token does not contain a valid user ID');
-    }
-    
-    // Find the user associated with the token
-    const user = await User.findOne({ _id: decoded._id, 'tokens.token': token });
-
-    // Check if the user exists
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    // Attach the token and user to the request object for use in subsequent middleware/routes
-    req.token = token;
-    req.user = user;
-    next(); // Call the next middleware function
-  } catch (error) {
-    // Send a 401 Unauthorized response if authentication fails
-    res.status(401).send({ error: 'Please authenticate.' });
-  }
 };
 
-module.exports = auth; // Export the auth middleware for use in other parts of the application
+module.exports = auth;
