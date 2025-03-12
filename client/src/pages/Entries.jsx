@@ -85,266 +85,39 @@ const processQuillContent = (content) => {
 };
 
 /**
- * Modal Component for displaying and editing entry details
+ * EntryImage Component for rendering entry images with error handling
  * 
  * @param {Object} props - Component props
- * @param {Object} props.entry - The entry to display
- * @param {Function} props.onClose - Function to close the modal
- * @param {Function} props.onEdit - Function to handle edit submission
- * @param {Function} props.onDelete - Function to handle entry deletion
- * @param {boolean} props.isEditing - Whether the modal is in edit mode
- * @param {Function} props.setIsEditing - Function to toggle edit mode
- * @param {Object} props.editForm - The form data for editing
- * @param {Function} props.setEditForm - Function to update form data
- * @returns {JSX.Element} The modal component
+ * @param {string} props.imagePath - Path to the image
+ * @returns {JSX.Element} The image element
  */
-const Modal = ({ entry, onClose, onEdit, onDelete, isEditing, setIsEditing, editForm, setEditForm }) => {
-    const modalRef = useRef(null);
+const EntryImage = ({ imagePath }) => {
+    const [error, setError] = useState(false);
 
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (modalRef.current && !modalRef.current.contains(event.target)) {
-                onClose();
-            }
-        };
+    if (!imagePath) {
+        return <div className="w-full h-full bg-gray-700 rounded flex items-center justify-center">
+            <span className="text-gray-400">No image</span>
+        </div>;
+    }
 
-        if (entry) {
-            document.addEventListener('mousedown', handleClickOutside);
-        }
+    // Handle both S3 and local image paths
+    const imageUrl = imagePath.startsWith('http') 
+        ? imagePath 
+        : `http://localhost:3333/uploads/images/${imagePath}`;
 
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [entry, onClose]);
-
-    if (!entry) return null;
-    
-    const [imagePreview, setImagePreview] = useState(null);
-    const [newImage, setNewImage] = useState(null);
-    
-    // Define callbacks at the top level of the component
-    const handleProfessionalContentChange = useCallback(
-        debounce((content) => {
-            setEditForm(prev => ({...prev, professionalContent: content}));
-        }, 300),
-        [setEditForm]
-    );
-
-    const handlePersonalContentChange = useCallback(
-        debounce((content) => {
-            setEditForm(prev => ({...prev, personalContent: content}));
-        }, 300),
-        [setEditForm]
-    );
-    
-    useEffect(() => {
-        // Reset image preview when editing mode changes or entry changes
-        if (entry.image) {
-            setImagePreview(null);
-        }
-    }, [isEditing, entry]);
-    
-    const handleImageChange = (e) => {
-        if (e.target.files && e.target.files[0]) {
-            const selectedImage = e.target.files[0];
-            setNewImage(selectedImage);
-            
-            // Create preview URL
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                setImagePreview(e.target.result);
-                toast.info('Image selected. Save the entry to upload it.');
-            };
-            reader.readAsDataURL(selectedImage);
-        }
-    };
-    
-    const handleRemoveImage = () => {
-        setNewImage(null);
-        setImagePreview('removed');
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const formData = new FormData();
-        formData.append('title', editForm.title);
-        formData.append('professionalContent', editForm.professionalContent);
-        formData.append('personalContent', editForm.personalContent);
-        
-        if (newImage) {
-            formData.append('image', newImage);
-        } else if (imagePreview === 'removed') {
-            formData.append('image', null);
-        }
-        
-        onEdit(entry._id, formData);
-    };
+    if (error) {
+        return <div className="w-full h-full bg-gray-700 rounded flex items-center justify-center">
+            <span className="text-gray-400">Failed to load image</span>
+        </div>;
+    }
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
-            <div ref={modalRef} className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl">
-                <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold text-blue-400 mx-auto">{isEditing ? 'Edit Entry' : entry.title}</h2>
-                    <button
-                        onClick={onClose}
-                        className="text-gray-400 hover:text-gray-200"
-                    >
-                        ✕
-                    </button>
-                </div>
-                {isEditing ? (
-                    // Edit Mode
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-1">Title</label>
-                            <input
-                                type="text"
-                                value={editForm.title}
-                                onChange={(e) => setEditForm({...editForm, title: e.target.value})}
-                                className="w-full p-2 rounded bg-gray-800 border-gray-700 text-white focus:border-blue-500 focus:ring-blue-500"
-                            />
-                        </div>
-                        
-                        <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-1">Image</label>
-                            <div className="flex items-center space-x-4">
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleImageChange}
-                                    className="hidden"
-                                    id="edit-image-upload"
-                                />
-                                <label 
-                                    htmlFor="edit-image-upload" 
-                                    className="px-4 py-2 bg-gray-800 text-white rounded cursor-pointer hover:bg-gray-700 border border-gray-700"
-                                >
-                                    {entry.image || imagePreview ? 'Change Image' : 'Add Image'}
-                                </label>
-                                {(entry.image || imagePreview) && imagePreview !== 'removed' && (
-                                    <button
-                                        type="button"
-                                        onClick={handleRemoveImage}
-                                        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-                                    >
-                                        Remove
-                                    </button>
-                                )}
-                            </div>
-                            {imagePreview && imagePreview !== 'removed' ? (
-                                <div className="mt-2">
-                                    <img 
-                                        src={imagePreview} 
-                                        alt="Preview" 
-                                        className="max-h-40 rounded border border-gray-700" 
-                                    />
-                                </div>
-                            ) : entry.image && imagePreview !== 'removed' ? (
-                                <div className="mt-2">
-                                    <img 
-                                        src={`http://localhost:3333/uploads/images/${entry.image.split('/').pop()}`} 
-                                        alt={entry.title} 
-                                        className="max-h-40 rounded border border-gray-700" 
-                                    />
-                                </div>
-                            ) : null}
-                        </div>
-                        
-                        <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-1 text-center">Professional Content</label>
-                            <div className="relative" style={{ height: '225px', marginBottom: '20px' }}>
-                                <ReactQuill
-                                    value={editForm.professionalContent}
-                                    onChange={handleProfessionalContentChange}
-                                    className="todo-quill dark-theme absolute inset-0"
-                                    theme="snow"
-                                    modules={quillModules}
-                                    formats={quillFormats}
-                                    style={{ height: '100%' }}
-                                    preserveWhitespace={true}
-                                />
-                            </div>
-                        </div>
-                        <div className="mt-12">
-                            <label className="block text-sm font-medium text-gray-300 mb-1 text-center">Personal Content</label>
-                            <div className="relative" style={{ height: '225px', marginBottom: '20px' }}>
-                                <ReactQuill
-                                    value={editForm.personalContent}
-                                    onChange={handlePersonalContentChange}
-                                    className="todo-quill dark-theme absolute inset-0"
-                                    theme="snow"
-                                    modules={quillModules}
-                                    formats={quillFormats}
-                                    style={{ height: '100%' }}
-                                    preserveWhitespace={true}
-                                />
-                            </div>
-                        </div>
-                        <div className="flex justify-end space-x-4 mt-6">
-                            <button
-                                type="button"
-                                onClick={() => setIsEditing(false)}
-                                className="px-4 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                type="submit"
-                                className="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg border border-blue-400"
-                            >
-                                Save Changes
-                            </button>
-                        </div>
-                    </form>
-                ) : (
-                    // View Mode
-                    <div className="space-y-4">
-                        <div className="text-center text-gray-300 text-sm mb-4">
-                            {new Date(entry.createdAt).toLocaleDateString()}
-                        </div>
-                        {entry.image && (
-                            <div>
-                                <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                                    <img 
-                                        src={`http://localhost:3333/uploads/images/${entry.image.split('/').pop()}`} 
-                                        alt={entry.title} 
-                                        className="max-w-full max-h-80 mx-auto rounded" 
-                                    />
-                                </div>
-                            </div>
-                        )}
-                        <div>
-                            <h3 className="text-lg font-medium text-blue-400 mb-2 text-center">Professional Content</h3>
-                            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                                <div className="todo-quill dark-theme ql-editor" dangerouslySetInnerHTML={{ __html: processQuillContent(entry.professionalContent) }} />
-                            </div>
-                        </div>
-                        <div className="mt-6">
-                            <h3 className="text-lg font-medium text-blue-400 mb-2 text-center">Personal Content</h3>
-                            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                                <div className="todo-quill dark-theme ql-editor" dangerouslySetInnerHTML={{ __html: processQuillContent(entry.personalContent) }} />
-                            </div>
-                        </div>
-                        <div className="flex justify-end space-x-4 mt-6">
-                            <button
-                                onClick={() => setIsEditing(true)}
-                                className="p-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg border border-blue-400"
-                                title="Edit"
-                            >
-                                <FaEdit size={20} />
-                            </button>
-                            <button
-                                onClick={() => onDelete(entry._id)}
-                                className="p-2 text-white bg-red-600 hover:bg-red-700 rounded-lg border border-red-400"
-                                title="Delete"
-                            >
-                                <FaTrashAlt size={20} />
-                            </button>
-                        </div>
-                    </div>
-                )}
-            </div>
-        </div>
+        <img
+            src={imageUrl}
+            alt="Entry"
+            className="w-full h-full object-cover rounded"
+            onError={() => setError(true)}
+        />
     );
 };
 
@@ -390,39 +163,52 @@ const DeleteConfirmationModal = ({ onConfirm, onCancel }) => {
  * @param {Function} props.onExitAttempt - Function to handle exit attempts
  * @returns {JSX.Element} The modal component
  */
-const NewEntryModal = ({ onClose, onSubmit, onExitAttempt }) => {
-    const [formData, setFormData] = useState({
-        title: '',
-        professionalContent: '',
-        personalContent: '',
-        image: null
-    });
-    
+const NewEntryModal = ({ isOpen, onClose, onSubmit }) => {
     const [imagePreview, setImagePreview] = useState(null);
-    
+    const [professionalContent, setProfessionalContent] = useState('');
+    const [personalContent, setPersonalContent] = useState('');
+    const [image, setImage] = useState(null);
+
     const handleImageChange = (e) => {
-        if (e.target.files && e.target.files[0]) {
-            const selectedImage = e.target.files[0];
-            setFormData({...formData, image: selectedImage});
-            
-            // Create preview URL
+        const file = e.target.files[0];
+        if (file) {
+            setImage(file);
             const reader = new FileReader();
-            reader.onload = (e) => {
-                setImagePreview(e.target.result);
-                toast.info('Image selected. Save the entry to upload it.');
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
             };
-            reader.readAsDataURL(selectedImage);
+            reader.readAsDataURL(file);
         }
     };
-    
-    const handleRemoveImage = () => {
-        setFormData({...formData, image: null});
-        setImagePreview(null);
-    };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        onSubmit(formData);
+        
+        // Get form data
+        const formData = {
+            title: e.target.title.value,
+            professionalContent: professionalContent,
+            personalContent: personalContent,
+            image: image
+        };
+
+        // Validate required fields
+        if (!formData.title || !formData.professionalContent) {
+            toast.error('Title and professional content are required');
+            return;
+        }
+
+        try {
+            await onSubmit(formData);
+            // Reset form
+            setImagePreview(null);
+            setImage(null);
+            setProfessionalContent('');
+            setPersonalContent('');
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            toast.error('Failed to create entry');
+        }
     };
 
     return (
@@ -431,7 +217,7 @@ const NewEntryModal = ({ onClose, onSubmit, onExitAttempt }) => {
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold text-blue-400">Create New Entry</h2>
                     <button
-                        onClick={onExitAttempt}
+                        onClick={onClose}
                         className="text-gray-400 hover:text-gray-200"
                     >
                         ✕
@@ -442,25 +228,25 @@ const NewEntryModal = ({ onClose, onSubmit, onExitAttempt }) => {
                         <label className="block text-sm font-medium text-gray-300 mb-1">Title</label>
                         <input
                             type="text"
-                            value={formData.title}
-                            onChange={(e) => setFormData({...formData, title: e.target.value})}
+                            id="title"
+                            name="title"
                             className="w-full p-2 rounded bg-gray-800 border-gray-700 text-white focus:border-blue-500 focus:ring-blue-500"
                             required
                         />
                     </div>
-                    
+
                     <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Image</label>
-                        <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-4 mb-4">
                             <input
                                 type="file"
+                                id="image"
+                                name="image"
                                 accept="image/*"
                                 onChange={handleImageChange}
                                 className="hidden"
-                                id="image-upload"
                             />
                             <label 
-                                htmlFor="image-upload" 
+                                htmlFor="image" 
                                 className="px-4 py-2 bg-gray-800 text-white rounded cursor-pointer hover:bg-gray-700 border border-gray-700"
                             >
                                 Choose Image
@@ -468,7 +254,10 @@ const NewEntryModal = ({ onClose, onSubmit, onExitAttempt }) => {
                             {imagePreview && (
                                 <button
                                     type="button"
-                                    onClick={handleRemoveImage}
+                                    onClick={() => {
+                                        setImagePreview(null);
+                                        setImage(null);
+                                    }}
                                     className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
                                 >
                                     Remove
@@ -476,55 +265,55 @@ const NewEntryModal = ({ onClose, onSubmit, onExitAttempt }) => {
                             )}
                         </div>
                         {imagePreview && (
-                            <div className="mt-2">
+                            <div className="mt-2 mb-4">
                                 <img 
                                     src={imagePreview} 
                                     alt="Preview" 
-                                    className="max-h-40 rounded border border-gray-700" 
+                                    className="max-h-48 rounded object-cover"
                                 />
                             </div>
                         )}
                     </div>
-                    
+
                     <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1 text-center">Professional Content</label>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Professional Content</label>
                         <div className="relative" style={{ height: '225px', marginBottom: '20px' }}>
                             <ReactQuill
-                                value={formData.professionalContent}
-                                onChange={(content) => setFormData({...formData, professionalContent: content})}
+                                value={professionalContent}
+                                onChange={setProfessionalContent}
                                 className="todo-quill dark-theme absolute inset-0"
                                 theme="snow"
                                 modules={quillModules}
                                 formats={quillFormats}
-                                style={{ height: '100%' }}
                             />
                         </div>
                     </div>
-                    <div className="mt-12">
-                        <label className="block text-sm font-medium text-gray-300 mb-1 text-center">Personal Content</label>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Personal Content</label>
                         <div className="relative" style={{ height: '225px', marginBottom: '20px' }}>
                             <ReactQuill
-                                value={formData.personalContent}
-                                onChange={(content) => setFormData({...formData, personalContent: content})}
+                                value={personalContent}
+                                onChange={setPersonalContent}
                                 className="todo-quill dark-theme absolute inset-0"
                                 theme="snow"
                                 modules={quillModules}
                                 formats={quillFormats}
-                                style={{ height: '100%' }}
                             />
                         </div>
                     </div>
+
                     <div className="flex justify-end space-x-4 mt-6">
                         <button
                             type="button"
-                            onClick={onExitAttempt}
+                            onClick={onClose}
                             className="px-4 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg border border-blue-400"
+                            className="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
                         >
                             Create Entry
                         </button>
@@ -583,99 +372,85 @@ const Entries = () => {
     const [selectedEntry, setSelectedEntry] = useState(null); // Currently selected entry for modal
     const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
     const [isEditing, setIsEditing] = useState(false); // Edit mode state
-    const [editForm, setEditForm] = useState({
-        title: '',
-        professionalContent: '',
-        personalContent: ''
-    });
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [entryToDelete, setEntryToDelete] = useState(null);
     const [isNewEntryModalOpen, setIsNewEntryModalOpen] = useState(false);
     const [isExitConfirmationOpen, setIsExitConfirmationOpen] = useState(false);
 
-    /**
-     * Fetches all entries from the server and updates the entries state.
-     * Handles authentication using the stored token.
-     * 
-     * @async
-     * @throws {Error} If the API request fails
-     */
-    const getEntries = async () => {
+    const fetchEntries = useCallback(async () => {
         try {
             const token = localStorage.getItem('token');
-            const { data } = await axios.get('http://localhost:3333/entries', {
+            const response = await axios.get('http://localhost:3333/entries', {
                 headers: {
-                    Accept: 'application/json',
                     Authorization: `Bearer ${token}`
                 }
             });
-            setEntries(data.data);
+            
+            if (!response.data.success) {
+                throw new Error('Failed to fetch entries');
+            }
+            
+            // Use data field from response
+            setEntries(response.data.data || []);
         } catch (error) {
             console.error('Error fetching entries:', error);
-            setError("Error fetching entries in FrontEnd. Please fix your shit");
+            toast.error('Failed to load entries');
+            setEntries([]);
         }
-    };
+    }, []);
 
     /**
-     * Fetches a single entry by ID and opens the modal to display it.
-     * 
-     * @async
-     * @param {string} id - The ID of the entry to fetch
-     * @throws {Error} If the API request fails
+     * Fetches a single entry by ID
      */
     const getEntry = async (id) => {
         try {
             const token = localStorage.getItem('token');
-            const { data } = await axios.get(`http://localhost:3333/entries/${id}`, {
+            const response = await axios.get(`http://localhost:3333/entries/${id}`, {
                 headers: {
-                    Accept: 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${token}`
                 }
             });
-            setSelectedEntry(data[0]);
-            
-            // Initialize edit form with current entry data
-            setEditForm({
-                title: data[0].title,
-                professionalContent: data[0].professionalContent,
-                personalContent: data[0].personalContent
-            });
+
+            if (!response.data.success || !response.data.data) {
+                throw new Error('Entry not found');
+            }
+
+            // Set the selected entry and open the modal
+            setSelectedEntry(response.data.data);
             setIsModalOpen(true);
         } catch (error) {
             console.error('Error fetching entry:', error);
-            setError('Error fetching entry details');
+            toast.error('Failed to load entry');
         }
     };
 
-    /**
-     * Handles the submission of the edit form.
-     * Updates the entry on the server and refreshes the data.
-     * 
-     * @async
-     * @param {Event} e - The form submission event
-     * @throws {Error} If the API request fails
-     */
-    const handleEdit = async (id, formData) => {
+    const handleUpdateEntry = async (id, formData) => {
         try {
             const token = localStorage.getItem('token');
-            
             const response = await axios.put(`http://localhost:3333/entries/${id}`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data'
                 }
             });
-            
-            if (response.data.success) {
-                toast.success('Entry updated successfully!');
-                getEntries(); // Refresh entries list
-                setIsEditing(false);
-                setIsModalOpen(false); // Close the modal using the state setter
+
+            if (!response.data.success) {
+                throw new Error(response.data.message || 'Failed to update entry');
             }
+
+            // Update the entries list with the updated entry
+            setEntries(entries.map(entry => 
+                entry._id === id ? response.data.data : entry
+            ));
+
+            // Close the modal and show success message
+            setIsModalOpen(false);
+            setIsEditing(false);
+            toast.success('Entry updated successfully');
         } catch (error) {
             console.error('Error updating entry:', error);
-            toast.error('Error updating entry. Please try again.');
-            setError('Error updating entry. Please try again.');
+            toast.error(error.message || 'Failed to update entry');
+            throw error;
         }
     };
 
@@ -698,62 +473,61 @@ const Entries = () => {
 
             if (response.data.success) {
                 toast.success('Entry deleted successfully!');
-                getEntries();
+                fetchEntries(); // Refresh entries list to get correct sorting
                 setIsModalOpen(false);
                 setIsDeleteModalOpen(false); // Close the delete confirmation modal
+            } else {
+                throw new Error(response.data.message || 'Failed to delete entry');
             }
         } catch (error) {
             console.error('Error deleting entry:', error);
-            toast.error('Error deleting entry. Please try again.');
+            toast.error(error.message || 'Failed to delete entry');
         }
     };
 
     /**
-     * Handles the submission of a new entry.
-     * Creates the entry on the server and refreshes the data.
-     * 
-     * @async
-     * @param {Object} formData - The form data for the new entry
-     * @throws {Error} If the API request fails
+     * Handles adding a new entry
      */
     const handleAddEntry = async (formData) => {
         try {
             const token = localStorage.getItem('token');
             
-            // Create a FormData object for the multipart/form-data request
-            const form = new FormData();
-            form.append('title', formData.title);
-            form.append('professionalContent', formData.professionalContent || '');
-            form.append('personalContent', formData.personalContent || '');
+            // Create FormData object for file upload
+            const data = new FormData();
+            data.append('title', formData.title);
+            data.append('professionalContent', formData.professionalContent);
+            data.append('personalContent', formData.personalContent || '');
+            data.append('date', new Date().toISOString());
             
-            // Append image if it exists
+            // Only append image if one was selected
             if (formData.image) {
-                form.append('image', formData.image);
+                data.append('image', formData.image);
             }
-            
-            const response = await axios.post('http://localhost:3333/entries', form, {
+
+            const response = await axios.post('http://localhost:3333/entries', data, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data'
                 }
             });
-            
+
             if (response.data.success) {
                 toast.success('Entry created successfully!');
-                getEntries(); // Refresh entries list
                 setIsNewEntryModalOpen(false);
-                setIsExitConfirmationOpen(false);
+                fetchEntries(); // Refresh entries list to get correct sorting
+            } else {
+                throw new Error(response.data.message || 'Failed to create entry');
             }
         } catch (error) {
             console.error('Error adding entry:', error);
-            toast.error('Error adding entry. Please try again.');
+            toast.error(error.message || 'Failed to create entry');
         }
     };
 
     // Effect to persist view mode preference and fetch entries
     useEffect(() => {
         localStorage.setItem('isListView', isListView.toString());
-        getEntries();
+        fetchEntries();
     }, [isListView]);
 
     /**
@@ -778,17 +552,13 @@ const Entries = () => {
     const gridItems = entries.map((entry) => {
         const formattedDate = new Date(entry.createdAt).toLocaleDateString();
         return (
-            <div key={entry._id} className="col-span-1" onClick={() => getEntry(entry._id)}>
+            <div key={entry._id} className="col-span-1" onClick={() => handleEntryClick(entry)}>
                 <div className="h-full">
                     <div className="bg-gray-900 border border-purple-500 rounded-lg shadow-lg overflow-hidden h-full transition duration-300 hover:bg-purple-900 hover:shadow-xl cursor-pointer">
                         <article className="h-full flex flex-col">
                             {entry.image ? (
                                 <div className="h-40 overflow-hidden">
-                                    <img 
-                                        src={`http://localhost:3333/uploads/images/${entry.image.split('/').pop()}`} 
-                                        alt={entry.title}
-                                        className="w-full h-full object-cover"
-                                    />
+                                    <EntryImage imagePath={entry.image} />
                                 </div>
                             ) : (
                                 <div className="h-40 bg-gradient-to-br from-purple-900 to-blue-900 flex items-center justify-center">
@@ -809,7 +579,267 @@ const Entries = () => {
                 </div>
             </div>
         );
-    }).reverse();
+    });
+
+    const handleEntryClick = async (entry) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:3333/entries/${entry._id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (!response.data.success || !response.data.data) {
+                throw new Error('Entry not found');
+            }
+
+            const entryData = response.data.data;
+            setSelectedEntry(entryData);
+            setIsModalOpen(true);
+        } catch (error) {
+            console.error('Error fetching entry:', error);
+            toast.error('Failed to load entry');
+        }
+    };
+
+    const entryList = entries.map((entry) => {
+        return (
+            <div
+                key={entry._id}
+                onClick={() => handleEntryClick(entry)}
+                className="bg-gray-800 rounded-lg p-6 cursor-pointer hover:bg-gray-700 transition-colors duration-200 border border-purple-500/30 hover:border-purple-500/50"
+            >
+                <div className="flex flex-col h-full">
+                    <h3 className="text-xl font-semibold mb-4 text-blue-400">{entry.title}</h3>
+                    <div className="flex-grow">
+                        <div className="mb-4">
+                            <div className="todo-quill dark-theme ql-editor" dangerouslySetInnerHTML={{ __html: processQuillContent(entry.professionalContent) }} />
+                        </div>
+                        {entry.image && (
+                            <div className="mb-4">
+                                <EntryImage imagePath={entry.image} />
+                            </div>
+                        )}
+                    </div>
+                    <div className="text-sm text-gray-400 mt-4">
+                        {new Date(entry.date).toLocaleDateString()}
+                    </div>
+                </div>
+            </div>
+        );
+    });
+
+    const ViewModal = ({ entry, isOpen, onClose, onEdit, onDelete }) => {
+        if (!entry) return null;
+
+        return (
+            <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+                <div className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl">
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-2xl font-bold text-blue-400">{entry.title}</h2>
+                        <button onClick={onClose} className="text-gray-400 hover:text-gray-200">✕</button>
+                    </div>
+                    <div className="space-y-6">
+                        {entry.image && (
+                            <div className="mb-6">
+                                <EntryImage imagePath={entry.image} />
+                            </div>
+                        )}
+                        <div>
+                            <h3 className="text-lg font-medium text-blue-400 mb-2">Professional Content</h3>
+                            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                                <div className="todo-quill dark-theme ql-editor" dangerouslySetInnerHTML={{ __html: processQuillContent(entry.professionalContent) }} />
+                            </div>
+                        </div>
+                        {entry.personalContent && (
+                            <div>
+                                <h3 className="text-lg font-medium text-blue-400 mb-2">Personal Content</h3>
+                                <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                                    <div className="todo-quill dark-theme ql-editor" dangerouslySetInnerHTML={{ __html: processQuillContent(entry.personalContent) }} />
+                                </div>
+                            </div>
+                        )}
+                        <div className="flex justify-between items-center mt-6">
+                            <div className="text-sm text-gray-400">
+                                {new Date(entry.date).toLocaleDateString()}
+                            </div>
+                            <div className="flex space-x-4">
+                                <button
+                                    onClick={onEdit}
+                                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    onClick={() => onDelete(entry._id)}
+                                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const EditModal = ({ entry, isOpen, onClose }) => {
+        const [title, setTitle] = useState('');
+        const [professionalContent, setProfessionalContent] = useState('');
+        const [personalContent, setPersonalContent] = useState('');
+        const [imagePreview, setImagePreview] = useState(null);
+        const [image, setImage] = useState(null);
+
+        // Update state when entry changes
+        useEffect(() => {
+            if (entry) {
+                setTitle(entry.title);
+                setProfessionalContent(entry.professionalContent);
+                setPersonalContent(entry.personalContent || '');
+                setImagePreview(entry.image);
+            }
+        }, [entry]);
+
+        const handleImageChange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                setImage(file);
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setImagePreview(reader.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
+        const handleSubmit = async (e) => {
+            e.preventDefault();
+            
+            if (!title || !professionalContent) {
+                toast.error('Title and professional content are required');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('professionalContent', professionalContent);
+            formData.append('personalContent', personalContent);
+            if (image) {
+                formData.append('image', image);
+            }
+
+            try {
+                await handleUpdateEntry(entry._id, formData);
+            } catch (error) {
+                console.error('Error updating entry:', error);
+                toast.error('Failed to update entry');
+            }
+        };
+
+        return (
+            <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+                <div className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl">
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-2xl font-bold text-blue-400">Edit Entry</h2>
+                        <button onClick={onClose} className="text-gray-400 hover:text-gray-200">✕</button>
+                    </div>
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-1">Title</label>
+                            <input
+                                type="text"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                className="w-full p-2 rounded bg-gray-800 border border-gray-700 text-white focus:border-blue-500 focus:ring-blue-500"
+                                required
+                            />
+                        </div>
+
+                        <div>
+                            <div className="flex items-center space-x-4 mb-4">
+                                <input
+                                    type="file"
+                                    id="image"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                    className="hidden"
+                                />
+                                <label 
+                                    htmlFor="image" 
+                                    className="px-4 py-2 bg-gray-800 text-white rounded cursor-pointer hover:bg-gray-700 border border-gray-700"
+                                >
+                                    Choose Image
+                                </label>
+                                {imagePreview && (
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setImagePreview(null);
+                                            setImage(null);
+                                        }}
+                                        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                                    >
+                                        Remove
+                                    </button>
+                                )}
+                            </div>
+                            {imagePreview && (
+                                <div className="mt-2 mb-4">
+                                    <EntryImage imagePath={imagePreview} />
+                                </div>
+                            )}
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-1">Professional Content</label>
+                            <div className="relative" style={{ height: '225px', marginBottom: '20px' }}>
+                                <ReactQuill
+                                    value={professionalContent}
+                                    onChange={setProfessionalContent}
+                                    className="todo-quill dark-theme absolute inset-0"
+                                    theme="snow"
+                                    modules={quillModules}
+                                    formats={quillFormats}
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-1">Personal Content</label>
+                            <div className="relative" style={{ height: '225px', marginBottom: '20px' }}>
+                                <ReactQuill
+                                    value={personalContent}
+                                    onChange={setPersonalContent}
+                                    className="todo-quill dark-theme absolute inset-0"
+                                    theme="snow"
+                                    modules={quillModules}
+                                    formats={quillFormats}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end space-x-4 mt-6">
+                            <button
+                                type="button"
+                                onClick={onClose}
+                                className="px-4 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                className="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
+                            >
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        );
+    };
 
     return (
         <div className="min-h-screen [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
@@ -850,71 +880,58 @@ const Entries = () => {
                 </div>
 
                 {/* Entries Container */}
-                <div className={`${isListView ? "flex flex-col items-center w-full" : "grid grid-cols-4 gap-3"}`}>
-                    {isListView ? (
-                        // List View
-                        <div className="w-full max-w-lg text-center">
-                            <ul className="list-none w-full">
-                                {entries.slice().reverse().map((entry) => (
-                                    <li key={entry._id} className="mb-4 p-4 border border-purple-500 rounded-lg bg-gray-900 text-white shadow-lg hover:bg-purple-900 transition duration-300 cursor-pointer" onClick={() => getEntry(entry._id)}>
-                                        <div className="flex justify-between items-center w-full">
-                                            <div className="flex items-center space-x-3">
-                                                {entry.image && (
-                                                    <img 
-                                                        src={`http://localhost:3333/uploads/images/${entry.image.split('/').pop()}`} 
-                                                        alt={entry.title}
-                                                        className="w-10 h-10 rounded object-cover"
-                                                    />
-                                                )}
-                                                <span className="text-lg font-bold">{entry.title}</span>
-                                            </div>
-                                            <span className="text-sm text-gray-300 block">{new Date(entry.createdAt).toLocaleDateString()}</span>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ) : (
-                        // Grid View
-                        gridItems
-                    )}
-                </div>
+                {entries.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-64">
+                        <i className="fas fa-book-open text-4xl mb-4 text-gray-400"></i>
+                        <p className="text-gray-500">No entries found. Create your first entry!</p>
+                    </div>
+                ) : isListView ? (
+                    // List View
+                    <div className="w-full max-w-lg text-center">
+                        <ul className="list-none w-full">
+                            {entryList}
+                        </ul>
+                    </div>
+                ) : (
+                    // Grid View
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {gridItems}
+                    </div>
+                )}
             </div>
 
             {/* Entry Modal */}
-            {isModalOpen && (
-                <Modal
+            {isModalOpen && !isEditing && (
+                <ViewModal
                     entry={selectedEntry}
+                    isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
-                    onEdit={handleEdit}
+                    onEdit={() => setIsEditing(true)}
                     onDelete={(id) => {
                         setEntryToDelete(id);
                         setIsDeleteModalOpen(true);
                     }}
-                    isEditing={isEditing}
-                    setIsEditing={setIsEditing}
-                    editForm={editForm}
-                    setEditForm={setEditForm}
+                />
+            )}
+
+            {/* Edit Modal */}
+            {isModalOpen && isEditing && (
+                <EditModal
+                    entry={selectedEntry}
+                    isOpen={isModalOpen}
+                    onClose={() => {
+                        setIsModalOpen(false);
+                        setIsEditing(false);
+                    }}
                 />
             )}
 
             {/* New Entry Modal */}
             {isNewEntryModalOpen && (
                 <NewEntryModal
+                    isOpen={isNewEntryModalOpen}
                     onClose={() => setIsNewEntryModalOpen(false)}
                     onSubmit={handleAddEntry}
-                    onExitAttempt={() => setIsExitConfirmationOpen(true)}
-                />
-            )}
-
-            {/* Exit Confirmation Modal */}
-            {isExitConfirmationOpen && (
-                <ExitConfirmationModal
-                    onConfirm={() => {
-                        setIsExitConfirmationOpen(false);
-                        setIsNewEntryModalOpen(false);
-                    }}
-                    onCancel={() => setIsExitConfirmationOpen(false)}
                 />
             )}
 
