@@ -95,27 +95,41 @@ const EntryImage = ({ imagePath }) => {
     const [error, setError] = useState(false);
 
     if (!imagePath) {
-        return <div className="w-full h-full bg-gray-700 rounded flex items-center justify-center">
-            <span className="text-gray-400">No image</span>
-        </div>;
+        return (
+            <div className="w-full h-48 bg-gray-800 rounded-lg flex items-center justify-center">
+                <span className="text-gray-400">No image</span>
+            </div>
+        );
     }
 
-    // Handle both S3 and local image paths
-    const imageUrl = imagePath.startsWith('http') 
-        ? imagePath 
-        : `http://localhost:3333/uploads/images/${imagePath}`;
+    // Handle local preview (data URL)
+    if (typeof imagePath === 'object' && imagePath.isLocal) {
+        return (
+            <img 
+                src={imagePath.url} 
+                alt="Entry preview" 
+                className="w-full h-48 object-cover rounded-lg"
+                onError={() => setError(true)}
+            />
+        );
+    }
+    
+    // Handle S3 URL
+    const imageUrl = typeof imagePath === 'object' ? imagePath.url : imagePath;
 
     if (error) {
-        return <div className="w-full h-full bg-gray-700 rounded flex items-center justify-center">
-            <span className="text-gray-400">Failed to load image</span>
-        </div>;
+        return (
+            <div className="w-full h-48 bg-gray-800 rounded-lg flex items-center justify-center">
+                <span className="text-gray-400">Failed to load image</span>
+            </div>
+        );
     }
 
     return (
         <img
             src={imageUrl}
             alt="Entry"
-            className="w-full h-full object-cover rounded"
+            className="w-full h-48 object-cover rounded-lg"
             onError={() => setError(true)}
         />
     );
@@ -774,17 +788,35 @@ const EditModal = ({ entry, isOpen, onClose, onUpdate }) => {
             setTitle(entry.title);
             setProfessionalContent(entry.professionalContent);
             setPersonalContent(entry.personalContent || '');
-            setImagePreview(entry.image);
+            // Set image preview with proper format for existing S3 images
+            setImagePreview(entry.image ? { url: entry.image, isLocal: false } : null);
+            setImage(null); // Reset any previously selected file
         }
     }, [entry]);
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                toast.error('Please select an image file');
+                return;
+            }
+            // Validate file size (5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                toast.error('Image size must be less than 5MB');
+                return;
+            }
+            
             setImage(file);
             const reader = new FileReader();
             reader.onloadend = () => {
-                setImagePreview(reader.result);
+                setImagePreview({ url: reader.result, isLocal: true });
+            };
+            reader.onerror = () => {
+                toast.error('Failed to read image file');
+                setImage(null);
+                setImagePreview(null);
             };
             reader.readAsDataURL(file);
         }
