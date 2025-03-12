@@ -1,11 +1,10 @@
 /**
  * Entries Component
  * 
- * A React component that displays a list of blog entries in either grid or list view.
+ * A React component that displays a list of blog entries in grid view.
  * Provides functionality to view, create, edit, and delete entries through a modal interface.
  * 
  * Features:
- * - Toggle between grid and list view
  * - View entry details in a modal
  * - Edit entries inline
  * - Delete entries with confirmation
@@ -25,8 +24,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import fallImage from '../../public/images/fall-bg.jpg';
 import beachIMG from '../../public/images/beach.jpg';
 import mountains from '../../public/images/mountains.jpg';
-import { BsGrid3X3Gap, BsListUl, BsPlusLg } from 'react-icons/bs';
+import { BsPlusLg } from 'react-icons/bs';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
+import { AiOutlineHome } from 'react-icons/ai';
 import '../styles/todo-quill.css';
 import '../styles/quill-viewer.css';
 
@@ -364,18 +364,12 @@ const Entries = () => {
     // State management
     const [entries, setEntries] = useState([]); // List of all entries
     const [error, setError] = useState(null); // Error state for handling API errors
-    const [isListView, setIsListView] = useState(() => {
-        // Initialize view mode from localStorage or default to false
-        const storedState = localStorage.getItem('isListView');
-        return storedState === 'true';
-    });
     const [selectedEntry, setSelectedEntry] = useState(null); // Currently selected entry for modal
     const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
     const [isEditing, setIsEditing] = useState(false); // Edit mode state
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [entryToDelete, setEntryToDelete] = useState(null);
     const [isNewEntryModalOpen, setIsNewEntryModalOpen] = useState(false);
-    const [isExitConfirmationOpen, setIsExitConfirmationOpen] = useState(false);
 
     const fetchEntries = useCallback(async () => {
         try {
@@ -524,11 +518,10 @@ const Entries = () => {
         }
     };
 
-    // Effect to persist view mode preference and fetch entries
+    // Effect to fetch entries
     useEffect(() => {
-        localStorage.setItem('isListView', isListView.toString());
         fetchEntries();
-    }, [isListView]);
+    }, []);
 
     /**
      * Navigates to the NewEntry page for creating a new entry.
@@ -603,267 +596,6 @@ const Entries = () => {
         }
     };
 
-    const entryList = entries.map((entry) => {
-        return (
-            <div
-                key={entry._id}
-                onClick={() => handleEntryClick(entry)}
-                className="bg-gray-800 rounded-lg p-6 cursor-pointer hover:bg-gray-700 transition-colors duration-200 border border-purple-500/30 hover:border-purple-500/50"
-            >
-                <div className="flex flex-col h-full">
-                    <h3 className="text-xl font-semibold mb-4 text-blue-400">{entry.title}</h3>
-                    <div className="flex-grow">
-                        <div className="mb-4">
-                            <div className="todo-quill dark-theme ql-editor" dangerouslySetInnerHTML={{ __html: processQuillContent(entry.professionalContent) }} />
-                        </div>
-                        {entry.image && (
-                            <div className="mb-4">
-                                <EntryImage imagePath={entry.image} />
-                            </div>
-                        )}
-                    </div>
-                    <div className="text-sm text-gray-400 mt-4">
-                        {new Date(entry.date).toLocaleDateString()}
-                    </div>
-                </div>
-            </div>
-        );
-    });
-
-    const ViewModal = ({ entry, isOpen, onClose, onEdit, onDelete }) => {
-        const modalRef = useRef(null);
-
-        useEffect(() => {
-            const handleClickOutside = (event) => {
-                if (modalRef.current && !modalRef.current.contains(event.target)) {
-                    onClose();
-                }
-            };
-
-            document.addEventListener('mousedown', handleClickOutside);
-            return () => document.removeEventListener('mousedown', handleClickOutside);
-        }, [onClose]);
-
-        if (!entry) return null;
-
-        const formattedDate = entry.createdAt 
-            ? new Date(entry.createdAt).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            })
-            : null;
-
-        return (
-            <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
-                <div ref={modalRef} className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl">
-                    <div className="flex justify-between items-center mb-2">
-                        <h2 className="text-2xl font-bold text-blue-400">{entry.title}</h2>
-                        <button onClick={onClose} className="text-gray-400 hover:text-gray-200">✕</button>
-                    </div>
-                    
-                    {formattedDate && (
-                        <div className="text-center text-gray-400 text-sm mb-6">
-                            {formattedDate}
-                        </div>
-                    )}
-
-                    <div className="space-y-6">
-                        {entry.image && (
-                            <div className="mb-6">
-                                <EntryImage imagePath={entry.image} />
-                            </div>
-                        )}
-                        <div>
-                            <h3 className="text-lg font-medium text-blue-400 mb-2">Professional Content</h3>
-                            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                                <div className="todo-quill dark-theme ql-editor" dangerouslySetInnerHTML={{ __html: processQuillContent(entry.professionalContent) }} />
-                            </div>
-                        </div>
-                        {entry.personalContent && (
-                            <div>
-                                <h3 className="text-lg font-medium text-blue-400 mb-2">Personal Content</h3>
-                                <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                                    <div className="todo-quill dark-theme ql-editor" dangerouslySetInnerHTML={{ __html: processQuillContent(entry.personalContent) }} />
-                                </div>
-                            </div>
-                        )}
-                        <div className="flex justify-end space-x-4 mt-6">
-                            <button
-                                onClick={onEdit}
-                                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                            >
-                                Edit
-                            </button>
-                            <button
-                                onClick={() => onDelete(entry._id)}
-                                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-                            >
-                                Delete
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    };
-
-    const EditModal = ({ entry, isOpen, onClose }) => {
-        const [title, setTitle] = useState('');
-        const [professionalContent, setProfessionalContent] = useState('');
-        const [personalContent, setPersonalContent] = useState('');
-        const [imagePreview, setImagePreview] = useState(null);
-        const [image, setImage] = useState(null);
-
-        // Update state when entry changes
-        useEffect(() => {
-            if (entry) {
-                setTitle(entry.title);
-                setProfessionalContent(entry.professionalContent);
-                setPersonalContent(entry.personalContent || '');
-                setImagePreview(entry.image);
-            }
-        }, [entry]);
-
-        const handleImageChange = (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                setImage(file);
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    setImagePreview(reader.result);
-                };
-                reader.readAsDataURL(file);
-            }
-        };
-
-        const handleSubmit = async (e) => {
-            e.preventDefault();
-            
-            if (!title || !professionalContent) {
-                toast.error('Title and professional content are required');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('title', title);
-            formData.append('professionalContent', professionalContent);
-            formData.append('personalContent', personalContent);
-            if (image) {
-                formData.append('image', image);
-            }
-
-            try {
-                await handleUpdateEntry(entry._id, formData);
-            } catch (error) {
-                console.error('Error updating entry:', error);
-                toast.error('Failed to update entry');
-            }
-        };
-
-        return (
-            <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
-                <div className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl">
-                    <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-2xl font-bold text-blue-400">Edit Entry</h2>
-                        <button onClick={onClose} className="text-gray-400 hover:text-gray-200">✕</button>
-                    </div>
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-1">Title</label>
-                            <input
-                                type="text"
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                                className="w-full p-2 rounded bg-gray-800 border border-gray-700 text-white focus:border-blue-500 focus:ring-blue-500"
-                                required
-                            />
-                        </div>
-
-                        <div>
-                            <div className="flex items-center space-x-4 mb-4">
-                                <input
-                                    type="file"
-                                    id="image"
-                                    accept="image/*"
-                                    onChange={handleImageChange}
-                                    className="hidden"
-                                />
-                                <label 
-                                    htmlFor="image" 
-                                    className="px-4 py-2 bg-gray-800 text-white rounded cursor-pointer hover:bg-gray-700 border border-gray-700"
-                                >
-                                    Choose Image
-                                </label>
-                                {imagePreview && (
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setImagePreview(null);
-                                            setImage(null);
-                                        }}
-                                        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-                                    >
-                                        Remove
-                                    </button>
-                                )}
-                            </div>
-                            {imagePreview && (
-                                <div className="mt-2 mb-4">
-                                    <EntryImage imagePath={imagePreview} />
-                                </div>
-                            )}
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-1">Professional Content</label>
-                            <div className="relative" style={{ height: '225px', marginBottom: '20px' }}>
-                                <ReactQuill
-                                    value={professionalContent}
-                                    onChange={setProfessionalContent}
-                                    className="todo-quill dark-theme absolute inset-0"
-                                    theme="snow"
-                                    modules={quillModules}
-                                    formats={quillFormats}
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-1">Personal Content</label>
-                            <div className="relative" style={{ height: '225px', marginBottom: '20px' }}>
-                                <ReactQuill
-                                    value={personalContent}
-                                    onChange={setPersonalContent}
-                                    className="todo-quill dark-theme absolute inset-0"
-                                    theme="snow"
-                                    modules={quillModules}
-                                    formats={quillFormats}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="flex justify-end space-x-4 mt-6">
-                            <button
-                                type="button"
-                                onClick={onClose}
-                                className="px-4 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                type="submit"
-                                className="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
-                            >
-                                Save Changes
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        );
-    };
-
     return (
         <div className="min-h-screen [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
             <NavBar />
@@ -879,51 +611,39 @@ const Entries = () => {
                 pauseOnHover
                 theme="dark"
             />
-            <div className="px-6 flex flex-col items-center">
-                <br />
-                
-                {/* Button Container */}
-                <div className="flex justify-between w-full mb-4">
-                    {/* View Toggle Icon */}
+            <div className="container mx-auto px-4 py-8">
+                <div className="flex justify-between items-center mb-8">
+                    <h1 className="text-3xl font-bold text-white">My Blog Entries</h1>
                     <button
-                        onClick={() => setIsListView(!isListView)}
-                        className="bg-gray-900 hover:bg-purple-900 text-white p-2 rounded-full shadow-md transition-all duration-300 transform hover:scale-110"
-                        title={isListView ? 'Change to Grid View' : 'Change to List View'}
-                    >
-                        {isListView ? <BsGrid3X3Gap size={24} /> : <BsListUl size={24} />}
-                    </button>
-
-                    {/* New Entry Button */}
-                    <button
-                        className="text-white bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm p-3 text-center transition duration-300"
                         onClick={() => setIsNewEntryModalOpen(true)}
-                        title="Make New Entry">
+                        className="p-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition duration-200 flex items-center justify-center"
+                        title="Create New Entry"
+                    >
                         <BsPlusLg size={20} />
                     </button>
                 </div>
 
-                {/* Entries Container */}
                 {entries.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-64">
-                        <i className="fas fa-book-open text-4xl mb-4 text-gray-400"></i>
-                        <p className="text-gray-500">No entries found. Create your first entry!</p>
-                    </div>
-                ) : isListView ? (
-                    // List View
-                    <div className="w-full max-w-lg text-center">
-                        <ul className="list-none w-full">
-                            {entryList}
-                        </ul>
+                    <div className="text-center text-gray-400 py-12">
+                        <p className="text-xl">No entries yet. Create your first entry!</p>
                     </div>
                 ) : (
-                    // Grid View
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {gridItems}
                     </div>
                 )}
             </div>
 
-            {/* Entry Modal */}
+            {/* New Entry Modal */}
+            {isNewEntryModalOpen && (
+                <NewEntryModal
+                    isOpen={isNewEntryModalOpen}
+                    onClose={() => setIsNewEntryModalOpen(false)}
+                    onSubmit={handleAddEntry}
+                />
+            )}
+
+            {/* View/Edit Modal */}
             {isModalOpen && !isEditing && (
                 <ViewModal
                     entry={selectedEntry}
@@ -946,15 +666,7 @@ const Entries = () => {
                         setIsModalOpen(false);
                         setIsEditing(false);
                     }}
-                />
-            )}
-
-            {/* New Entry Modal */}
-            {isNewEntryModalOpen && (
-                <NewEntryModal
-                    isOpen={isNewEntryModalOpen}
-                    onClose={() => setIsNewEntryModalOpen(false)}
-                    onSubmit={handleAddEntry}
+                    onUpdate={handleUpdateEntry}
                 />
             )}
 
@@ -968,5 +680,242 @@ const Entries = () => {
         </div>
     );
 }
+
+const ViewModal = ({ entry, isOpen, onClose, onEdit, onDelete }) => {
+    const modalRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (modalRef.current && !modalRef.current.contains(event.target)) {
+                onClose();
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [onClose]);
+
+    if (!entry) return null;
+
+    const formattedDate = entry.createdAt 
+        ? new Date(entry.createdAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        })
+        : null;
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+            <div ref={modalRef} className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl">
+                <div className="flex justify-between items-center mb-2">
+                    <h2 className="text-2xl font-bold text-blue-400">{entry.title}</h2>
+                    <button onClick={onClose} className="text-gray-400 hover:text-gray-200">✕</button>
+                </div>
+                
+                {formattedDate && (
+                    <div className="text-center text-gray-400 text-sm mb-6">
+                        {formattedDate}
+                    </div>
+                )}
+
+                <div className="space-y-6">
+                    {entry.image && (
+                        <div className="mb-6">
+                            <EntryImage imagePath={entry.image} />
+                        </div>
+                    )}
+                    <div>
+                        <h3 className="text-lg font-medium text-blue-400 mb-2">Professional Content</h3>
+                        <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                            <div className="todo-quill dark-theme ql-editor" dangerouslySetInnerHTML={{ __html: processQuillContent(entry.professionalContent) }} />
+                        </div>
+                    </div>
+                    {entry.personalContent && (
+                        <div>
+                            <h3 className="text-lg font-medium text-blue-400 mb-2">Personal Content</h3>
+                            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                                <div className="todo-quill dark-theme ql-editor" dangerouslySetInnerHTML={{ __html: processQuillContent(entry.personalContent) }} />
+                            </div>
+                        </div>
+                    )}
+                    <div className="flex justify-end space-x-4 mt-6">
+                        <button
+                            onClick={onEdit}
+                            className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200"
+                            title="Edit Entry"
+                        >
+                            <FaEdit size={18} />
+                        </button>
+                        <button
+                            onClick={() => onDelete(entry._id)}
+                            className="p-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors duration-200"
+                            title="Delete Entry"
+                        >
+                            <FaTrashAlt size={18} />
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const EditModal = ({ entry, isOpen, onClose, onUpdate }) => {
+    const [title, setTitle] = useState('');
+    const [professionalContent, setProfessionalContent] = useState('');
+    const [personalContent, setPersonalContent] = useState('');
+    const [imagePreview, setImagePreview] = useState(null);
+    const [image, setImage] = useState(null);
+
+    // Update state when entry changes
+    useEffect(() => {
+        if (entry) {
+            setTitle(entry.title);
+            setProfessionalContent(entry.professionalContent);
+            setPersonalContent(entry.personalContent || '');
+            setImagePreview(entry.image);
+        }
+    }, [entry]);
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setImage(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        if (!title || !professionalContent) {
+            toast.error('Title and professional content are required');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('professionalContent', professionalContent);
+        formData.append('personalContent', personalContent);
+        if (image) {
+            formData.append('image', image);
+        }
+
+        try {
+            await onUpdate(entry._id, formData);
+            onClose();
+        } catch (error) {
+            console.error('Error updating entry:', error);
+            toast.error('Failed to update entry');
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+            <div className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl">
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-2xl font-bold text-blue-400">Edit Entry</h2>
+                    <button onClick={onClose} className="text-gray-400 hover:text-gray-200">✕</button>
+                </div>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Title</label>
+                        <input
+                            type="text"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            className="w-full p-2 rounded bg-gray-800 border border-gray-700 text-white focus:border-blue-500 focus:ring-blue-500"
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <div className="flex items-center space-x-4 mb-4">
+                            <input
+                                type="file"
+                                id="image"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                                className="hidden"
+                            />
+                            <label 
+                                htmlFor="image" 
+                                className="px-4 py-2 bg-gray-800 text-white rounded cursor-pointer hover:bg-gray-700 border border-gray-700"
+                            >
+                                Choose Image
+                            </label>
+                            {imagePreview && (
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setImagePreview(null);
+                                        setImage(null);
+                                    }}
+                                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                                >
+                                    Remove
+                                </button>
+                            )}
+                        </div>
+                        {imagePreview && (
+                            <div className="mt-2 mb-4">
+                                <EntryImage imagePath={imagePreview} />
+                            </div>
+                        )}
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Professional Content</label>
+                        <div className="relative" style={{ height: '225px', marginBottom: '20px' }}>
+                            <ReactQuill
+                                value={professionalContent}
+                                onChange={setProfessionalContent}
+                                className="todo-quill dark-theme absolute inset-0"
+                                theme="snow"
+                                modules={quillModules}
+                                formats={quillFormats}
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Personal Content</label>
+                        <div className="relative" style={{ height: '225px', marginBottom: '20px' }}>
+                            <ReactQuill
+                                value={personalContent}
+                                onChange={setPersonalContent}
+                                className="todo-quill dark-theme absolute inset-0"
+                                theme="snow"
+                                modules={quillModules}
+                                formats={quillFormats}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex justify-end space-x-4 mt-6">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="px-4 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
+                        >
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
 
 export default Entries;
