@@ -94,7 +94,12 @@ Git commit messages, if extra window pops up:  cmd + S to save changes, cmd + W 
     upon rendering, you get news about current events, sports, AI, tech, etc.
 
     - made another WS account, after this one, I'm going back to Cursor and will most likely pay for the premium version.
-    -Goal for today: get SW3 bucket or cloudflare online bucket attached to this app for picture storage. 
 
+    - Date on entry card moved to title line, date added underneath title on view entry modal
+    - Changed add/edit buttons to icon
+    -Center titles on view entry modal
+
+    -Goal for today: get SW3 bucket or cloudflare online bucket attached to this app for picture storage. 
+    - Looking into BLOBS, batch requests? sign up for free and see how much usage thee is in one week.≠
 
 
