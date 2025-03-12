@@ -631,15 +631,43 @@ const Entries = () => {
     });
 
     const ViewModal = ({ entry, isOpen, onClose, onEdit, onDelete }) => {
+        const modalRef = useRef(null);
+
+        useEffect(() => {
+            const handleClickOutside = (event) => {
+                if (modalRef.current && !modalRef.current.contains(event.target)) {
+                    onClose();
+                }
+            };
+
+            document.addEventListener('mousedown', handleClickOutside);
+            return () => document.removeEventListener('mousedown', handleClickOutside);
+        }, [onClose]);
+
         if (!entry) return null;
+
+        const formattedDate = entry.createdAt 
+            ? new Date(entry.createdAt).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            })
+            : null;
 
         return (
             <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
-                <div className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl">
-                    <div className="flex justify-between items-center mb-6">
+                <div ref={modalRef} className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl">
+                    <div className="flex justify-between items-center mb-2">
                         <h2 className="text-2xl font-bold text-blue-400">{entry.title}</h2>
                         <button onClick={onClose} className="text-gray-400 hover:text-gray-200">✕</button>
                     </div>
+                    
+                    {formattedDate && (
+                        <div className="text-center text-gray-400 text-sm mb-6">
+                            {formattedDate}
+                        </div>
+                    )}
+
                     <div className="space-y-6">
                         {entry.image && (
                             <div className="mb-6">
@@ -660,24 +688,19 @@ const Entries = () => {
                                 </div>
                             </div>
                         )}
-                        <div className="flex justify-between items-center mt-6">
-                            <div className="text-sm text-gray-400">
-                                {new Date(entry.date).toLocaleDateString()}
-                            </div>
-                            <div className="flex space-x-4">
-                                <button
-                                    onClick={onEdit}
-                                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    onClick={() => onDelete(entry._id)}
-                                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-                                >
-                                    Delete
-                                </button>
-                            </div>
+                        <div className="flex justify-end space-x-4 mt-6">
+                            <button
+                                onClick={onEdit}
+                                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                            >
+                                Edit
+                            </button>
+                            <button
+                                onClick={() => onDelete(entry._id)}
+                                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                            >
+                                Delete
+                            </button>
                         </div>
                     </div>
                 </div>
