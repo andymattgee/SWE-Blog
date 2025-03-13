@@ -101,5 +101,12 @@ Git commit messages, if extra window pops up:  cmd + S to save changes, cmd + W 
 
     -Goal for today: get SW3 bucket or cloudflare online bucket attached to this app for picture storage. 
     - Looking into BLOBS, batch requests? sign up for free and see how much usage thee is in one week.≠
-
+3/12/25
+    -Tested CRUD functionality for entries
+    - Fixed issue with entry image upload
+    - Added toaster notifications for edit,add,delete entry, add pic to entry.
+    - Changed formatting for entries and all modals
+    - Plus entry, edit and delete buttons changed to icons
+    - Footer added to blog page, user profile page, tasks page
+    - Tested tasks section and editing, everything seems to be working, all CRUD functional
 

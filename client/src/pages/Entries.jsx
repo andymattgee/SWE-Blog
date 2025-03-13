@@ -612,7 +612,7 @@ const Entries = () => {
     };
 
     return (
-        <div className="min-h-screen [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
+        <div className="min-h-screen [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)] flex flex-col">
             <NavBar />
             <ToastContainer
                 position="top-right"
@@ -628,7 +628,7 @@ const Entries = () => {
             />
             <div className="container mx-auto px-4 py-8">
                 <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-3xl font-bold text-white">My Blog Entries</h1>
+                    <h1 className="text-3xl font-bold text-white">Bloggy Mc-Blog Face</h1>
                     <button
                         onClick={() => setIsNewEntryModalOpen(true)}
                         className="p-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition duration-200 flex items-center justify-center"

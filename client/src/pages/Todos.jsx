@@ -4,6 +4,7 @@ import axios from 'axios';
 import NavBar from '../components/navbar';
 import TodoItem from '../components/TodoItem';
 import TodoModal from '../components/TodoModal';
+import Footer from '../components/Footer';
 
 // Set axios base URL for API requests
 axios.defaults.baseURL = 'http://localhost:3333';
@@ -316,10 +317,10 @@ const Todos = () => {
     };
 
     return (
-        <div className="min-h-screen [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
+        <div className="min-h-screen [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)] flex flex-col">
             <NavBar />
-            <div className="container mx-auto px-4 py-8">
-                <div className="flex flex-col items-center mb-8">
+            <div className="container mx-auto px-4 py-8 flex-grow mb-8">
+                <div className="flex flex-col items-center ">
                     <h1 className="text-4xl font-bold text-white mb-6">Task Manager</h1>
                     <div className="flex space-x-4">
                         <button
@@ -374,7 +375,7 @@ const Todos = () => {
                     </button>
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-4 mb-12">
                     {renderTodoItems(todos[activeSection] || [])}
                 </div>
 
@@ -414,6 +415,9 @@ const Todos = () => {
                     onSubmit={handleSubmit}
                     editingTodo={editingTodo}
                 />
+            </div>
+            <div className="mt-auto">
+                <Footer />
             </div>
         </div>
     );
