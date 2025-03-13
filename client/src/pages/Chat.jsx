@@ -49,6 +49,13 @@ const Chatbot = () => {
         }
     };
 
+    const handleClearChat = () => {
+        setChatHistory([]);
+        setMessage('');
+        setResponse('');
+        removeSelectedImage();
+    };
+
     const handleSendMessage = async () => {
         if (!message.trim() && !selectedImage) {
             toast.warning('Please enter a message or select an image');
@@ -56,48 +63,48 @@ const Chatbot = () => {
         }
 
         setLoading(true);
-        
+
         // Create form data for multipart/form-data request
         const formData = new FormData();
         formData.append('message', message);
-        
+
         if (selectedImage) {
             formData.append('image', selectedImage);
         }
-        
+
         // Add user message to chat history
-        const userMessageContent = message.trim() 
-            ? message 
+        const userMessageContent = message.trim()
+            ? message
             : 'Sent an image for analysis';
-            
+
         // Add user message with image preview if available
-        const userMessage = { 
-            role: 'user', 
+        const userMessage = {
+            role: 'user',
             content: userMessageContent,
             imageUrl: imagePreview // Store image preview URL in chat history
         };
-        
+
         setChatHistory(prev => [...prev, userMessage]);
-        
+
         try {
             console.log('Sending message to API with image:', selectedImage ? selectedImage.name : 'No image');
-            
+
             // Use axios to send formData
             const { data } = await axios.post('http://localhost:3333/api/chat', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-            
+
             // Add AI response to chat history
             const aiResponse = { role: 'assistant', content: data.response };
             setChatHistory(prev => [...prev, aiResponse]);
-            
+
             setResponse(data.response);
             toast.success('Response received!');
         } catch (error) {
             console.error('Error in chat request:', error);
-            
+
             // Handle different error scenarios
             if (error.response) {
                 // The request was made and the server responded with a status code
@@ -114,14 +121,14 @@ const Chatbot = () => {
                 toast.error(`Error: ${error.message}`);
                 setResponse(`Error: ${error.message}`);
             }
-            
+
             // Add error message to chat history
-            setChatHistory(prev => [...prev, { 
-                role: 'system', 
-                content: 'Error: Failed to get response from AI' 
+            setChatHistory(prev => [...prev, {
+                role: 'system',
+                content: 'Error: Failed to get response from AI'
             }]);
         }
-        
+
         setLoading(false);
         setMessage(''); // Clear input field after sending
         removeSelectedImage(); // Clear selected image
@@ -144,10 +151,15 @@ const Chatbot = () => {
         <div className="min-h-screen flex flex-col bg-gradient-to-tr from-cyan-600 via-blue-700 to-indigo-800">
             <Navbar />
             <ToastContainer position="top-right" autoClose={3000} />
-            
+
             <div className="flex-grow container mx-auto px-4 py-8 flex flex-col items-center">
-                <h1 className="text-3xl font-bold mb-6 text-white">Chat with GPT-4 Vision</h1>
-                
+                <div className="w-full max-w-3xl flex justify-between items-center mb-6">
+
+                    <h1 className="text-3xl font-bold mb-6 text-white">Chat with GPT-4 Vision</h1>
+                    <button onClick={handleClearChat} className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                        Clear Chat
+                    </button>
+                </div>
                 <div className="w-full max-w-3xl bg-gray-800 rounded-lg shadow-lg overflow-hidden">
                     {/* Chat history display */}
                     <div className="h-[60vh] overflow-y-auto p-4 space-y-4" id="chat-container">
@@ -158,22 +170,21 @@ const Chatbot = () => {
                             </div>
                         ) : (
                             chatHistory.map((msg, index) => (
-                                <div 
-                                    key={index} 
-                                    className={`p-3 rounded-lg ${
-                                        msg.role === 'user' 
-                                            ? 'bg-purple-600 text-white ml-auto max-w-[80%]' 
+                                <div
+                                    key={index}
+                                    className={`p-3 rounded-lg ${msg.role === 'user'
+                                            ? 'bg-purple-600 text-white ml-auto max-w-[80%]'
                                             : msg.role === 'assistant'
-                                                ? 'bg-gray-700 text-white max-w-[80%]' 
+                                                ? 'bg-gray-700 text-white max-w-[80%]'
                                                 : 'bg-red-500 text-white max-w-[80%]'
-                                    }`}
+                                        }`}
                                 >
                                     {/* Display image if present */}
                                     {msg.imageUrl && (
                                         <div className="mb-2">
-                                            <img 
-                                                src={msg.imageUrl} 
-                                                alt="User uploaded" 
+                                            <img
+                                                src={msg.imageUrl}
+                                                alt="User uploaded"
                                                 className="rounded-md max-h-48 max-w-full"
                                             />
                                         </div>
@@ -187,24 +198,24 @@ const Chatbot = () => {
                             <div className="bg-gray-700 text-white p-3 rounded-lg max-w-[80%] flex items-center space-x-2">
                                 <div className="animate-pulse">Thinking</div>
                                 <div className="flex space-x-1">
-                                    <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
-                                    <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
-                                    <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
+                                    <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                                    <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                                    <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                                 </div>
                             </div>
                         )}
                     </div>
-                    
+
                     {/* Image preview area */}
                     {imagePreview && (
                         <div className="p-2 bg-gray-900 border-t border-gray-700">
                             <div className="relative inline-block">
-                                <img 
-                                    src={imagePreview} 
-                                    alt="Preview" 
+                                <img
+                                    src={imagePreview}
+                                    alt="Preview"
                                     className="h-20 rounded-md"
                                 />
-                                <button 
+                                <button
                                     onClick={removeSelectedImage}
                                     className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
                                 >
@@ -213,7 +224,7 @@ const Chatbot = () => {
                             </div>
                         </div>
                     )}
-                    
+
                     {/* Input area */}
                     <div className="p-4 bg-gray-900 border-t border-gray-700">
                         <div className="flex space-x-2">
@@ -226,7 +237,7 @@ const Chatbot = () => {
                                 rows={2}
                                 disabled={loading}
                             />
-                            
+
                             {/* Hidden file input */}
                             <input
                                 type="file"
@@ -235,7 +246,7 @@ const Chatbot = () => {
                                 accept="image/*"
                                 className="hidden"
                             />
-                            
+
                             {/* Image upload button */}
                             <button
                                 className="px-4 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
@@ -245,7 +256,7 @@ const Chatbot = () => {
                             >
                                 <FaImage />
                             </button>
-                            
+
                             {/* Send button */}
                             <button
                                 className="px-4 py-3 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50"
@@ -262,7 +273,7 @@ const Chatbot = () => {
                     </div>
                 </div>
             </div>
-            
+
             <div className="mt-auto">
                 <Footer />
             </div>
