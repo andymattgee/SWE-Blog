@@ -28,7 +28,7 @@ const getChatResponse = async (req, res) => {
             model: 'gpt-3.5-turbo',
             messages: [{role: 'user', content: userMessage}],
             temperature: 0.7,
-            max_tokens: 150, // Increased token limit for more detailed responses
+            max_tokens: 500, // Increased token limit for more detailed responses
         });
         
         // Log and return successful response
