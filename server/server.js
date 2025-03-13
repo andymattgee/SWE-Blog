@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser'); // Middleware for parsing cookies
 const userRoute = require('./Routes/userRoute.js'); // Import user routes
 const entriesRoute = require('./Routes/entriesRoute.js'); // Import entries routes
 const todoRoute = require('./Routes/todoRoute.js'); // Import todo routes
+const chatRoute = require('./Routes/chatRoute.js'); // Import chat routes
 const cors = require('cors'); // Import CORS middleware
 const path = require('path'); // Import path module for file paths
 
@@ -46,6 +47,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/users', userRoute); // User-related routes
 app.use('/entries', entriesRoute); // Blog entries routes
 app.use('/api/todos', todoRoute); // Todo-related routes
+app.use('/api/chat', chatRoute); // Chatbot routes
 
 // Handle 404 errors for any undefined routes
 app.use('*', (req, res) => { 

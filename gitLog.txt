@@ -110,3 +110,12 @@ Git commit messages, if extra window pops up:  cmd + S to save changes, cmd + W 
     - Footer added to blog page, user profile page, tasks page
     - Tested tasks section and editing, everything seems to be working, all CRUD functional
 
+3/13/25
+    -Using windsurf and ChatPt seperately
+
+    -Changed API Test page to chat page utilizing OpenAI API
+    - Currently only handles a single response, no conversation context
+    - Can add images and have AI process and interpret them correctly
+    - Full stack feature implemented for chat bot, backend uses Sharp to process images by converting to jpeg and compressing to >20MB 
+    - Front end has chat interface with text input and image upload, clear chat button. 
+    

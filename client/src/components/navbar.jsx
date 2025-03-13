@@ -122,11 +122,11 @@ const Navbar = () => {
                                 Tasks
                             </Link>
                             <Link 
-                                to="/APITestPage" 
+                                to="/chat" 
                                 className="text-blue-700 hover:text-blue-900 text-lg font-medium"
                                 onClick={closeMenu} // Close menu on link click
                             >
-                                API Page
+                                Chat
                             </Link>
                             <Link 
                                 to="/ContactPage" 
