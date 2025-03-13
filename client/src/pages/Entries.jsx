@@ -29,6 +29,7 @@ import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import { AiOutlineHome } from 'react-icons/ai';
 import '../styles/todo-quill.css';
 import '../styles/quill-viewer.css';
+import Footer from '../components/Footer';
 
 /* Custom styles for Quill editor containers */
 import '../styles/quill-container.css';
@@ -47,7 +48,7 @@ const quillModules = {
     toolbar: [
         [{ 'header': [1, 2, 3, false] }],
         ['bold', 'italic', 'underline'],
-        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
         [{ 'align': ['', 'center', 'right', 'justify'] }],
         ['clean']
     ],
@@ -58,7 +59,7 @@ const quillModules = {
         bindings: {
             tab: {
                 key: 9,
-                handler: function() {
+                handler: function () {
                     return true; // Let default tab behavior happen
                 }
             }
@@ -78,7 +79,7 @@ const quillFormats = [
 // Function to process Quill content for display
 const processQuillContent = (content) => {
     if (!content) return '';
-    
+
     // Simply return the content directly to preserve all HTML formatting
     // The dangerouslySetInnerHTML in the component will handle rendering it
     return content;
@@ -105,15 +106,15 @@ const EntryImage = ({ imagePath }) => {
     // Handle local preview (data URL)
     if (typeof imagePath === 'object' && imagePath.isLocal) {
         return (
-            <img 
-                src={imagePath.url} 
-                alt="Entry preview" 
+            <img
+                src={imagePath.url}
+                alt="Entry preview"
                 className="w-full h-48 object-cover rounded-lg"
                 onError={() => setError(true)}
             />
         );
     }
-    
+
     // Handle S3 URL
     const imageUrl = typeof imagePath === 'object' ? imagePath.url : imagePath;
 
@@ -197,7 +198,7 @@ const NewEntryModal = ({ isOpen, onClose, onSubmit }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         // Get form data
         const formData = {
             title: e.target.title.value,
@@ -259,8 +260,8 @@ const NewEntryModal = ({ isOpen, onClose, onSubmit }) => {
                                 onChange={handleImageChange}
                                 className="hidden"
                             />
-                            <label 
-                                htmlFor="image" 
+                            <label
+                                htmlFor="image"
                                 className="px-4 py-2 bg-gray-800 text-white rounded cursor-pointer hover:bg-gray-700 border border-gray-700"
                             >
                                 Choose Image
@@ -280,9 +281,9 @@ const NewEntryModal = ({ isOpen, onClose, onSubmit }) => {
                         </div>
                         {imagePreview && (
                             <div className="mt-2 mb-4">
-                                <img 
-                                    src={imagePreview} 
-                                    alt="Preview" 
+                                <img
+                                    src={imagePreview}
+                                    alt="Preview"
                                     className="max-h-48 rounded object-cover"
                                 />
                             </div>
@@ -374,7 +375,7 @@ const ExitConfirmationModal = ({ onConfirm, onCancel }) => {
 const Entries = () => {
     // Navigation hook for programmatic routing
     const navigate = useNavigate();
-    
+
     // State management
     const [entries, setEntries] = useState([]); // List of all entries
     const [error, setError] = useState(null); // Error state for handling API errors
@@ -393,11 +394,11 @@ const Entries = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
-            
+
             if (!response.data.success) {
                 throw new Error('Failed to fetch entries');
             }
-            
+
             // Use data field from response
             setEntries(response.data.data || []);
         } catch (error) {
@@ -447,7 +448,7 @@ const Entries = () => {
             }
 
             // Update the entries list with the updated entry
-            setEntries(entries.map(entry => 
+            setEntries(entries.map(entry =>
                 entry._id === id ? response.data.data : entry
             ));
 
@@ -499,14 +500,14 @@ const Entries = () => {
     const handleAddEntry = async (formData) => {
         try {
             const token = localStorage.getItem('token');
-            
+
             // Create FormData object for file upload
             const data = new FormData();
             data.append('title', formData.title);
             data.append('professionalContent', formData.professionalContent);
             data.append('personalContent', formData.personalContent || '');
             data.append('date', new Date().toISOString());
-            
+
             // Only append image if one was selected
             if (formData.image) {
                 data.append('image', formData.image);
@@ -613,7 +614,7 @@ const Entries = () => {
     return (
         <div className="min-h-screen [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
             <NavBar />
-            <ToastContainer 
+            <ToastContainer
                 position="top-right"
                 autoClose={3000}
                 hideProgressBar={false}
@@ -691,6 +692,7 @@ const Entries = () => {
                     onCancel={() => setIsDeleteModalOpen(false)}
                 />
             )}
+            <Footer />
         </div>
     );
 }
@@ -711,7 +713,7 @@ const ViewModal = ({ entry, isOpen, onClose, onEdit, onDelete }) => {
 
     if (!entry) return null;
 
-    const formattedDate = entry.createdAt 
+    const formattedDate = entry.createdAt
         ? new Date(entry.createdAt).toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
@@ -722,11 +724,13 @@ const ViewModal = ({ entry, isOpen, onClose, onEdit, onDelete }) => {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
             <div ref={modalRef} className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl">
-                <div className="flex justify-between items-center mb-2">
-                    <h2 className="text-2xl font-bold text-blue-400">{entry.title}</h2>
-                    <button onClick={onClose} className="text-gray-400 hover:text-gray-200">✕</button>
+                <div className="flex justify-end">
+                    <button onClick={onClose} className="text-gray-400 hover:text-gray-200">x</button>
                 </div>
-                
+                <div className="flex justify-center items-center mb-2">
+                    <h2 className="text-2xl font-bold text-blue-400">{entry.title}</h2>
+                </div>
+
                 {formattedDate && (
                     <div className="text-center text-gray-400 text-sm mb-6">
                         {formattedDate}
@@ -807,7 +811,7 @@ const EditModal = ({ entry, isOpen, onClose, onUpdate }) => {
                 toast.error('Image size must be less than 5MB');
                 return;
             }
-            
+
             setImage(file);
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -824,7 +828,7 @@ const EditModal = ({ entry, isOpen, onClose, onUpdate }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (!title || !professionalContent) {
             toast.error('Title and professional content are required');
             return;
@@ -875,8 +879,8 @@ const EditModal = ({ entry, isOpen, onClose, onUpdate }) => {
                                 onChange={handleImageChange}
                                 className="hidden"
                             />
-                            <label 
-                                htmlFor="image" 
+                            <label
+                                htmlFor="image"
                                 className="px-4 py-2 bg-gray-800 text-white rounded cursor-pointer hover:bg-gray-700 border border-gray-700"
                             >
                                 Choose Image
@@ -945,6 +949,7 @@ const EditModal = ({ entry, isOpen, onClose, onUpdate }) => {
                         </button>
                     </div>
                 </form>
+            
             </div>
         </div>
     );
