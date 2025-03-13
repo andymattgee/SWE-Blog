@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Navbar from './navbar';
 import { useUser } from '../context/UserContext';
 import PasswordChangeModal from './PasswordChangeModal';
+import Footer from './Footer';
 
 /**
  * UserProfile component displays the user's profile information and allows
@@ -22,10 +23,13 @@ const UserProfile = () => {
     // If user data is not available, show a loading message
     if (!userData) {
         return (
-            <div className="min-h-screen [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
+            <div className="min-h-screen [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)] flex flex-col">
                 <Navbar />
-                <div className="container mx-auto px-4 py-8 text-center text-white">
+                <div className="container mx-auto px-4 py-8 text-center text-white flex-grow">
                     Loading user data...
+                </div>
+                <div className="mt-auto">
+                    <Footer />
                 </div>
             </div>
         );
@@ -49,10 +53,10 @@ const UserProfile = () => {
     };
 
     return (
-        <div className="min-h-screen [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
+        <div className="min-h-screen [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)] flex flex-col">
             <Navbar />
-            <div className="container mx-auto px-4 py-8">
-                <div className="max-w-2xl mx-auto bg-opacity-80 bg-gray-900 rounded-lg shadow-lg p-6 text-white">
+            <div className="container mx-auto px-4 py-8 flex-grow">
+                <div className="max-w-2xl mx-auto bg-opacity-80 bg-gray-900 rounded-lg shadow-lg p-6 text-white mb-12">
                     <h1 className="text-3xl font-bold text-blue-400 mb-6">User Profile</h1>
                     <div className="space-y-4">
                         {/* Display user name */}
@@ -81,6 +85,9 @@ const UserProfile = () => {
                         </div>
                     </div>
                 </div>
+            </div>
+            <div className="mt-auto">
+                <Footer />
             </div>
             <PasswordChangeModal 
                 isOpen={isPasswordModalOpen} 
