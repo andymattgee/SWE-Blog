@@ -124,7 +124,7 @@ const getChatResponse = async (req, res) => {
                 });
                 
                 // Log and return successful response
-                console.log('OpenAI Vision response received');
+                console.log('OpenAI GPT-4 Turbo response received');
                 return res.status(200).json({ 
                     response: response.choices[0].message.content,
                     success: true
