@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
-import NavBar from '../components/navbar';
+import Navbar from '../components/Navbar';
 
 //API page, just a playground for working with 3rd party API's and testing axios/fetch requests
 
@@ -85,7 +85,7 @@ const APITestPage = () => {
 
     return (
         <div>
-            <NavBar />
+            <Navbar />
             <div className='flex flex-col h-screen items-center '>
 
                 <button

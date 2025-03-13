@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import NavBar from '../components/navbar';
+import Navbar from '../components/Navbar';
 import TodoItem from '../components/TodoItem';
 import TodoModal from '../components/TodoModal';
 import Footer from '../components/Footer';
@@ -318,7 +318,7 @@ const Todos = () => {
 
     return (
         <div className="min-h-screen [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)] flex flex-col">
-            <NavBar />
+            <Navbar />
             <div className="container mx-auto px-4 py-8 flex-grow mb-8">
                 <div className="flex flex-col items-center ">
                     <h1 className="text-4xl font-bold text-white mb-6">Task Manager</h1>

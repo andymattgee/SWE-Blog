@@ -1,5 +1,5 @@
 import React from 'react';
-import NavBar from '../components/navbar';
+import Navbar from '../components/Navbar';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 
@@ -22,7 +22,7 @@ const ContactPage = () => {
 
   return (
     <div>
-      <NavBar />
+      <Navbar />
       <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-tr from-cyan-600 via-blue-700 to-indigo-800">
         <h1 className='text-white text-6xl mb-10'>
           Leave your Contact Info and I'll reach out!

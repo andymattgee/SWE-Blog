@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
-import NavBar from '../components/navbar';
+import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import LogLocalStorage from '../components/LogLocalStorage';
 import stars from '../../public/videos/starryVideo.mp4'
@@ -33,7 +33,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen flex flex-col [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
-      <NavBar />
+      <Navbar />
 
       {/* Hero Banner Section */}
       <div className="relative h-[50vh] w-full mx-auto mt-0">
