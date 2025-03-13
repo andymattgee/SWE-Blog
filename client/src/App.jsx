@@ -13,7 +13,7 @@ import "../public/styles/styles.css";
 import Login from './pages/Login.jsx';
 import Home from "./pages/Home.jsx";
 import ContactPage from "./pages/ContactPage.jsx";
-import APITestPage from "./pages/APITestPage.jsx";
+import Chat from "./pages/Chat.jsx";
 import Entries from "./pages/Entries.jsx"
 import Signup from './pages/Signup.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
@@ -41,7 +41,7 @@ const App = () => {
             <Route path="/signup" element={<Signup />} />
             <Route path="/home" element={<PrivateRoute element={<Home />} />} />
             <Route path="/contactpage" element={<PrivateRoute element={<ContactPage />} />} />
-            <Route path="/apitestpage" element={<PrivateRoute element={<APITestPage />} />} />
+            <Route path="/chat" element={<PrivateRoute element={<Chat />} />} />
             <Route path="/entries" element={<PrivateRoute element={<Entries />} />} />
             <Route path="/todos" element={<PrivateRoute element={<Todos />} />} />
             <Route path="/profile" element={<PrivateRoute element={<UserProfile />} />} />
