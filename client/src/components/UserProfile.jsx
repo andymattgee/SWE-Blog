@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Navbar from './navbar';
+import Navbar from '../components/Navbar';
 import { useUser } from '../context/UserContext';
 import PasswordChangeModal from './PasswordChangeModal';
 import Footer from './Footer';

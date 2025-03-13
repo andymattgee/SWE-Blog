@@ -16,7 +16,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from "axios";
 import { Link, useNavigate } from 'react-router-dom';
-import NavBar from '../components/navbar';
+import Navbar from '../components/Navbar';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { ToastContainer, toast } from 'react-toastify';
@@ -613,7 +613,7 @@ const Entries = () => {
 
     return (
         <div className="min-h-screen [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)] flex flex-col">
-            <NavBar />
+            <Navbar />
             <ToastContainer
                 position="top-right"
                 autoClose={3000}
