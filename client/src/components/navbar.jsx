@@ -115,6 +115,13 @@ const Navbar = () => {
                                 Blog 
                             </Link>
                             <Link 
+                                to="/news" 
+                                className="text-blue-700 hover:text-blue-900 text-lg font-medium"
+                                onClick={closeMenu} // Close menu on link click
+                            >
+                                News
+                            </Link>
+                            <Link 
                                 to="/Todos" 
                                 className="text-blue-700 hover:text-blue-900 text-lg font-medium"
                                 onClick={closeMenu} // Close menu on link click
