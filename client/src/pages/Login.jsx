@@ -19,22 +19,22 @@ const Login = () => {
   const onSubmit = async (data) => {
     try {
       const response = await axios.post('http://localhost:3333/api/users/login', {
-        username: data.userName,
+        userName: data.userName,
         password: data.password
       });
-      const result = response.data;
-      if (result.success) {
-        localStorage.setItem('token', result.token);
-        const userData = {
-          userName: result.user.userName,
-          entriesCount: 0,
-          tasksCount: 0
-        };
-        updateUserData(userData);
-        navigate("/Home");
-      } else {
-        console.error('Login failed:', result);
-      }
+      
+      // The response directly contains user and token
+      const { user, token } = response.data;
+      
+      // If we got here, the login was successful
+      localStorage.setItem('token', token);
+      const userData = {
+        userName: user.userName,
+        entriesCount: user.entries?.length || 0,
+        tasksCount: user.todos?.length || 0
+      };
+      updateUserData(userData);
+      navigate("/Home");
     } catch (error) {
       console.error('Login error:', error);
     }
