@@ -562,7 +562,7 @@ const Entries = () => {
         return (
             <div key={entry._id} className="col-span-1" onClick={() => handleEntryClick(entry)}>
                 <div className="h-full">
-                    <div className="bg-gray-900 border border-purple-500 rounded-lg shadow-lg overflow-hidden h-full transition duration-300 hover:bg-purple-900 hover:shadow-xl cursor-pointer">
+                    <div className="bg-gray-900 border border-purple-500 rounded-lg shadow-lg overflow-hidden h-full transition duration-300 hover:bg-purple-900 hover:shadow-xl hover:shadow-gray-400/30 hover:border-gray-300 cursor-pointer">
                         <article className="h-full flex flex-col">
                             {entry.image ? (
                                 <div className="h-40 overflow-hidden">
