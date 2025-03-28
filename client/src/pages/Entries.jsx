@@ -17,21 +17,15 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { BsPlusLg } from 'react-icons/bs';
-import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import '../styles/todo-quill.css';
 import '../styles/quill-viewer.css';
 import Footer from '../components/Footer';
-import ViewEntryModal from '../components/ViewEntryModal';
-import EntryImage from '../components/EntryImage';
-import NewEntryModal from '../components/NewEntryModal';
-import EditEntryModal from '../components/EditEntryModal';
-import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
-import ExitConfirmationModal from '../components/ExitConfirmationModal';
+import EntryCard from '../components/EntryCard';
+import ModalManager from '../components/ModalManager';
 
 /* Custom styles for Quill editor containers */
 import '../styles/quill-container.css';
@@ -45,55 +39,9 @@ const debounce = (func, wait) => {
     };
 };
 
-// Quill modules and formats configuration
-const quillModules = {
-    toolbar: [
-        [{ 'header': [1, 2, 3, false] }],
-        ['bold', 'italic', 'underline'],
-        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-        [{ 'align': ['', 'center', 'right', 'justify'] }],
-        ['clean']
-    ],
-    clipboard: {
-        matchVisual: false
-    },
-    keyboard: {
-        bindings: {
-            tab: {
-                key: 9,
-                handler: function () {
-                    return true; // Let default tab behavior happen
-                }
-            }
-        }
-    }
-};
-
-const quillFormats = [
-    'header',
-    'bold', 'italic', 'underline',
-    'list', 'bullet', 'ordered',
-    'align',
-    'indent',
-    'direction'
-];
-
-// Function to process Quill content for display
-const processQuillContent = (content) => {
-    if (!content) return '';
-
-    // Simply return the content directly to preserve all HTML formatting
-    // The dangerouslySetInnerHTML in the component will handle rendering it
-    return content;
-};
-
 const Entries = () => {
-    // Navigation hook for programmatic routing
-    const navigate = useNavigate();
-
     // State management
     const [entries, setEntries] = useState([]); // List of all entries
-    const [error, setError] = useState(null); // Error state for handling API errors
     const [selectedEntry, setSelectedEntry] = useState(null); // Currently selected entry for modal
     const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
     const [isEditing, setIsEditing] = useState(false); // Edit mode state
@@ -123,30 +71,6 @@ const Entries = () => {
         }
     }, []);
 
-    /**
-     * Fetches a single entry by ID
-     */
-    const getEntry = async (id) => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:3333/entries/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-
-            if (!response.data.success || !response.data.data) {
-                throw new Error('Entry not found');
-            }
-
-            // Set the selected entry and open the modal
-            setSelectedEntry(response.data.data);
-            setIsModalOpen(true);
-        } catch (error) {
-            console.error('Error fetching entry:', error);
-            toast.error('Failed to load entry');
-        }
-    };
 
     const handleUpdateEntry = async (id, formData) => {
         try {
@@ -253,43 +177,6 @@ const Entries = () => {
         fetchEntries();
     }, []);
 
-    /**
-     * Maps entries to grid view cards
-     * 
-     * @returns {Array<JSX.Element>} Array of entry cards
-     */
-    const gridItems = entries.map((entry) => {
-        const formattedDate = new Date(entry.createdAt).toLocaleDateString();
-        return (
-            <div key={entry._id} className="col-span-1" onClick={() => handleEntryClick(entry)}>
-                <div className="h-full">
-                    <div className="bg-gray-900 border border-purple-500 rounded-lg shadow-lg overflow-hidden h-full transition duration-300 hover:bg-purple-900 hover:shadow-xl hover:shadow-gray-400/30 hover:border-gray-300 cursor-pointer">
-                        <article className="h-full flex flex-col">
-                            {entry.image ? (
-                                <div className="h-40 overflow-hidden">
-                                    <EntryImage imagePath={entry.image} />
-                                </div>
-                            ) : (
-                                <div className="h-40 bg-gradient-to-br from-purple-900 to-blue-900 flex items-center justify-center">
-                                    <span className="text-4xl text-white opacity-30">✍️</span>
-                                </div>
-                            )}
-                            <div className="p-4 flex-grow flex flex-col">
-                                <div className="flex justify-between items-center mb-2">
-                                    <h3 className="text-lg font-bold text-white truncate pr-2">{entry.title}</h3>
-                                    <span className="text-xs text-gray-300 whitespace-nowrap">{formattedDate}</span>
-                                </div>
-                                <div className="text-gray-300 text-sm line-clamp-3 flex-grow">
-                                    <div dangerouslySetInnerHTML={{ __html: processQuillContent(entry.professionalContent) }} />
-                                </div>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-            </div>
-        );
-    });
-
     const handleEntryClick = async (entry) => {
         try {
             const token = localStorage.getItem('token');
@@ -311,6 +198,19 @@ const Entries = () => {
             toast.error('Failed to load entry');
         }
     };
+
+    /**
+     * Maps entries to grid view cards
+     * 
+     * @returns {Array<JSX.Element>} Array of entry cards
+     */
+    const gridItems = entries.map((entry) => (
+        <EntryCard
+            key={entry._id}
+            entry={entry}
+            onClick={handleEntryClick}
+        />
+    ));
 
     return (
         <div className="min-h-screen [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)] flex flex-col">
@@ -350,49 +250,30 @@ const Entries = () => {
                 )}
             </div>
 
-            {/* New Entry Modal */}
-            {isNewEntryModalOpen && (
-                <NewEntryModal
-                    isOpen={isNewEntryModalOpen}
-                    onClose={() => setIsNewEntryModalOpen(false)}
-                    onSubmit={handleAddEntry}
-                />
-            )}
-
-            {/* View/Edit Modal */}
-            {isModalOpen && !isEditing && (
-                <ViewEntryModal
-                    entry={selectedEntry}
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    onEdit={() => setIsEditing(true)}
-                    onDelete={(id) => {
-                        setEntryToDelete(id);
-                        setIsDeleteModalOpen(true);
-                    }}
-                />
-            )}
-
-            {/* Edit Modal */}
-            {isModalOpen && isEditing && (
-                <EditEntryModal
-                    entry={selectedEntry}
-                    isOpen={isModalOpen}
-                    onClose={() => {
-                        setIsModalOpen(false);
-                        setIsEditing(false);
-                    }}
-                    onUpdate={handleUpdateEntry}
-                />
-            )}
-
-            {/* Delete Confirmation Modal */}
-            {isDeleteModalOpen && (
-                <DeleteConfirmationModal
-                    onConfirm={() => handleDelete(entryToDelete)}
-                    onCancel={() => setIsDeleteModalOpen(false)}
-                />
-            )}
+            {/* Add ModalManager Component */}
+            <ModalManager 
+                isNewEntryModalOpen={isNewEntryModalOpen}
+                onCloseNewEntryModal={() => setIsNewEntryModalOpen(false)}
+                handleAddEntry={handleAddEntry}
+                isModalOpen={isModalOpen}
+                selectedEntry={selectedEntry}
+                isEditing={isEditing}
+                onEdit={() => setIsEditing(true)}
+                onCloseModal={() => {
+                    setIsModalOpen(false);
+                    // Ensure isEditing is reset when closing the main modal regardless of mode
+                    setIsEditing(false); 
+                }}
+                handleUpdateEntry={handleUpdateEntry}
+                onTriggerDelete={(id) => {
+                    setEntryToDelete(id);
+                    setIsDeleteModalOpen(true);
+                }}
+                isDeleteModalOpen={isDeleteModalOpen}
+                entryToDelete={entryToDelete}
+                handleDelete={handleDelete}
+                onCloseDeleteModal={() => setIsDeleteModalOpen(false)}
+            />
             <Footer />
         </div>
     );
