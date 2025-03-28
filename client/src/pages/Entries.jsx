@@ -24,12 +24,8 @@ import { BsPlusLg } from 'react-icons/bs';
 import '../styles/todo-quill.css';
 import '../styles/quill-viewer.css';
 import Footer from '../components/Footer';
-import ViewEntryModal from '../components/ViewEntryModal';
-import NewEntryModal from '../components/NewEntryModal';
-import EditEntryModal from '../components/EditEntryModal';
-import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
-import ExitConfirmationModal from '../components/ExitConfirmationModal';
 import EntryCard from '../components/EntryCard';
+import ModalManager from '../components/ModalManager';
 
 /* Custom styles for Quill editor containers */
 import '../styles/quill-container.css';
@@ -254,49 +250,30 @@ const Entries = () => {
                 )}
             </div>
 
-            {/* New Entry Modal */}
-            {isNewEntryModalOpen && (
-                <NewEntryModal
-                    isOpen={isNewEntryModalOpen}
-                    onClose={() => setIsNewEntryModalOpen(false)}
-                    onSubmit={handleAddEntry}
-                />
-            )}
-
-            {/* View/Edit Modal */}
-            {isModalOpen && !isEditing && (
-                <ViewEntryModal
-                    entry={selectedEntry}
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    onEdit={() => setIsEditing(true)}
-                    onDelete={(id) => {
-                        setEntryToDelete(id);
-                        setIsDeleteModalOpen(true);
-                    }}
-                />
-            )}
-
-            {/* Edit Modal */}
-            {isModalOpen && isEditing && (
-                <EditEntryModal
-                    entry={selectedEntry}
-                    isOpen={isModalOpen}
-                    onClose={() => {
-                        setIsModalOpen(false);
-                        setIsEditing(false);
-                    }}
-                    onUpdate={handleUpdateEntry}
-                />
-            )}
-
-            {/* Delete Confirmation Modal */}
-            {isDeleteModalOpen && (
-                <DeleteConfirmationModal
-                    onConfirm={() => handleDelete(entryToDelete)}
-                    onCancel={() => setIsDeleteModalOpen(false)}
-                />
-            )}
+            {/* Add ModalManager Component */}
+            <ModalManager 
+                isNewEntryModalOpen={isNewEntryModalOpen}
+                onCloseNewEntryModal={() => setIsNewEntryModalOpen(false)}
+                handleAddEntry={handleAddEntry}
+                isModalOpen={isModalOpen}
+                selectedEntry={selectedEntry}
+                isEditing={isEditing}
+                onEdit={() => setIsEditing(true)}
+                onCloseModal={() => {
+                    setIsModalOpen(false);
+                    // Ensure isEditing is reset when closing the main modal regardless of mode
+                    setIsEditing(false); 
+                }}
+                handleUpdateEntry={handleUpdateEntry}
+                onTriggerDelete={(id) => {
+                    setEntryToDelete(id);
+                    setIsDeleteModalOpen(true);
+                }}
+                isDeleteModalOpen={isDeleteModalOpen}
+                entryToDelete={entryToDelete}
+                handleDelete={handleDelete}
+                onCloseDeleteModal={() => setIsDeleteModalOpen(false)}
+            />
             <Footer />
         </div>
     );
