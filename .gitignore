@@ -1,6 +1,7 @@
 # Node modules
 node_modules/
 
+
 # Environment variables
 .env
 
@@ -44,3 +45,9 @@ temp/
 *.zip
 *.tar
 *.gz
+
+# Docker
+docker-compose.yml
+
+# Kubernetes
+kubernetes/
