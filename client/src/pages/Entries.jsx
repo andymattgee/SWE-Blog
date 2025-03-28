@@ -17,17 +17,14 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { BsPlusLg } from 'react-icons/bs';
-import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import '../styles/todo-quill.css';
 import '../styles/quill-viewer.css';
 import Footer from '../components/Footer';
 import ViewEntryModal from '../components/ViewEntryModal';
-import EntryImage from '../components/EntryImage';
 import NewEntryModal from '../components/NewEntryModal';
 import EditEntryModal from '../components/EditEntryModal';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
@@ -47,12 +44,8 @@ const debounce = (func, wait) => {
 };
 
 const Entries = () => {
-    // Navigation hook for programmatic routing
-    const navigate = useNavigate();
-
     // State management
     const [entries, setEntries] = useState([]); // List of all entries
-    const [error, setError] = useState(null); // Error state for handling API errors
     const [selectedEntry, setSelectedEntry] = useState(null); // Currently selected entry for modal
     const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
     const [isEditing, setIsEditing] = useState(false); // Edit mode state
@@ -82,30 +75,6 @@ const Entries = () => {
         }
     }, []);
 
-    /**
-     * Fetches a single entry by ID
-     */
-    const getEntry = async (id) => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:3333/entries/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-
-            if (!response.data.success || !response.data.data) {
-                throw new Error('Entry not found');
-            }
-
-            // Set the selected entry and open the modal
-            setSelectedEntry(response.data.data);
-            setIsModalOpen(true);
-        } catch (error) {
-            console.error('Error fetching entry:', error);
-            toast.error('Failed to load entry');
-        }
-    };
 
     const handleUpdateEntry = async (id, formData) => {
         try {
@@ -240,10 +209,10 @@ const Entries = () => {
      * @returns {Array<JSX.Element>} Array of entry cards
      */
     const gridItems = entries.map((entry) => (
-        <EntryCard 
-            key={entry._id} 
-            entry={entry} 
-            onClick={handleEntryClick} 
+        <EntryCard
+            key={entry._id}
+            entry={entry}
+            onClick={handleEntryClick}
         />
     ));
 
