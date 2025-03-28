@@ -1,0 +1,97 @@
+/* Base styles for the viewer */
+.ql-viewer {
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* Lists */
+.ql-viewer .ql-editor {
+    padding: 0 !important;
+}
+
+.ql-viewer .ql-editor ul,
+.ql-viewer .ql-editor ol {
+    padding-left: 1.5em !important;
+    margin-top: 0.5em !important;
+    margin-bottom: 0.5em !important;
+}
+
+.ql-viewer .ql-editor ul {
+    list-style: disc outside !important;
+}
+
+.ql-viewer .ql-editor ol {
+    list-style: decimal outside !important;
+}
+
+.ql-viewer .ql-editor li {
+    display: list-item !important;
+    padding-left: 0 !important;
+    margin-bottom: 0.3em !important;
+}
+
+.ql-viewer .ql-editor li:not(.ql-direction-rtl)::before {
+    display: none !important;
+}
+
+/* Nested lists */
+.ql-viewer .ql-editor ul > li > ul {
+    list-style-type: circle !important;
+}
+
+.ql-viewer .ql-editor ul > li > ul > li > ul {
+    list-style-type: square !important;
+}
+
+/* Indentation */
+.ql-viewer .ql-editor .ql-indent-1 { padding-left: 3em !important; }
+.ql-viewer .ql-editor .ql-indent-2 { padding-left: 6em !important; }
+.ql-viewer .ql-editor .ql-indent-3 { padding-left: 9em !important; }
+
+/* Headers */
+.ql-viewer .ql-editor h1 {
+    font-size: 2em !important;
+    font-weight: bold !important;
+    margin: 0.67em 0 !important;
+}
+
+.ql-viewer .ql-editor h2 {
+    font-size: 1.5em !important;
+    font-weight: bold !important;
+    margin: 0.83em 0 !important;
+}
+
+.ql-viewer .ql-editor h3 {
+    font-size: 1.17em !important;
+    font-weight: bold !important;
+    margin: 1em 0 !important;
+}
+
+/* Alignment */
+.ql-viewer .ql-editor .ql-align-center { text-align: center !important; }
+.ql-viewer .ql-editor .ql-align-right { text-align: right !important; }
+.ql-viewer .ql-editor .ql-align-justify { text-align: justify !important; }
+
+/* Text Formatting */
+.ql-viewer .ql-editor strong { font-weight: bold !important; }
+.ql-viewer .ql-editor em { font-style: italic !important; }
+.ql-viewer .ql-editor u { text-decoration: underline !important; }
+
+/* Override Quill's default list styles */
+.ql-viewer .ql-editor .ql-list-bullet {
+    list-style-type: disc !important;
+}
+
+.ql-viewer .ql-editor .ql-list-ordered {
+    list-style-type: decimal !important;
+}
+
+/* Fix list marker positioning */
+.ql-viewer .ql-editor li::marker {
+    color: inherit !important;
+}
+
+/* Ensure proper list nesting */
+.ql-viewer .ql-editor li > .ql-ui {
+    display: none !important;
+}

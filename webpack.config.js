@@ -17,7 +17,7 @@ module.exports = {
         // The filename of the output bundle
         filename: 'bundle.js',
         // The path to the output directory
-        path: path.join(__dirname, 'build'),
+        path: path.join(__dirname, './build'),
         // The public URL of the output directory when referenced in a browser
         publicPath: '/',
         // Cleans the output directory before emitting
@@ -31,19 +31,27 @@ module.exports = {
     devServer: {
         // Serve static files from the build directory
         static: {
-            directory: path.resolve(__dirname, 'build'),
-            publicPath: '/build/',
+            directory: path.resolve(__dirname, './build'),
+            publicPath: '/',
         },
         // Fallback to index.html for Single Page Applications
         historyApiFallback: true,
         // Port to run the devServer
         port: 3000,
-        // Automatically open the browser
-        open: true,
+        // Automatically open the browser to new window w localhost3000
+        // open: true,
         // Enables hot module replacement for CSS/JS
         hot: true,
         // Enable gzip compression
         compress: true,
+        // liveReload: true,
+        // Proxy configuration for API requests
+        proxy: [{
+            context: ['/api'],
+            target: 'http://localhost:3333',
+            secure: false,
+            changeOrigin: true
+        }],
 
     },
     // Disable performance hints (e.g., asset size warnings)
@@ -54,7 +62,7 @@ module.exports = {
     plugins: [
         // Generates an HTML file to serve the webpack bundles
         new HtmlWebpackPlugin({
-            title: "testapp",
+            title: "SWE-Blog",
             template: './client/public/index.html'
         })
     ],
@@ -64,6 +72,7 @@ module.exports = {
             {
                 // Test for JavaScript files to use babel-loader
                 test: /\.(?:js|jsx|mjs|cjs)$/,
+
                 // Exclude node_modules from processing
                 exclude: /node_modules/,
                 // Use babel-loader for JS/JSX files
@@ -71,21 +80,23 @@ module.exports = {
                     loader: 'babel-loader',
                     // Presets used for transpiling
                     options: {
-                        presets: ['@babel/preset-env', '@babel/preset-react',]
+                        presets: [
+                            ["@babel/preset-env", { targets: "defaults" }],
+                            // '@babel/preset-env',
+                            '@babel/preset-react',
+                        ]
                     }
                 }
             },
             {
                 // Test for CSS and SCSS files
-                test: /\.(css|scss)$/i,
-                // Only include files from the specified directory
-                include: path.resolve(__dirname, 'src'),
+                test: /\.css$/i,
                 // Use these loaders in sequence for CSS/SCSS files
                 use: [
-                    "style-loader", // Injects styles into the DOM
-                    "css-loader", // Translates CSS into CommonJS
-                    "sass-loader", // Compiles Sass to CSS
-                    "postcss-loader" // Process CSS with PostCSS
+                    "style-loader",
+                    "css-loader",
+                    "postcss-loader",
+                    "sass-loader",
                 ],
             },
             {
@@ -93,10 +104,20 @@ module.exports = {
                 test: /\.(png|svg|jpg|jpeg|gif)$/i,
                 type: 'asset/resource'
             },
+            {
+                // Loader for video files to handle them as assets/resources (npm install file-loader)
+                test: /\.(mp4)$/,
+                use: {
+                    loader: 'file-loader',
+                    options: {
+                        name: 'videos/[name].[ext]',
+                    },
+                },
+            }
         ]
     },
     // Automatically resolve these extensions
     resolve: {
-        extensions: [".*", ".js", ".jsx"]
+        extensions: [".*", ".js", ".jsx", ".ts", ".tsx", ".gif", ".png", ".svg", ".jpg", ".jpeg", ".mjs", ".cjs"],
     }
 }

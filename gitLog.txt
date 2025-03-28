@@ -1,0 +1,126 @@
+This will be a log that will keep track of app updates and Git pushes and GitHub PR'S
+Git commit messages, if extra window pops up:  cmd + S to save changes, cmd + W exits the window,
+
+3/5/25 
+    Major ToDo Changes w Cursor AP
+
+    BELOW CHANGES MADE WITH AGENT USING CLAUDE SONNET 3.5
+    Todos.js Model page updated to reflect new toDo fields
+    todoController.js page modified to handle new fields
+    todoModal.jsx newly created page that created a reusable model for creating and editing tasks
+    TodoItems.jsx displays individual TodoItems
+    Todos.jsx updated - main page updated with new functionality
+
+    PUSHED AND COMBINED W DEV VIA PR
+
+
+3/6/25 
+    Minor ToDo changes
+
+    BELOW DONE WITH AGENT USING CLAUDE SONNET 3.5
+    Reordered the today,pending,overdue section and made them wider
+    Made sure text fields were clear for every new task
+    Confirmation modal popup for deleting a task
+    Changed order of tasks so that new tasks appear at top of list
+    Changed red indicator to an exclamation point ! instead of red dot 
+    Changed edit and delete button to icons and change priotity indicator to an icon
+
+    BRANCH FEATURE/TODO PUSHED TO REPO AND MERGE TO DEV BRANCH
+
+    DOCS ADDED USING EDIT FEATURE W GPT-4o-MINI
+    Docs and comments added to the following pages:
+        Models/todo.js
+        Controllers/todoController
+        components/TodoModal.jsx (new component)
+        componenets/TodoItem.jsx (new component)
+        pages/Todos.jsx
+     -Added gitLog.txt to capture major git pushes and PR's
+
+    Front end pages clean up - going through pages and deleting pages/files that are no longer needed to due recent app revisions
+        Following pages were removed: singleTodo.jsx, CreateTodo.jsx, NewEntry.jsx, SingleEntry.jsx, editEntry.jsx,Test2.jsx
+        Files deleted from pages folder and removed from App.jsx router and imports sections
+        All frontend pages/components have documentation and cleaned up, move on to back end.
+
+    Back end files cleans up and documentation added : IN PROCESS 
+        All backend files documentation/comments added except for: userController, userRoutes
+            Need to go back and edit these files so they are used correctly,
+            current routes and controllers are in the same file instead of split
+            UserController and UserRoute fixed, route has route definitions and controller has logic to handle async calls to DB
+            Documentation/comments added to userController and userRoute pages, all backend pages now have docs and comments
+
+3/7/25
+    Testing Windsurf
+
+    - Navbar edited to includes icons, rearranging order of things 
+    - Added Text Rich editor to entry form, files affected: Entries.jsx (NewEntryModal component,EditEntryModal component)
+    - NPM installed react-quill, added to webpack.config.js and import statement, added quill.snow.css
+    - Added quill-viewer.css and a lot more changes to get text editor working for entries but not functional! 
+    - Text Rich editor added to task details section, can now add and edit task with TRE.
+    BUG: old tasks were'nt showing TRE formatting, only newer ones. Unable to fix, deleted old tasks and moved on.
+
+3/8/25
+    Continuing to use Windsurf (getting low on credits)
+    - Added userProfile page to keep track of number of tasks, todos,name, and a password change button added (no functionality)
+    - Added context to application to help store user information after login, then used for user profile page
+
+    
+3/9/25
+    Continuing to use Windsurf (another account)
+    -Edit create new task modal so priority appears as a label
+    -Edited Text Rich Editor so it no longer overlaps with other components
+    -Test Tasks CRUD functionality to make sure everything working properly
+
+    pic upload functional
+    currently pics loaded onto local machine
+    eventually use s3 bucket or some online bucket
+    edit image functional
+    image displayed on individual entry
+    image displayed on grids and list view for preview
+    image saved in server side uploads/images
+
+    DOCS ADDED to: Todos.JSX, TodoModal.jsx, TodoItem.jsx, UserProfile.jsx, PasswordChangeModal.jsx
+    
+3/10/25
+    Continuing to use Windsurf
+    -Fixed issue with entry image upload
+    - Added toaster notifications for edit,add,delete entry, add pic to entry.
+    - Comments to server/upload middleware
+    - Changes to Home page w new sections for about me, technologies I work with, projects (templates)
+    - Footer component, created, only added to home page this time
+    - Look to add animations, something like GSAP? 
+
+3/11/25
+    API or front page, idea to use ChatGPT API: news page
+    upon rendering, you get news about current events, sports, AI, tech, etc.
+
+    - made another WS account, after this one, I'm going back to Cursor and will most likely pay for the premium version.
+
+    - Date on entry card moved to title line, date added underneath title on view entry modal
+    - Changed add/edit buttons to icon
+    -Center titles on view entry modal
+
+    -Goal for today: get SW3 bucket or cloudflare online bucket attached to this app for picture storage. 
+    - Looking into BLOBS, batch requests? sign up for free and see how much usage thee is in one week.≠
+3/12/25
+    -Tested CRUD functionality for entries
+    - Fixed issue with entry image upload
+    - Added toaster notifications for edit,add,delete entry, add pic to entry.
+    - Changed formatting for entries and all modals
+    - Plus entry, edit and delete buttons changed to icons
+    - Footer added to blog page, user profile page, tasks page
+    - Tested tasks section and editing, everything seems to be working, all CRUD functional
+
+3/13/25
+    -Using windsurf and ChatPt seperately
+
+    -Changed API Test page to chat page utilizing OpenAI API
+    - Currently only handles a single response, no conversation context
+    - Can add images and have AI process and interpret them correctly
+    - Full stack feature implemented for chat bot, backend uses Sharp to process images by converting to jpeg and compressing to >20MB 
+    - Front end has chat interface with text input and image upload, clear chat button. 
+    
+3/18/25
+    - Will be adding a news section to app utilizing a news API that will show stories of the day.
+    - News section page created with multiple sections and empty place holder containers
+    - Added new section to navbar and route to App.jsx
+    - NEED TO DO: research on NEWS API and choose one, get backend going. 
