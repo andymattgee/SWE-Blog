@@ -15,21 +15,19 @@
  */
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from "axios";
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import fallImage from '../../public/images/fall-bg.jpg';
-import beachIMG from '../../public/images/beach.jpg';
-import mountains from '../../public/images/mountains.jpg';
 import { BsPlusLg } from 'react-icons/bs';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
-import { AiOutlineHome } from 'react-icons/ai';
 import '../styles/todo-quill.css';
 import '../styles/quill-viewer.css';
 import Footer from '../components/Footer';
+import ViewEntryModal from '../components/ViewEntryModal';
+import EntryImage from '../components/EntryImage';
 
 /* Custom styles for Quill editor containers */
 import '../styles/quill-container.css';
@@ -83,57 +81,6 @@ const processQuillContent = (content) => {
     // Simply return the content directly to preserve all HTML formatting
     // The dangerouslySetInnerHTML in the component will handle rendering it
     return content;
-};
-
-/**
- * EntryImage Component for rendering entry images with error handling
- * 
- * @param {Object} props - Component props
- * @param {string} props.imagePath - Path to the image
- * @returns {JSX.Element} The image element
- */
-const EntryImage = ({ imagePath }) => {
-    const [error, setError] = useState(false);
-
-    if (!imagePath) {
-        return (
-            <div className="w-full h-48 bg-gray-800 rounded-lg flex items-center justify-center">
-                <span className="text-gray-400">No image</span>
-            </div>
-        );
-    }
-
-    // Handle local preview (data URL)
-    if (typeof imagePath === 'object' && imagePath.isLocal) {
-        return (
-            <img
-                src={imagePath.url}
-                alt="Entry preview"
-                className="w-full h-48 object-cover rounded-lg"
-                onError={() => setError(true)}
-            />
-        );
-    }
-
-    // Handle S3 URL
-    const imageUrl = typeof imagePath === 'object' ? imagePath.url : imagePath;
-
-    if (error) {
-        return (
-            <div className="w-full h-48 bg-gray-800 rounded-lg flex items-center justify-center">
-                <span className="text-gray-400">Failed to load image</span>
-            </div>
-        );
-    }
-
-    return (
-        <img
-            src={imageUrl}
-            alt="Entry"
-            className="w-full h-48 object-cover rounded-lg"
-            onError={() => setError(true)}
-        />
-    );
 };
 
 /**
@@ -539,20 +486,6 @@ const Entries = () => {
     }, []);
 
     /**
-     * Navigates to the NewEntry page for creating a new entry.
-     */
-    const handleNewEntry = () => {
-        navigate('/NewEntry');
-    };
-
-    /**
-     * Navigates to the Home page.
-     */
-    const handleHomeButton = () => {
-        navigate('/Home');
-    };
-
-    /**
      * Maps entries to grid view cards
      * 
      * @returns {Array<JSX.Element>} Array of entry cards
@@ -660,7 +593,7 @@ const Entries = () => {
 
             {/* View/Edit Modal */}
             {isModalOpen && !isEditing && (
-                <ViewModal
+                <ViewEntryModal
                     entry={selectedEntry}
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
@@ -696,88 +629,6 @@ const Entries = () => {
         </div>
     );
 }
-
-const ViewModal = ({ entry, isOpen, onClose, onEdit, onDelete }) => {
-    const modalRef = useRef(null);
-
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (modalRef.current && !modalRef.current.contains(event.target)) {
-                onClose();
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [onClose]);
-
-    if (!entry) return null;
-
-    const formattedDate = entry.createdAt
-        ? new Date(entry.createdAt).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        })
-        : null;
-
-    return (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
-            <div ref={modalRef} className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl">
-                <div className="flex justify-end">
-                    <button onClick={onClose} className="text-gray-400 hover:text-gray-200">x</button>
-                </div>
-                <div className="flex justify-center items-center mb-2">
-                    <h2 className="text-2xl font-bold text-blue-400">{entry.title}</h2>
-                </div>
-
-                {formattedDate && (
-                    <div className="text-center text-gray-400 text-sm mb-6">
-                        {formattedDate}
-                    </div>
-                )}
-
-                <div className="space-y-6">
-                    {entry.image && (
-                        <div className="mb-6">
-                            <EntryImage imagePath={entry.image} />
-                        </div>
-                    )}
-                    <div>
-                        <h3 className="text-lg font-medium text-blue-400 mb-2">Professional Content</h3>
-                        <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                            <div className="todo-quill dark-theme ql-editor" dangerouslySetInnerHTML={{ __html: processQuillContent(entry.professionalContent) }} />
-                        </div>
-                    </div>
-                    {entry.personalContent && (
-                        <div>
-                            <h3 className="text-lg font-medium text-blue-400 mb-2">Personal Content</h3>
-                            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                                <div className="todo-quill dark-theme ql-editor" dangerouslySetInnerHTML={{ __html: processQuillContent(entry.personalContent) }} />
-                            </div>
-                        </div>
-                    )}
-                    <div className="flex justify-end space-x-4 mt-6">
-                        <button
-                            onClick={onEdit}
-                            className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200"
-                            title="Edit Entry"
-                        >
-                            <FaEdit size={18} />
-                        </button>
-                        <button
-                            onClick={() => onDelete(entry._id)}
-                            className="p-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors duration-200"
-                            title="Delete Entry"
-                        >
-                            <FaTrashAlt size={18} />
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};
 
 const EditModal = ({ entry, isOpen, onClose, onUpdate }) => {
     const [title, setTitle] = useState('');
