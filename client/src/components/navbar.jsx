@@ -121,13 +121,7 @@ const Navbar = () => {
                             >
                                 News
                             </Link>
-                            <Link 
-                                to="/Todos" 
-                                className="text-blue-700 hover:text-blue-900 text-lg font-medium"
-                                onClick={closeMenu} // Close menu on link click
-                            >
-                                Tasks
-                            </Link>
+                            
                             <Link 
                                 to="/chat" 
                                 className="text-blue-700 hover:text-blue-900 text-lg font-medium"
