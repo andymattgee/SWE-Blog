@@ -17,7 +17,7 @@ import Chat from "./pages/Chat.jsx";
 import Entries from "./pages/Entries.jsx"
 import Signup from './pages/Signup.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
-import Todos from './pages/Todos.jsx';
+// import Todos from './pages/Todos.jsx';
 import UserProfile from './components/UserProfile.jsx';
 import News from './pages/News.jsx';
 
@@ -45,7 +45,7 @@ const App = () => {
             <Route path="/chat" element={<PrivateRoute element={<Chat />} />} />
             <Route path="/entries" element={<PrivateRoute element={<Entries />} />} />
             <Route path="/news" element={<PrivateRoute element={<News />} />} />
-            <Route path="/todos" element={<PrivateRoute element={<Todos />} />} />
+            {/* <Route path="/todos" element={<PrivateRoute element={<Todos />} />} /> */}
             <Route path="/profile" element={<PrivateRoute element={<UserProfile />} />} />
             
           </>
