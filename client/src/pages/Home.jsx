@@ -54,7 +54,7 @@ const Home = () => {
               <Link to="/entries" className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-colors mr-4">
                 Read Blog
               </Link>
-              <Link to="/contact" className="bg-transparent hover:bg-white hover:text-purple-700 text-white font-bold py-3 px-6 rounded-lg border border-white transition-colors">
+              <Link to="/contactPage" className="bg-transparent hover:bg-white hover:text-purple-700 text-white font-bold py-3 px-6 rounded-lg border border-white transition-colors">
                 Contact Me
               </Link>
             </div>
@@ -211,7 +211,7 @@ const Home = () => {
             Interested in collaborating or have questions about my work?
             Feel free to reach out and let's start a conversation.
           </p>
-          <Link to="/contact" className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg transition-colors">
+          <Link to="/contactPage" className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg transition-colors">
             Get in Touch
           </Link>
         </div>
