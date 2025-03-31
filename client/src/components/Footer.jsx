@@ -20,8 +20,7 @@ const Footer = () => {
             <ul className="space-y-2">
               <li><Link to="/" className="hover:text-purple-400 transition-colors">Home</Link></li>
               <li><Link to="/entries" className="hover:text-purple-400 transition-colors">Blog</Link></li>
-              <li><Link to="/todos" className="hover:text-purple-400 transition-colors">Tasks</Link></li>
-              <li><Link to="/contact" className="hover:text-purple-400 transition-colors">Contact</Link></li>
+              <li><Link to="/contactPage" className="hover:text-purple-400 transition-colors">Contact</Link></li>
             </ul>
           </div>
           
@@ -44,7 +43,7 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4 text-purple-400">Contact</h3>
             <p className="mb-2">Email: example@email.com</p>
-            <p>Location: San Francisco, CA</p>
+            <p>Location: Portland, OR</p>
           </div>
         </div>
         
