@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import EntryImage from './EntryImage';
 
@@ -18,20 +18,30 @@ const processQuillContent = (content) => {
  * @param {Function} props.onClose - Function to call when closing the modal
  * @param {Function} props.onEdit - Function to call when edit button is clicked
  * @param {Function} props.onDelete - Function to call when delete button is clicked
+ * @param {Function} props.onSummarize - Function to call when summarize button is clicked
+ * @param {boolean} props.isSummaryOpen - Whether the summary modal is open
  */
-const ViewEntryModal = ({ entry, isOpen, onClose, onEdit, onDelete }) => {
+const ViewEntryModal = ({ entry, isOpen, onClose, onEdit, onDelete, onSummarize, isSummaryOpen }) => {
     const modalRef = useRef(null);
+    // Use the prop to keep track of summary modal state
+    const [isLocalSummaryOpen, setIsLocalSummaryOpen] = useState(isSummaryOpen || false);
+
+    // Update local state when prop changes
+    useEffect(() => {
+        setIsLocalSummaryOpen(isSummaryOpen || false);
+    }, [isSummaryOpen]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (modalRef.current && !modalRef.current.contains(event.target)) {
+            // Only close if summary is not open and click is outside
+            if (!isLocalSummaryOpen && modalRef.current && !modalRef.current.contains(event.target)) {
                 onClose();
             }
         };
 
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [onClose]);
+    }, [onClose, isLocalSummaryOpen]);
 
     if (!entry) return null;
 
@@ -42,10 +52,19 @@ const ViewEntryModal = ({ entry, isOpen, onClose, onEdit, onDelete }) => {
             day: 'numeric'
         })
         : null;
+    
+    // Handle the summarize button click
+    const handleSummarizeClick = () => {
+        setIsLocalSummaryOpen(true);
+        onSummarize();
+    };
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
-            <div ref={modalRef} className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl">
+            <div 
+                ref={modalRef} 
+                className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl"
+            >
                 <div className="flex justify-end">
                     <button onClick={onClose} className="text-gray-400 hover:text-gray-200">x</button>
                 </div>
@@ -82,7 +101,7 @@ const ViewEntryModal = ({ entry, isOpen, onClose, onEdit, onDelete }) => {
                     <div className="flex justify-between items-center mt-6">
                         <div className="flex">
                             <button
-                                onClick={() => console.log('summary button clicked')}
+                                onClick={handleSummarizeClick}
                                 className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200"
                                 title="Summarize with AI"
                             >

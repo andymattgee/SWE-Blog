@@ -10,6 +10,7 @@
  * - Delete entries with confirmation
  * - Create new entries
  * - Responsive design
+ * - AI summary of blog entries
  * 
  * @component
  */
@@ -48,6 +49,7 @@ const Entries = () => {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [entryToDelete, setEntryToDelete] = useState(null);
     const [isNewEntryModalOpen, setIsNewEntryModalOpen] = useState(false);
+    const [isSummaryModalOpen, setIsSummaryModalOpen] = useState(false); // Summary modal state
 
     const fetchEntries = useCallback(async () => {
         try {
@@ -212,6 +214,27 @@ const Entries = () => {
         />
     ));
 
+    // Handle opening and closing summary modal
+    const handleOpenSummaryModal = () => {
+        setIsSummaryModalOpen(true);
+    };
+
+    const handleCloseSummaryModal = () => {
+        // Only close the summary modal without affecting the entry modal
+        setIsSummaryModalOpen(false);
+    };
+
+    // When closing the main entry modal, also close summary if open
+    const handleCloseViewModal = () => {
+        setIsModalOpen(false);
+        setIsEditing(false);
+        
+        // Ensure summary modal closes with parent
+        if (isSummaryModalOpen) {
+            setIsSummaryModalOpen(false);
+        }
+    };
+
     return (
         <div className="min-h-screen [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)] flex flex-col">
             <Navbar />
@@ -259,11 +282,7 @@ const Entries = () => {
                 selectedEntry={selectedEntry}
                 isEditing={isEditing}
                 onEdit={() => setIsEditing(true)}
-                onCloseModal={() => {
-                    setIsModalOpen(false);
-                    // Ensure isEditing is reset when closing the main modal regardless of mode
-                    setIsEditing(false); 
-                }}
+                onCloseModal={handleCloseViewModal}
                 handleUpdateEntry={handleUpdateEntry}
                 onTriggerDelete={(id) => {
                     setEntryToDelete(id);
@@ -273,6 +292,9 @@ const Entries = () => {
                 entryToDelete={entryToDelete}
                 handleDelete={handleDelete}
                 onCloseDeleteModal={() => setIsDeleteModalOpen(false)}
+                isSummaryModalOpen={isSummaryModalOpen}
+                onOpenSummaryModal={handleOpenSummaryModal}
+                onCloseSummaryModal={handleCloseSummaryModal}
             />
             <Footer />
         </div>
