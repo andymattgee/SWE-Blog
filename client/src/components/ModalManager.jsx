@@ -67,10 +67,11 @@ const ModalManager = ({
             )}
 
             {/* Summary Modal */}
-            {isSummaryModalOpen && (
+            {isSummaryModalOpen && selectedEntry && (
                 <ViewSummaryModal 
                     isOpen={isSummaryModalOpen}
                     onClose={onCloseSummaryModal}
+                    entry={selectedEntry}
                 />
             )}
         </>

@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import EntryImage from './EntryImage';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 // Function to process Quill content for display
 const processQuillContent = (content) => {
@@ -25,6 +27,27 @@ const ViewEntryModal = ({ entry, isOpen, onClose, onEdit, onDelete, onSummarize,
     const modalRef = useRef(null);
     // Use the prop to keep track of summary modal state
     const [isLocalSummaryOpen, setIsLocalSummaryOpen] = useState(isSummaryOpen || false);
+    const [isLoadingSummary, setIsLoadingSummary] = useState(false);
+    
+    // Clear any old summary data when a new entry is viewed
+    useEffect(() => {
+        if (entry && entry._id) {
+            // Check if there's cached summary data for a different entry
+            const storedSummary = localStorage.getItem('entrySummary');
+            if (storedSummary) {
+                try {
+                    const parsedSummary = JSON.parse(storedSummary);
+                    // If it's for a different entry, clear it
+                    if (parsedSummary.entryId !== entry._id) {
+                        localStorage.removeItem('entrySummary');
+                    }
+                } catch (error) {
+                    // If there's an error parsing, clear it
+                    localStorage.removeItem('entrySummary');
+                }
+            }
+        }
+    }, [entry]);
 
     // Update local state when prop changes
     useEffect(() => {
@@ -54,9 +77,96 @@ const ViewEntryModal = ({ entry, isOpen, onClose, onEdit, onDelete, onSummarize,
         : null;
     
     // Handle the summarize button click
-    const handleSummarizeClick = () => {
-        setIsLocalSummaryOpen(true);
-        onSummarize();
+    const handleSummarizeClick = async () => {
+        if (!entry || !entry._id) {
+            toast.error('Cannot summarize: Invalid entry');
+            return;
+        }
+
+        try {
+            setIsLoadingSummary(true);
+            
+            // Create a key specific to this entry
+            const entryKey = `entrySummary_${entry._id}`;
+            
+            // Check if we already have a valid summary for this entry
+            const existingSummary = localStorage.getItem(entryKey);
+            if (existingSummary) {
+                try {
+                    const parsed = JSON.parse(existingSummary);
+                    const isRecent = (new Date().getTime() - parsed.timestamp) < (60 * 60 * 1000);
+                    
+                    if (isRecent && parsed.entryId === entry._id) {
+                        // We already have a valid summary, just open the modal
+                        onSummarize();
+                        setIsLocalSummaryOpen(true);
+                        setIsLoadingSummary(false);
+                        return;
+                    }
+                } catch (error) {
+                    // Invalid cache, continue with API call
+                    console.warn('Invalid cached summary, generating a new one');
+                }
+            }
+            
+            // First open the modal so user sees loading state
+            onSummarize();
+            setIsLocalSummaryOpen(true);
+            
+            // Mark the current entry for which we're fetching a summary
+            localStorage.setItem('currentSummaryEntryId', entry._id);
+            
+            // Get token from local storage
+            const token = localStorage.getItem('token');
+            
+            // Make API request to generate summary
+            const response = await axios.post(
+                'http://localhost:3333/api/summary/generate',
+                {
+                    professionalContent: entry.professionalContent,
+                    personalContent: entry.personalContent,
+                    entryId: entry._id // Send entry ID to backend
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+            
+            // Check if the request was successful
+            if (response.data.success) {
+                // Store the summary in localStorage with entry ID as part of the key
+                localStorage.setItem(entryKey, JSON.stringify({
+                    professionalSummary: response.data.data.professionalSummary,
+                    personalSummary: response.data.data.personalSummary,
+                    entryId: entry._id,
+                    timestamp: new Date().getTime()
+                }));
+                
+                // Also store in the general key for ViewSummaryModal to access
+                localStorage.setItem('entrySummary', JSON.stringify({
+                    professionalSummary: response.data.data.professionalSummary,
+                    personalSummary: response.data.data.personalSummary,
+                    entryId: entry._id,
+                    timestamp: new Date().getTime()
+                }));
+                
+                // Remove the current entry marker
+                localStorage.removeItem('currentSummaryEntryId');
+            } else {
+                toast.error('Failed to generate summary');
+            }
+        } catch (error) {
+            console.error('Error generating summary:', error);
+            toast.error('Error generating summary: ' + (error.response?.data?.message || error.message));
+            
+            // Clean up in case of errors
+            localStorage.removeItem('currentSummaryEntryId');
+        } finally {
+            setIsLoadingSummary(false);
+        }
     };
 
     return (
@@ -104,8 +214,9 @@ const ViewEntryModal = ({ entry, isOpen, onClose, onEdit, onDelete, onSummarize,
                                 onClick={handleSummarizeClick}
                                 className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200"
                                 title="Summarize with AI"
+                                disabled={isLoadingSummary}
                             >
-                                Summarize with AI
+                                {isLoadingSummary ? 'Summarizing...' : 'Summarize with AI'}
                             </button>
                         </div>
                         <div className="flex space-x-4">
