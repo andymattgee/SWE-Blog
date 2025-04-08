@@ -79,21 +79,32 @@ const ViewEntryModal = ({ entry, isOpen, onClose, onEdit, onDelete }) => {
                             </div>
                         </div>
                     )}
-                    <div className="flex justify-end space-x-4 mt-6">
-                        <button
-                            onClick={onEdit}
-                            className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200"
-                            title="Edit Entry"
-                        >
-                            <FaEdit size={18} />
-                        </button>
-                        <button
-                            onClick={() => onDelete(entry._id)}
-                            className="p-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors duration-200"
-                            title="Delete Entry"
-                        >
-                            <FaTrashAlt size={18} />
-                        </button>
+                    <div className="flex justify-between items-center mt-6">
+                        <div className="flex">
+                            <button
+                                onClick={() => console.log('summary button clicked')}
+                                className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200"
+                                title="Summarize with AI"
+                            >
+                                Summarize with AI
+                            </button>
+                        </div>
+                        <div className="flex space-x-4">
+                            <button
+                                onClick={onEdit}
+                                className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200"
+                                title="Edit Entry"
+                            >
+                                <FaEdit size={18} />
+                            </button>
+                            <button
+                                onClick={() => onDelete(entry._id)}
+                                className="p-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors duration-200"
+                                title="Delete Entry"
+                            >
+                                <FaTrashAlt size={18} />
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
