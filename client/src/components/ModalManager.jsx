@@ -3,6 +3,7 @@ import NewEntryModal from './NewEntryModal';
 import ViewEntryModal from './ViewEntryModal';
 import EditEntryModal from './EditEntryModal';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
+import ViewSummaryModal from './ViewSummaryModal';
 
 const ModalManager = ({
     isNewEntryModalOpen,
@@ -18,7 +19,10 @@ const ModalManager = ({
     isDeleteModalOpen,
     entryToDelete,
     handleDelete,
-    onCloseDeleteModal
+    onCloseDeleteModal,
+    isSummaryModalOpen,
+    onOpenSummaryModal,
+    onCloseSummaryModal
 }) => {
     return (
         <>
@@ -39,6 +43,8 @@ const ModalManager = ({
                     onClose={onCloseModal}
                     onEdit={onEdit}
                     onDelete={onTriggerDelete} // Pass the trigger function
+                    onSummarize={onOpenSummaryModal}
+                    isSummaryOpen={isSummaryModalOpen} // Pass the summary modal state
                 />
             )}
 
@@ -57,6 +63,15 @@ const ModalManager = ({
                 <DeleteConfirmationModal
                     onConfirm={() => handleDelete(entryToDelete)}
                     onCancel={onCloseDeleteModal}
+                />
+            )}
+
+            {/* Summary Modal */}
+            {isSummaryModalOpen && selectedEntry && (
+                <ViewSummaryModal 
+                    isOpen={isSummaryModalOpen}
+                    onClose={onCloseSummaryModal}
+                    entry={selectedEntry}
                 />
             )}
         </>
