@@ -7,6 +7,7 @@ import PsychedelicPattern from '../components/PsychedelicPattern';
 import SpaceButton from '../components/SpaceButton';
 import GradientCard from '../components/GradientCard';
 import AboutCard from '../components/AboutCard';
+import ProjectCard from '../components/ProjectCard';
 import stars from '../../public/videos/starryVideo.mp4'
 import mountains from '../../public/images/mountains.jpg';
 import computerGlasses from '../../public/images/computer_glasses.jpg';
@@ -77,6 +78,37 @@ const Home = () => {
     }
   }, [isPaused]);
 
+  // Project data
+  const projects = [
+    {
+      title: "Project One",
+      image: mountains,
+      projectUrl: "https://github.com",
+      types: [
+        { name: "React", bgColor: "rgba(97, 218, 251, 0.2)", textColor: "#2196f3" },
+        { name: "Frontend", bgColor: "#e6f7ff", textColor: "#0078d7" }
+      ]
+    },
+    {
+      title: "Project Two",
+      image: computerGlasses,
+      projectUrl: "https://github.com",
+      types: [
+        { name: "Node.js", bgColor: "rgba(104, 159, 56, 0.2)", textColor: "#388e3c" },
+        { name: "Backend", bgColor: "#e8f5e9", textColor: "#2e7d32" }
+      ]
+    },
+    {
+      title: "Project Three",
+      image: mtsRed,
+      projectUrl: "https://github.com",
+      types: [
+        { name: "MongoDB", bgColor: "rgba(76, 175, 80, 0.2)", textColor: "#2e7d32" },
+        { name: "Database", bgColor: "#fafafa", textColor: "#424242" }
+      ]
+    }
+  ];
+
   return (
     <div className="min-h-screen flex flex-col [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
       <Navbar />
@@ -109,10 +141,7 @@ const Home = () => {
 
       {/* About Me Section */}
       <section className="py-16 px-4 md:px-8 max-w-7xl mx-auto">
-        {/* <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">About Me</h2>
-          <div className="h-1 w-20 bg-purple-500 mx-auto"></div>
-        </div> */}
+        
         
         <div className="flex justify-center">
           <AboutCard />
@@ -205,40 +234,16 @@ const Home = () => {
           <div className="h-1 w-20 bg-purple-500 mx-auto"></div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Project Cards */}
-          <div className="bg-gray-800 bg-opacity-50 rounded-lg overflow-hidden border border-gray-700">
-            <img src={mountains} alt="Project 1" className="w-full h-48 object-cover" />
-            <div className="p-6">
-              <h3 className="text-xl font-bold text-white mb-2">Project One</h3>
-              <p className="text-gray-300 mb-4">
-                Description of your first featured project. Highlight the technologies used and your role.
-              </p>
-              <a href="#" className="text-purple-400 hover:text-purple-300">Learn more →</a>
-            </div>
-          </div>
-          
-          <div className="bg-gray-800 bg-opacity-50 rounded-lg overflow-hidden border border-gray-700">
-            <img src={computerGlasses} alt="Project 2" className="w-full h-48 object-cover" />
-            <div className="p-6">
-              <h3 className="text-xl font-bold text-white mb-2">Project Two</h3>
-              <p className="text-gray-300 mb-4">
-                Description of your second featured project. Highlight the technologies used and your role.
-              </p>
-              <a href="#" className="text-purple-400 hover:text-purple-300">Learn more →</a>
-            </div>
-          </div>
-          
-          <div className="bg-gray-800 bg-opacity-50 rounded-lg overflow-hidden border border-gray-700">
-            <img src={mtsRed} alt="Project 3" className="w-full h-48 object-cover" />
-            <div className="p-6">
-              <h3 className="text-xl font-bold text-white mb-2">Project Three</h3>
-              <p className="text-gray-300 mb-4">
-                Description of your third featured project. Highlight the technologies used and your role.
-              </p>
-              <a href="#" className="text-purple-400 hover:text-purple-300">Learn more →</a>
-            </div>
-          </div>
+        <div className="flex flex-wrap justify-center gap-16 mt-10">
+          {projects.map((project, index) => (
+            <ProjectCard 
+              key={index}
+              title={project.title}
+              image={project.image}
+              projectUrl={project.projectUrl}
+              types={project.types}
+            />
+          ))}
         </div>
       </section>
 
