@@ -27,6 +27,7 @@ import '../styles/quill-viewer.css';
 import Footer from '../components/Footer';
 import EntryCard from '../components/EntryCard';
 import ModalManager from '../components/ModalManager';
+import { ActivityCalendar } from 'react-activity-calendar';
 
 /* Custom styles for Quill editor containers */
 import '../styles/quill-container.css';
@@ -253,6 +254,7 @@ const Entries = () => {
             <div className="container mx-auto px-4 py-8">
                 <div className="flex justify-between items-center mb-8">
                     <h1 className="text-3xl font-bold text-white">Bloggy Mc-Blog Face</h1>
+                    
                     <button
                         onClick={() => setIsNewEntryModalOpen(true)}
                         className="p-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition duration-200 flex items-center justify-center"
