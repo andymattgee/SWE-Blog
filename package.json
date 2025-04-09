@@ -46,6 +46,7 @@
     "react-toastify": "^11.0.5",
     "sass": "^1.75.0",
     "sharp": "^0.33.5",
+    "styled-components": "^6.1.17",
     "tailwind": "^4.0.0",
     "tailwind-merge": "^2.3.0"
   },

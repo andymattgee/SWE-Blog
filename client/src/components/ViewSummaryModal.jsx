@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
+import HamsterLoader from './HamsterLoader';
 
 /**
  * Formats the AI response to properly render lists in HTML
@@ -283,9 +284,9 @@ const ViewSummaryModal = ({ isOpen, onClose, entry }) => {
 
                 <div className="space-y-6">
                     {showLoading && (
-                        <div className="text-center py-8">
-                            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                            <p className="text-gray-300">Generating AI summary...</p>
+                        <div className="text-center py-8 flex flex-col items-center justify-center">
+                            <HamsterLoader />
+                            <p className="text-gray-300 mt-4">Generating AI summary...</p>
                         </div>
                     )}
                     
