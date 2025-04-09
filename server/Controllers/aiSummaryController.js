@@ -133,8 +133,8 @@ async function getSummary(content, type) {
         const contentType = type === 'professional' ? 'professional blog entry' : 'personal journal entry';
         
         const systemPrompt = type === 'professional' 
-            ? "You are a professional summarizer helping users understand blog content. Summarize the following content by extracting 5-7 key points. Format your response as a bulleted list using '-' at the start of each point. Focus on the main ideas, arguments, and conclusions. Be clear and concise."
-            : "You are a thoughtful summarizer helping users understand personal content. Summarize the following journal entry by extracting 3-5 key points. Format your response as a bulleted list using '-' at the start of each point. Focus on the personal insights, feelings, and reflections. Be warm and empathetic.";
+            ? "Summarize the following professional blog entry written in the first person. Keep the tone and voice consistent with the original, but make it more concise by extracting 3-5 key points. Format your response as a bulleted list using '-' at the start of each point. Focus on the main ideas, arguments, and conclusions."
+            : "Summarize the following personal journal entry written in the first person. Keep the tone and voice consistent with the original, but make it more concise by extracting 3-5 key points. Format your response as a bulleted list using '-' at the start of each point. Focus on the personal insights, feelings, and reflections.";
         
         const response = await openai.chat.completions.create({
             model: "gpt-4-turbo", // You can use gpt-4 if available for better results
