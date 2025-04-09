@@ -3,11 +3,11 @@ import { Link, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import LogLocalStorage from '../components/LogLocalStorage';
+import MatrixPattern from '../components/MatrixPattern';
 import stars from '../../public/videos/starryVideo.mp4'
 import mountains from '../../public/images/mountains.jpg';
 import computerGlasses from '../../public/images/computer_glasses.jpg';
 import mtsRed from '../../public/images/mts_Red.jpg';
-import bannerOne from '../../public/images/bannerOne.jpg';
 import bannerTwo from '../../public/images/bannerTwo.jpg';
 
 /**
@@ -36,13 +36,14 @@ const Home = () => {
       <Navbar />
 
       {/* Hero Banner Section */}
-      <div className="relative h-[50vh] w-full mx-auto mt-0">
-        <img 
-          src={bannerOne} 
-          alt="Banner" 
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div className="relative h-[50vh] w-full mx-auto mt-0 bg-black">
+        {/* Matrix Pattern Background */}
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
+          <MatrixPattern />
+        </div>
+        
+        {/* Content Overlay with higher z-index */}
+        <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center z-10">
           <div className="text-center">
             <h1 className="text-white text-4xl md:text-6xl font-bold mb-4">
               Welcome to {userName ? userName + "'s" : "My"} Tech Blog
