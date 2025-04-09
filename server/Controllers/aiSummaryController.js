@@ -94,7 +94,7 @@ async function getSummary(content, type) {
         if (!content) return null;
         
         // If content is too long, truncate it to avoid token limits
-        const maxLength = 8000; // Roughly 2000 tokens
+        const maxLength = 16000; // Roughly ~4000 tokens
         const truncatedContent = content.length > maxLength 
             ? content.substring(0, maxLength) + "..." 
             : content;
@@ -102,19 +102,19 @@ async function getSummary(content, type) {
         const contentType = type === 'professional' ? 'professional blog entry' : 'personal journal entry';
         
         const response = await openai.chat.completions.create({
-            model: "gpt-3.5-turbo", // You can use gpt-4 if available for better results
+            model: "gpt-4-turbo", // You can use gpt-4 if available for better results
             messages: [
                 {
                     role: "system",
-                    content: `You are an expert summarizer. Provide a concise summary of the ${contentType} below, highlighting the key points and main ideas. Keep your summary under 150 words.`
-                },
+                    content: "You are a friendly and thoughtful assistant. Summarize the following professional blog entry in a warm and human tone. Focus on the key ideas and convey them clearly and concisely, as if you're helping someone quickly understand what was written.Give the response back in a list format. "
+                  },
                 {
                     role: "user",
                     content: truncatedContent
                 }
             ],
-            max_tokens: 250,
-            temperature: 0.5,
+            max_tokens: 1000,
+            temperature: 0.7,
         });
         
         return response.choices[0].message.content.trim();
@@ -122,4 +122,4 @@ async function getSummary(content, type) {
         console.error(`Error getting ${type} summary from OpenAI:`, error);
         throw new Error(`Failed to generate ${type} summary: ${error.message}`);
     }
-} 
+}
