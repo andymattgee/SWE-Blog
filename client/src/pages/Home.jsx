@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Link, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -21,6 +21,9 @@ import bannerTwo from '../../public/images/bannerTwo.jpg';
 const Home = () => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState('');
+  const techScrollRef = useRef(null);
+  const scrollIntervalRef = useRef(null);
+  const [isPaused, setIsPaused] = useState(false);
 
   /**
    * Retrieve user information from localStorage and update the state
@@ -32,6 +35,46 @@ const Home = () => {
       setUserName(storedUserName);
     }
   }, []);
+
+  // Initialize auto-scrolling for technologies section
+  useEffect(() => {
+    const scrollContainer = techScrollRef.current;
+    
+    if (scrollContainer) {
+      // Start auto-scrolling
+      const startAutoScroll = () => {
+        if (scrollIntervalRef.current) clearInterval(scrollIntervalRef.current);
+        
+        scrollIntervalRef.current = setInterval(() => {
+          if (!isPaused && scrollContainer) {
+            scrollContainer.scrollLeft += 1; // Smooth, slow scrolling
+            
+            // Reset scroll when we reach the end to create an infinite loop effect
+            if (scrollContainer.scrollLeft >= 
+                (scrollContainer.scrollWidth - scrollContainer.clientWidth)) {
+              scrollContainer.scrollLeft = 0;
+            }
+          }
+        }, 30); // Adjust timing for slower/faster scroll
+      };
+      
+      startAutoScroll();
+      
+      // Add hover handlers to pause/resume scrolling
+      const handleMouseEnter = () => setIsPaused(true);
+      const handleMouseLeave = () => setIsPaused(false);
+      
+      scrollContainer.addEventListener('mouseenter', handleMouseEnter);
+      scrollContainer.addEventListener('mouseleave', handleMouseLeave);
+      
+      // Cleanup
+      return () => {
+        if (scrollIntervalRef.current) clearInterval(scrollIntervalRef.current);
+        scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
+        scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
+      };
+    }
+  }, [isPaused]);
 
   return (
     <div className="min-h-screen flex flex-col [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
@@ -119,17 +162,22 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Technologies Section */}
+      {/* Technologies Section with auto-scroll */}
       <section className="py-16 px-4 md:px-8 bg-gray-900 bg-opacity-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Technologies I Work With</h2>
             <div className="h-1 w-20 bg-purple-500 mx-auto"></div>
+            <p className="text-gray-300 mt-4 text-sm italic">Hover over card for details</p>
           </div>
           
           <div className="relative">
-            {/* Scrollable container */}
-            <div className="overflow-x-auto scrollbar-hide pb-12 pt-6" style={{ minHeight: '290px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            {/* Scrollable container with auto-scroll */}
+            <div 
+              ref={techScrollRef}
+              className="overflow-x-auto scrollbar-hide pb-12 pt-6" 
+              style={{ minHeight: '290px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
               <div className="flex space-x-12 min-w-max px-8 py-2">
                 {/* Technology Cards */}
                 <GradientCard 
