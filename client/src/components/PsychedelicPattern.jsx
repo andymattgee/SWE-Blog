@@ -14,10 +14,18 @@ const StyledWrapper = styled.div`
   width: 100%;
   height: 100%;
   overflow: hidden;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
   
   .container {
     position: absolute;
     inset: -1em;
+    width: 100vw; /* Full viewport width */
+    height: 100%; /* Full height */
+    margin: 0;
+    padding: 0;
     --c: 7px;
     background-color: #000;
     background-image: radial-gradient(
@@ -52,6 +60,7 @@ const StyledWrapper = styled.div`
     animation:
       wee 40s linear infinite,
       filt 6s linear infinite;
+    transform: scale(1.1); /* Scale up slightly to avoid gaps */
   }
 
   @keyframes filt {
