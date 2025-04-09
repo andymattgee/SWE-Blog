@@ -3,7 +3,8 @@ import { Link, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import LogLocalStorage from '../components/LogLocalStorage';
-import MatrixPattern from '../components/MatrixPattern';
+import PsychedelicPattern from '../components/PsychedelicPattern';
+import SpaceButton from '../components/SpaceButton';
 import stars from '../../public/videos/starryVideo.mp4'
 import mountains from '../../public/images/mountains.jpg';
 import computerGlasses from '../../public/images/computer_glasses.jpg';
@@ -37,13 +38,13 @@ const Home = () => {
 
       {/* Hero Banner Section */}
       <div className="relative h-[50vh] w-full mx-auto mt-0 bg-black">
-        {/* Matrix Pattern Background */}
+        {/* Psychedelic Pattern Background */}
         <div className="absolute inset-0 w-full h-full overflow-hidden">
-          <MatrixPattern />
+          <PsychedelicPattern />
         </div>
         
         {/* Content Overlay with higher z-index */}
-        <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center z-10">
+        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center z-10">
           <div className="text-center">
             <h1 className="text-white text-4xl md:text-6xl font-bold mb-4">
               Welcome to {userName ? userName + "'s" : "My"} Tech Blog
@@ -51,13 +52,11 @@ const Home = () => {
             <p className="text-white text-xl md:text-2xl">
               Exploring Software Engineering, Web Development, and Technology
             </p>
-            <div className="mt-8">
-              <Link to="/entries" className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-colors mr-4">
-                Read Blog
-              </Link>
-              <Link to="/contactPage" className="bg-transparent hover:bg-white hover:text-purple-700 text-white font-bold py-3 px-6 rounded-lg border border-white transition-colors">
+            <div className="mt-8 flex flex-wrap justify-center items-center gap-4">
+              <SpaceButton text="READ BLOG" to="/entries" />
+              {/* <Link to="/contactPage" className="bg-transparent hover:bg-white hover:text-purple-700 text-white font-bold py-3 px-6 rounded-lg border border-white transition-colors">
                 Contact Me
-              </Link>
+              </Link> */}
             </div>
           </div>
         </div>
