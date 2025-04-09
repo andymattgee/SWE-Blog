@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import LogLocalStorage from '../components/LogLocalStorage';
 import PsychedelicPattern from '../components/PsychedelicPattern';
 import SpaceButton from '../components/SpaceButton';
+import GradientCard from '../components/GradientCard';
 import stars from '../../public/videos/starryVideo.mp4'
 import mountains from '../../public/images/mountains.jpg';
 import computerGlasses from '../../public/images/computer_glasses.jpg';
@@ -126,35 +127,68 @@ const Home = () => {
             <div className="h-1 w-20 bg-purple-500 mx-auto"></div>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {/* Technology Cards */}
-            <div className="bg-gray-800 p-6 rounded-lg text-center hover:transform hover:scale-105 transition-transform">
-              <div className="text-4xl text-purple-400 mb-4">
-                <i className="fab fa-react"></i>
+          <div className="relative">
+            {/* Scrollable container */}
+            <div className="overflow-x-auto scrollbar-hide pb-12 pt-6" style={{ minHeight: '290px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+              <div className="flex space-x-12 min-w-max px-8 py-2">
+                {/* Technology Cards */}
+                <GradientCard 
+                  title="React"
+                  subtitle="Frontend Library"
+                  highlight="Component-based"
+                />
+                
+                <GradientCard 
+                  title="Node.js"
+                  subtitle="Backend Runtime"
+                  highlight="JavaScript everywhere"
+                />
+                
+                <GradientCard 
+                  title="MongoDB"
+                  subtitle="Database"
+                  highlight="NoSQL, Document-based"
+                />
+                
+                <GradientCard 
+                  title="JavaScript"
+                  subtitle="Programming Language"
+                  highlight="Web Development"
+                />
+                
+                <GradientCard 
+                  title="Next.js"
+                  subtitle="React Framework"
+                  highlight="SSR & Static Generation"
+                />
+                
+                <GradientCard 
+                  title="TypeScript"
+                  subtitle="JavaScript Superset"
+                  highlight="Type Safety"
+                />
+                
+                <GradientCard 
+                  title="TailwindCSS"
+                  subtitle="CSS Framework"
+                  highlight="Utility-first"
+                />
+                
+                <GradientCard 
+                  title="GraphQL"
+                  subtitle="Query Language"
+                  highlight="Efficient data fetching"
+                />
+                
+                <GradientCard 
+                  title="AWS"
+                  subtitle="Cloud Services"
+                  highlight="Scalable infrastructure"
+                />
               </div>
-              <h3 className="text-xl font-semibold text-white">React</h3>
             </div>
-            
-            <div className="bg-gray-800 p-6 rounded-lg text-center hover:transform hover:scale-105 transition-transform">
-              <div className="text-4xl text-purple-400 mb-4">
-                <i className="fab fa-node-js"></i>
-              </div>
-              <h3 className="text-xl font-semibold text-white">Node.js</h3>
-            </div>
-            
-            <div className="bg-gray-800 p-6 rounded-lg text-center hover:transform hover:scale-105 transition-transform">
-              <div className="text-4xl text-purple-400 mb-4">
-                <i className="fas fa-database"></i>
-              </div>
-              <h3 className="text-xl font-semibold text-white">MongoDB</h3>
-            </div>
-            
-            <div className="bg-gray-800 p-6 rounded-lg text-center hover:transform hover:scale-105 transition-transform">
-              <div className="text-4xl text-purple-400 mb-4">
-                <i className="fab fa-js"></i>
-              </div>
-              <h3 className="text-xl font-semibold text-white">JavaScript</h3>
-            </div>
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 bg-gradient-to-r from-gray-900 to-transparent w-12 h-full pointer-events-none"></div>
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 bg-gradient-to-l from-gray-900 to-transparent w-12 h-full pointer-events-none"></div>
           </div>
         </div>
       </section>
