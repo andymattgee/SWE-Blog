@@ -57,11 +57,15 @@ exports.generateSummary = async (req, res) => {
             personalSummary = await getSummary(cleanPersonalContent, 'personal');
         }
         
+        // Ensure summaries are properly formatted as lists if they aren't already
+        const formattedProfessionalSummary = ensureListFormat(professionalSummary);
+        const formattedPersonalSummary = personalSummary ? ensureListFormat(personalSummary) : null;
+        
         return res.status(200).json({
             success: true,
             data: {
-                professionalSummary,
-                personalSummary,
+                professionalSummary: formattedProfessionalSummary,
+                personalSummary: formattedPersonalSummary,
                 entryId
             }
         });
@@ -84,6 +88,33 @@ exports.generateSummary = async (req, res) => {
 };
 
 /**
+ * Ensures text is in a consistent list format
+ * @param {string} text - The text to format
+ * @returns {string} - Text formatted as a list
+ */
+function ensureListFormat(text) {
+    if (!text) return '';
+    
+    // Check if it's already in a list format
+    const hasListMarkers = text.includes('- ') || text.includes('• ') || 
+                           text.includes('* ') || /^\d+\.\s/.test(text);
+    
+    if (hasListMarkers) {
+        return text; // Already a list, return as is
+    }
+    
+    // If not in list format, convert to bullet points
+    // First, split by sentences or paragraphs
+    const lines = text.split(/(?<=[.!?])\s+/);
+    
+    // Convert each meaningful line to a bullet point
+    return lines
+        .filter(line => line.trim().length > 10) // Only include meaningful content
+        .map(line => `- ${line.trim()}`)
+        .join('\n');
+}
+
+/**
  * Generate a summary using OpenAI API
  * @param {string} content - The content to summarize
  * @param {string} type - The type of content (professional or personal)
@@ -101,13 +132,17 @@ async function getSummary(content, type) {
         
         const contentType = type === 'professional' ? 'professional blog entry' : 'personal journal entry';
         
+        const systemPrompt = type === 'professional' 
+            ? "You are a professional summarizer helping users understand blog content. Summarize the following content by extracting 5-7 key points. Format your response as a bulleted list using '-' at the start of each point. Focus on the main ideas, arguments, and conclusions. Be clear and concise."
+            : "You are a thoughtful summarizer helping users understand personal content. Summarize the following journal entry by extracting 3-5 key points. Format your response as a bulleted list using '-' at the start of each point. Focus on the personal insights, feelings, and reflections. Be warm and empathetic.";
+        
         const response = await openai.chat.completions.create({
             model: "gpt-4-turbo", // You can use gpt-4 if available for better results
             messages: [
                 {
                     role: "system",
-                    content: "You are a friendly and thoughtful assistant. Summarize the following professional blog entry in a warm and human tone. Focus on the key ideas and convey them clearly and concisely, as if you're helping someone quickly understand what was written.Give the response back in a list format. "
-                  },
+                    content: systemPrompt
+                },
                 {
                     role: "user",
                     content: truncatedContent

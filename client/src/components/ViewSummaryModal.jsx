@@ -2,6 +2,65 @@ import React, { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 
 /**
+ * Formats the AI response to properly render lists in HTML
+ * @param {string} content - The content from OpenAI that may contain lists
+ * @returns {JSX.Element} Formatted content with proper list rendering
+ */
+const formatSummaryContent = (content) => {
+    if (!content) return null;
+
+    // Check if the content appears to be in a list format
+    const hasListItems = content.includes('- ') || content.includes('• ') || 
+                          content.includes('* ') || /^\d+\.\s/.test(content);
+    
+    if (hasListItems) {
+        // Split content by lines
+        const lines = content.split('\n').filter(line => line.trim() !== '');
+        
+        // Check if we have numbered list (1. 2. 3.)
+        const isNumberedList = lines.some(line => /^\d+\.\s/.test(line.trim()));
+        
+        // Check if we have bullet list (-, •, *)
+        const isBulletList = lines.some(line => 
+            line.trim().startsWith('- ') || 
+            line.trim().startsWith('• ') || 
+            line.trim().startsWith('* ')
+        );
+        
+        if (isNumberedList) {
+            return (
+                <ol className="list-decimal pl-6 space-y-2">
+                    {lines.map((line, index) => {
+                        // Remove number prefix for clean display in <li>
+                        const cleanLine = line.trim().replace(/^\d+\.\s*/, '');
+                        return cleanLine ? <li key={index}>{cleanLine}</li> : null;
+                    })}
+                </ol>
+            );
+        } else if (isBulletList) {
+            return (
+                <ul className="list-disc pl-6 space-y-2">
+                    {lines.map((line, index) => {
+                        // Remove bullet prefix for clean display in <li>
+                        const cleanLine = line.trim().replace(/^[-•*]\s*/, '');
+                        return cleanLine ? <li key={index}>{cleanLine}</li> : null;
+                    })}
+                </ul>
+            );
+        }
+    }
+    
+    // If not a list or couldn't parse as a list, render as regular text with paragraphs
+    return (
+        <div className="space-y-4">
+            {content.split('\n\n').map((paragraph, index) => (
+                paragraph.trim() ? <p key={index}>{paragraph}</p> : null
+            ))}
+        </div>
+    );
+};
+
+/**
  * ViewSummaryModal Component
  * Displays an AI-generated summary of a blog entry
  * 
@@ -242,7 +301,9 @@ const ViewSummaryModal = ({ isOpen, onClose, entry }) => {
                             <div>
                                 <h3 className="text-lg font-medium text-blue-400 mb-2">Professional Summary</h3>
                                 <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                                    <p className="text-gray-300">{summary.professionalSummary}</p>
+                                    <div className="text-gray-300">
+                                        {formatSummaryContent(summary.professionalSummary)}
+                                    </div>
                                 </div>
                             </div>
                             
@@ -250,7 +311,9 @@ const ViewSummaryModal = ({ isOpen, onClose, entry }) => {
                                 <div>
                                     <h3 className="text-lg font-medium text-blue-400 mb-2">Personal Summary</h3>
                                     <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                                        <p className="text-gray-300">{summary.personalSummary}</p>
+                                        <div className="text-gray-300">
+                                            {formatSummaryContent(summary.personalSummary)}
+                                        </div>
                                     </div>
                                 </div>
                             )}
