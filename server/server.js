@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser'); // Middleware for parsing cookies
 const userRoute = require('./Routes/userRoute.js'); // Import user routes
 const entriesRoute = require('./Routes/entriesRoute.js'); // Import entries routes
 const chatRoute = require('./Routes/chatRoute.js'); // Import chat routes
+const aiSummaryRoute = require('./Routes/aiSummaryRoute.js'); // Import AI summary routes
 const cors = require('cors'); // Import CORS middleware
 const path = require('path'); // Import path module for file paths
 
@@ -23,6 +24,12 @@ const useS3 = process.env.AWS_ACCESS_KEY_ID &&
 if (!useS3) {
     console.error('AWS credentials are missing. S3 upload will not work!');
     console.error('Please set AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, and AWS_BUCKET_NAME in your .env file');
+}
+
+// Check if OpenAI API key is available
+if (!process.env.OPENAI_API_KEY) {
+    console.error('OpenAI API key is missing. AI Summarization will not work!');
+    console.error('Please set OPENAI_API_KEY in your .env file');
 }
 
 const app = express(); // Create an instance of the Express application
@@ -46,6 +53,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/users', userRoute); // User-related routes
 app.use('/entries', entriesRoute); // Blog entries routes
 app.use('/api/chat', chatRoute); // Chatbot routes
+app.use('/api/summary', aiSummaryRoute); // AI summary routes
 
 // Handle 404 errors for any undefined routes
 app.use('*', (req, res) => { 

@@ -1,6 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import EntryImage from './EntryImage';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 // Function to process Quill content for display
 const processQuillContent = (content) => {
@@ -18,20 +20,51 @@ const processQuillContent = (content) => {
  * @param {Function} props.onClose - Function to call when closing the modal
  * @param {Function} props.onEdit - Function to call when edit button is clicked
  * @param {Function} props.onDelete - Function to call when delete button is clicked
+ * @param {Function} props.onSummarize - Function to call when summarize button is clicked
+ * @param {boolean} props.isSummaryOpen - Whether the summary modal is open
  */
-const ViewEntryModal = ({ entry, isOpen, onClose, onEdit, onDelete }) => {
+const ViewEntryModal = ({ entry, isOpen, onClose, onEdit, onDelete, onSummarize, isSummaryOpen }) => {
     const modalRef = useRef(null);
+    // Use the prop to keep track of summary modal state
+    const [isLocalSummaryOpen, setIsLocalSummaryOpen] = useState(isSummaryOpen || false);
+    const [isLoadingSummary, setIsLoadingSummary] = useState(false);
+    
+    // Clear any old summary data when a new entry is viewed
+    useEffect(() => {
+        if (entry && entry._id) {
+            // Check if there's cached summary data for a different entry
+            const storedSummary = localStorage.getItem('entrySummary');
+            if (storedSummary) {
+                try {
+                    const parsedSummary = JSON.parse(storedSummary);
+                    // If it's for a different entry, clear it
+                    if (parsedSummary.entryId !== entry._id) {
+                        localStorage.removeItem('entrySummary');
+                    }
+                } catch (error) {
+                    // If there's an error parsing, clear it
+                    localStorage.removeItem('entrySummary');
+                }
+            }
+        }
+    }, [entry]);
+
+    // Update local state when prop changes
+    useEffect(() => {
+        setIsLocalSummaryOpen(isSummaryOpen || false);
+    }, [isSummaryOpen]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (modalRef.current && !modalRef.current.contains(event.target)) {
+            // Only close if summary is not open and click is outside
+            if (!isLocalSummaryOpen && modalRef.current && !modalRef.current.contains(event.target)) {
                 onClose();
             }
         };
 
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [onClose]);
+    }, [onClose, isLocalSummaryOpen]);
 
     if (!entry) return null;
 
@@ -42,10 +75,106 @@ const ViewEntryModal = ({ entry, isOpen, onClose, onEdit, onDelete }) => {
             day: 'numeric'
         })
         : null;
+    
+    // Handle the summarize button click
+    const handleSummarizeClick = async () => {
+        if (!entry || !entry._id) {
+            toast.error('Cannot summarize: Invalid entry');
+            return;
+        }
+
+        try {
+            setIsLoadingSummary(true);
+            
+            // Create a key specific to this entry
+            const entryKey = `entrySummary_${entry._id}`;
+            
+            // Check if we already have a valid summary for this entry
+            const existingSummary = localStorage.getItem(entryKey);
+            if (existingSummary) {
+                try {
+                    const parsed = JSON.parse(existingSummary);
+                    const isRecent = (new Date().getTime() - parsed.timestamp) < (60 * 60 * 1000);
+                    
+                    if (isRecent && parsed.entryId === entry._id) {
+                        // We already have a valid summary, just open the modal
+                        onSummarize();
+                        setIsLocalSummaryOpen(true);
+                        setIsLoadingSummary(false);
+                        return;
+                    }
+                } catch (error) {
+                    // Invalid cache, continue with API call
+                    console.warn('Invalid cached summary, generating a new one');
+                }
+            }
+            
+            // First open the modal so user sees loading state
+            onSummarize();
+            setIsLocalSummaryOpen(true);
+            
+            // Mark the current entry for which we're fetching a summary
+            localStorage.setItem('currentSummaryEntryId', entry._id);
+            
+            // Get token from local storage
+            const token = localStorage.getItem('token');
+            
+            // Make API request to generate summary
+            const response = await axios.post(
+                'http://localhost:3333/api/summary/generate',
+                {
+                    professionalContent: entry.professionalContent,
+                    personalContent: entry.personalContent,
+                    entryId: entry._id // Send entry ID to backend
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+            
+            // Check if the request was successful
+            if (response.data.success) {
+                // Store the summary in localStorage with entry ID as part of the key
+                localStorage.setItem(entryKey, JSON.stringify({
+                    professionalSummary: response.data.data.professionalSummary,
+                    personalSummary: response.data.data.personalSummary,
+                    entryId: entry._id,
+                    timestamp: new Date().getTime()
+                }));
+                
+                // Also store in the general key for ViewSummaryModal to access
+                localStorage.setItem('entrySummary', JSON.stringify({
+                    professionalSummary: response.data.data.professionalSummary,
+                    personalSummary: response.data.data.personalSummary,
+                    entryId: entry._id,
+                    timestamp: new Date().getTime()
+                }));
+                
+                // Remove the current entry marker
+                localStorage.removeItem('currentSummaryEntryId');
+            } else {
+                toast.error('Failed to generate summary');
+            }
+        } catch (error) {
+            console.error('Error generating summary:', error);
+            toast.error('Error generating summary: ' + (error.response?.data?.message || error.message));
+            
+            // Clean up in case of errors
+            localStorage.removeItem('currentSummaryEntryId');
+        } finally {
+            setIsLoadingSummary(false);
+        }
+    };
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
-            <div ref={modalRef} className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl">
+            <div 
+                ref={modalRef} 
+                className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl"
+            >
                 <div className="flex justify-end">
                     <button onClick={onClose} className="text-gray-400 hover:text-gray-200">x</button>
                 </div>
@@ -79,21 +208,33 @@ const ViewEntryModal = ({ entry, isOpen, onClose, onEdit, onDelete }) => {
                             </div>
                         </div>
                     )}
-                    <div className="flex justify-end space-x-4 mt-6">
-                        <button
-                            onClick={onEdit}
-                            className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200"
-                            title="Edit Entry"
-                        >
-                            <FaEdit size={18} />
-                        </button>
-                        <button
-                            onClick={() => onDelete(entry._id)}
-                            className="p-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors duration-200"
-                            title="Delete Entry"
-                        >
-                            <FaTrashAlt size={18} />
-                        </button>
+                    <div className="flex justify-between items-center mt-6">
+                        <div className="flex">
+                            <button
+                                onClick={handleSummarizeClick}
+                                className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200"
+                                title="Summarize with AI"
+                                disabled={isLoadingSummary}
+                            >
+                                {isLoadingSummary ? 'Summarizing...' : 'Summarize with AI'}
+                            </button>
+                        </div>
+                        <div className="flex space-x-4">
+                            <button
+                                onClick={onEdit}
+                                className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200"
+                                title="Edit Entry"
+                            >
+                                <FaEdit size={18} />
+                            </button>
+                            <button
+                                onClick={() => onDelete(entry._id)}
+                                className="p-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors duration-200"
+                                title="Delete Entry"
+                            >
+                                <FaTrashAlt size={18} />
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Link, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import LogLocalStorage from '../components/LogLocalStorage';
+import PsychedelicPattern from '../components/PsychedelicPattern';
+import SpaceButton from '../components/SpaceButton';
+import GradientCard from '../components/GradientCard';
 import stars from '../../public/videos/starryVideo.mp4'
 import mountains from '../../public/images/mountains.jpg';
 import computerGlasses from '../../public/images/computer_glasses.jpg';
 import mtsRed from '../../public/images/mts_Red.jpg';
-import bannerOne from '../../public/images/bannerOne.jpg';
 import bannerTwo from '../../public/images/bannerTwo.jpg';
 
 /**
@@ -19,6 +21,9 @@ import bannerTwo from '../../public/images/bannerTwo.jpg';
 const Home = () => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState('');
+  const techScrollRef = useRef(null);
+  const scrollIntervalRef = useRef(null);
+  const [isPaused, setIsPaused] = useState(false);
 
   /**
    * Retrieve user information from localStorage and update the state
@@ -31,18 +36,59 @@ const Home = () => {
     }
   }, []);
 
+  // Initialize auto-scrolling for technologies section
+  useEffect(() => {
+    const scrollContainer = techScrollRef.current;
+    
+    if (scrollContainer) {
+      // Start auto-scrolling
+      const startAutoScroll = () => {
+        if (scrollIntervalRef.current) clearInterval(scrollIntervalRef.current);
+        
+        scrollIntervalRef.current = setInterval(() => {
+          if (!isPaused && scrollContainer) {
+            scrollContainer.scrollLeft += 1; // Smooth, slow scrolling
+            
+            // Reset scroll when we reach the end to create an infinite loop effect
+            if (scrollContainer.scrollLeft >= 
+                (scrollContainer.scrollWidth - scrollContainer.clientWidth)) {
+              scrollContainer.scrollLeft = 0;
+            }
+          }
+        }, 30); // Adjust timing for slower/faster scroll
+      };
+      
+      startAutoScroll();
+      
+      // Add hover handlers to pause/resume scrolling
+      const handleMouseEnter = () => setIsPaused(true);
+      const handleMouseLeave = () => setIsPaused(false);
+      
+      scrollContainer.addEventListener('mouseenter', handleMouseEnter);
+      scrollContainer.addEventListener('mouseleave', handleMouseLeave);
+      
+      // Cleanup
+      return () => {
+        if (scrollIntervalRef.current) clearInterval(scrollIntervalRef.current);
+        scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
+        scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
+      };
+    }
+  }, [isPaused]);
+
   return (
     <div className="min-h-screen flex flex-col [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
       <Navbar />
 
       {/* Hero Banner Section */}
-      <div className="relative h-[50vh] w-full mx-auto mt-0">
-        <img 
-          src={bannerOne} 
-          alt="Banner" 
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div className="relative h-[50vh] w-full mx-auto mt-0 bg-black">
+        {/* Psychedelic Pattern Background */}
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
+          <PsychedelicPattern />
+        </div>
+        
+        {/* Content Overlay with higher z-index */}
+        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center z-10">
           <div className="text-center">
             <h1 className="text-white text-4xl md:text-6xl font-bold mb-4">
               Welcome to {userName ? userName + "'s" : "My"} Tech Blog
@@ -50,13 +96,11 @@ const Home = () => {
             <p className="text-white text-xl md:text-2xl">
               Exploring Software Engineering, Web Development, and Technology
             </p>
-            <div className="mt-8">
-              <Link to="/entries" className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-colors mr-4">
-                Read Blog
-              </Link>
-              <Link to="/contactPage" className="bg-transparent hover:bg-white hover:text-purple-700 text-white font-bold py-3 px-6 rounded-lg border border-white transition-colors">
+            <div className="mt-8 flex flex-wrap justify-center items-center gap-4">
+              <SpaceButton text="READ BLOG" to="/entries" />
+              {/* <Link to="/contactPage" className="bg-transparent hover:bg-white hover:text-purple-700 text-white font-bold py-3 px-6 rounded-lg border border-white transition-colors">
                 Contact Me
-              </Link>
+              </Link> */}
             </div>
           </div>
         </div>
@@ -118,43 +162,81 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Technologies Section */}
+      {/* Technologies Section with auto-scroll */}
       <section className="py-16 px-4 md:px-8 bg-gray-900 bg-opacity-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Technologies I Work With</h2>
             <div className="h-1 w-20 bg-purple-500 mx-auto"></div>
+            <p className="text-gray-300 mt-4 text-sm italic">Hover over card for details</p>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {/* Technology Cards */}
-            <div className="bg-gray-800 p-6 rounded-lg text-center hover:transform hover:scale-105 transition-transform">
-              <div className="text-4xl text-purple-400 mb-4">
-                <i className="fab fa-react"></i>
+          <div className="relative">
+            {/* Scrollable container with auto-scroll */}
+            <div 
+              ref={techScrollRef}
+              className="overflow-x-auto scrollbar-hide pb-12 pt-6" 
+              style={{ minHeight: '290px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              <div className="flex space-x-12 min-w-max px-8 py-2">
+                {/* Technology Cards */}
+                <GradientCard 
+                  title="React"
+                  subtitle="Frontend Library"
+                  highlight="Component-based"
+                />
+                
+                <GradientCard 
+                  title="Node.js"
+                  subtitle="Backend Runtime"
+                  highlight="JavaScript everywhere"
+                />
+                
+                <GradientCard 
+                  title="MongoDB"
+                  subtitle="Database"
+                  highlight="NoSQL, Document-based"
+                />
+                
+                <GradientCard 
+                  title="JavaScript"
+                  subtitle="Programming Language"
+                  highlight="Web Development"
+                />
+                
+                <GradientCard 
+                  title="Next.js"
+                  subtitle="React Framework"
+                  highlight="SSR & Static Generation"
+                />
+                
+                <GradientCard 
+                  title="TypeScript"
+                  subtitle="JavaScript Superset"
+                  highlight="Type Safety"
+                />
+                
+                <GradientCard 
+                  title="TailwindCSS"
+                  subtitle="CSS Framework"
+                  highlight="Utility-first"
+                />
+                
+                <GradientCard 
+                  title="GraphQL"
+                  subtitle="Query Language"
+                  highlight="Efficient data fetching"
+                />
+                
+                <GradientCard 
+                  title="AWS"
+                  subtitle="Cloud Services"
+                  highlight="Scalable infrastructure"
+                />
               </div>
-              <h3 className="text-xl font-semibold text-white">React</h3>
             </div>
-            
-            <div className="bg-gray-800 p-6 rounded-lg text-center hover:transform hover:scale-105 transition-transform">
-              <div className="text-4xl text-purple-400 mb-4">
-                <i className="fab fa-node-js"></i>
-              </div>
-              <h3 className="text-xl font-semibold text-white">Node.js</h3>
-            </div>
-            
-            <div className="bg-gray-800 p-6 rounded-lg text-center hover:transform hover:scale-105 transition-transform">
-              <div className="text-4xl text-purple-400 mb-4">
-                <i className="fas fa-database"></i>
-              </div>
-              <h3 className="text-xl font-semibold text-white">MongoDB</h3>
-            </div>
-            
-            <div className="bg-gray-800 p-6 rounded-lg text-center hover:transform hover:scale-105 transition-transform">
-              <div className="text-4xl text-purple-400 mb-4">
-                <i className="fab fa-js"></i>
-              </div>
-              <h3 className="text-xl font-semibold text-white">JavaScript</h3>
-            </div>
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 bg-gradient-to-r from-gray-900 to-transparent w-12 h-full pointer-events-none"></div>
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 bg-gradient-to-l from-gray-900 to-transparent w-12 h-full pointer-events-none"></div>
           </div>
         </div>
       </section>
