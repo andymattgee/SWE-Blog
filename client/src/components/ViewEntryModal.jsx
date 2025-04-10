@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import EntryImage from './EntryImage';
+import DeleteButton from './DeleteButton'; // Import the new delete button
+import EditButton from './EditButton'; // Import the new edit button
+import SummarizeButton from './SummarizeButton'; // Import the new summarize button
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
@@ -210,30 +212,15 @@ const ViewEntryModal = ({ entry, isOpen, onClose, onEdit, onDelete, onSummarize,
                     )}
                     <div className="flex justify-between items-center mt-6">
                         <div className="flex">
-                            <button
+                            <SummarizeButton
                                 onClick={handleSummarizeClick}
-                                className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200"
-                                title="Summarize with AI"
                                 disabled={isLoadingSummary}
-                            >
-                                {isLoadingSummary ? 'Summarizing...' : 'Summarize with AI'}
-                            </button>
+                                isLoading={isLoadingSummary}
+                            />
                         </div>
                         <div className="flex space-x-4">
-                            <button
-                                onClick={onEdit}
-                                className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200"
-                                title="Edit Entry"
-                            >
-                                <FaEdit size={18} />
-                            </button>
-                            <button
-                                onClick={() => onDelete(entry._id)}
-                                className="p-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors duration-200"
-                                title="Delete Entry"
-                            >
-                                <FaTrashAlt size={18} />
-                            </button>
+                            <EditButton onClick={onEdit} />
+                            <DeleteButton onClick={() => onDelete(entry._id)} />
                         </div>
                     </div>
                 </div>
