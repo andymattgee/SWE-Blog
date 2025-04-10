@@ -21,12 +21,13 @@ import Navbar from '../components/Navbar';
 import 'react-quill/dist/quill.snow.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { BsPlusLg } from 'react-icons/bs';
+import { BsPlusLg } from 'react-icons/bs'; // Keep this if used elsewhere, remove if not. Assuming it might be used.
 import '../styles/todo-quill.css';
 import '../styles/quill-viewer.css';
 import Footer from '../components/Footer';
 import EntryCard from '../components/EntryCard';
 import ModalManager from '../components/ModalManager';
+import AddEntryButton from '../components/AddEntryButton'; // Import the new button
 import { ActivityCalendar } from 'react-activity-calendar';
 
 /* Custom styles for Quill editor containers */
@@ -255,13 +256,7 @@ const Entries = () => {
                 <div className="flex justify-between items-center mb-8">
                     <h1 className="text-3xl font-bold text-white">Bloggy Mc-Blog Face</h1>
                     
-                    <button
-                        onClick={() => setIsNewEntryModalOpen(true)}
-                        className="p-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition duration-200 flex items-center justify-center"
-                        title="Create New Entry"
-                    >
-                        <BsPlusLg size={20} />
-                    </button>
+                    <AddEntryButton onClick={() => setIsNewEntryModalOpen(true)} />
                 </div>
 
                 {entries.length === 0 ? (
