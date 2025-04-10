@@ -175,7 +175,7 @@ const ViewEntryModal = ({ entry, isOpen, onClose, onEdit, onDelete, onSummarize,
         <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
             <div 
                 ref={modalRef} 
-                className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl"
+                className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-3xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl"
             >
                 <div className="flex justify-end">
                     <button onClick={onClose} className="text-gray-400 hover:text-gray-200">x</button>

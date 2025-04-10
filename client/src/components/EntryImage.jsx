@@ -12,7 +12,7 @@ const EntryImage = ({ imagePath }) => {
 
     if (!imagePath) {
         return (
-            <div className="w-full h-48 bg-gray-800 rounded-lg flex items-center justify-center">
+            <div className="w-full h-64 bg-gray-800 rounded-lg flex items-center justify-center">
                 <span className="text-gray-400">No image</span>
             </div>
         );
@@ -24,7 +24,7 @@ const EntryImage = ({ imagePath }) => {
             <img
                 src={imagePath.url}
                 alt="Entry preview"
-                className="w-full h-48 object-cover rounded-lg"
+                className="w-full h-64 object-cover rounded-lg"
                 onError={() => setError(true)}
             />
         );
@@ -35,7 +35,7 @@ const EntryImage = ({ imagePath }) => {
 
     if (error) {
         return (
-            <div className="w-full h-48 bg-gray-800 rounded-lg flex items-center justify-center">
+            <div className="w-full h-64 bg-gray-800 rounded-lg flex items-center justify-center">
                 <span className="text-gray-400">Failed to load image</span>
             </div>
         );
@@ -45,7 +45,7 @@ const EntryImage = ({ imagePath }) => {
         <img
             src={imageUrl}
             alt="Entry"
-            className="w-full h-48 object-cover rounded-lg"
+            className="w-full h-64 object-cover rounded-lg"
             onError={() => setError(true)}
         />
     );
