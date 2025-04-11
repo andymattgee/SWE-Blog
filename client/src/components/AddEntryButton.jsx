@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const AddEntryButton = ({ onClick }) => {
+const AddEntryButton = ({ onClick, theme = 'dark' }) => { // Default to dark if theme prop is not provided
   return (
-    <StyledWrapper>
+    <StyledWrapper theme={theme}> {/* Pass theme prop here */}
       <button type="button" className="button" onClick={onClick}>
         <span className="button__text">Add Entry</span> {/* Changed text here */}
         <span className="button__icon"><svg xmlns="http://www.w3.org/2000/svg" width={24} viewBox="0 0 24 24" strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" stroke="currentColor" height={24} fill="none" className="svg"><line y2={19} y1={5} x2={12} x1={12} /><line y2={12} y1={12} x2={19} x1={5} /></svg></span>
@@ -14,12 +14,12 @@ const AddEntryButton = ({ onClick }) => {
 
 const StyledWrapper = styled.div`
   .button {
-    /* Updated color variables */
-    --main-focus: #a855f7; /* Using purple for focus */
-    --font-color: #dedede; /* Keeping light text */
-    --bg-color-sub: #222; /* Initial icon background */
-    --bg-color: #111827; /* gray-900 */
-    --main-color: #ffffff; /* white */
+    /* Color variables based on theme */
+    --main-focus: #a855f7; /* Purple for focus */
+    --font-color: ${({ theme }) => (theme === 'light' ? '#374151' : '#dedede')}; /* Dark gray for light, light gray for dark */
+    --bg-color-sub: ${({ theme }) => (theme === 'light' ? '#e5e7eb' : '#222')}; /* Light gray for light, dark gray for dark */
+    --bg-color: ${({ theme }) => (theme === 'light' ? '#ffffff' : '#111827')}; /* White for light, dark gray for dark */
+    --main-color: ${({ theme }) => (theme === 'light' ? '#a855f7' : '#ffffff')}; /* Purple for light, white for dark */
     position: relative;
     width: 150px;
     height: 40px;
@@ -57,7 +57,7 @@ const StyledWrapper = styled.div`
 
   .button .svg {
     width: 20px;
-    stroke:  #a855f7; /* Initial icon stroke: white */
+    stroke: var(--main-color); /* Use main color for initial icon stroke */
   }
 
   /* Keep main button background/border/shadow the same on hover */
@@ -75,7 +75,7 @@ const StyledWrapper = styled.div`
 
   /* Keep icon stroke white on hover */
   .button:hover .svg {
-     stroke: #ffffff; /* white */
+     stroke: ${({ theme }) => (theme === 'light' ? '#ffffff' : '#ffffff')}; /* Keep white stroke on hover for both */
   }
 
   .button:hover .button__text {
