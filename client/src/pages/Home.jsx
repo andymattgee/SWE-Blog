@@ -113,31 +113,31 @@ const Home = () => {
     <div className="min-h-screen flex flex-col [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
       <Navbar />
 
-      {/* Hero Banner Section */}
-      <div className="relative h-[50vh] w-full mx-auto mt-0 bg-black overflow-hidden">
-        {/* Psychedelic Pattern Background */}
-        <div className="absolute inset-0 w-screen h-full">
+      {/* Hero Banner Section - Using the same approach as the Technologies section */}
+      <section className="py-0 w-full bg-black">
+        <div className="relative h-[50vh] w-full overflow-hidden">
+          {/* Psychedelic Pattern Container */}
           <PsychedelicPattern />
-        </div>
-        
-        {/* Content Overlay with higher z-index */}
-        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center z-10">
-          <div className="text-center">
-            <h1 className="text-white text-4xl md:text-6xl font-bold mb-4">
-              Welcome to {userName ? userName + "'s" : "My"} Tech Blog
-            </h1>
-            <p className="text-white text-xl md:text-2xl">
-              Exploring Software Engineering, Web Development, and Technology
-            </p>
-            <div className="mt-8 flex flex-wrap justify-center items-center gap-4">
-              <SpaceButton text="READ BLOG" to="/entries" />
-              {/* <Link to="/contactPage" className="bg-transparent hover:bg-white hover:text-purple-700 text-white font-bold py-3 px-6 rounded-lg border border-white transition-colors">
-                Contact Me
-              </Link> */}
+          
+          {/* Dark overlay for text contrast */}
+          <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+          
+          {/* Content with max-width container - same as technologies section */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="max-w-7xl w-full mx-auto px-4 md:px-8 text-center">
+              <h1 className="text-white text-4xl md:text-6xl font-bold mb-4">
+                Welcome to {userName ? userName + "'s" : "my"}  Blog
+              </h1>
+              <p className="text-white text-xl md:text-2xl">
+                Exploring Software Engineering, Web Development, and Technology
+              </p>
+              <div className="mt-8 flex flex-wrap justify-center items-center gap-4">
+                <SpaceButton text="READ BLOG" to="/entries" />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* About Me Section */}
       <section className="py-16 px-4 md:px-8 max-w-7xl mx-auto">

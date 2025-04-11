@@ -67,7 +67,7 @@ const Navbar = () => {
                 <div className="container mx-auto px-4">
                     <div className="flex justify-between items-center h-16">
                         {/* Logo/Title */}
-                        <Link to="/Home" className="text-2xl md:text-3xl font-bold text-red-500">
+                        <Link to="/Home" className="text-blue-500 text-2xl md:text-3xl font-bold ">
                             Tech Talk
                         </Link>
 
