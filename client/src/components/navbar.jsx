@@ -75,8 +75,7 @@ const Navbar = () => {
                         <div className="hidden md:flex items-center space-x-6">
                             <NavLink to="/Home" className={({ isActive }) => isActive ? "text-blue-500 font-semibold" : "text-blue-700 hover:text-blue-900"}>Home</NavLink>
                             <NavLink to="/entries" className={({ isActive }) => isActive ? "text-blue-500 font-semibold" : "text-blue-700 hover:text-blue-900"}>Blog</NavLink>
-                            <NavLink to="/news" className={({ isActive }) => isActive ? "text-blue-500 font-semibold" : "text-blue-700 hover:text-blue-900"}>News</NavLink>
-                            <NavLink to="/chat" className={({ isActive }) => isActive ? "text-blue-500 font-semibold" : "text-blue-700 hover:text-blue-900"}>Chat</NavLink>
+                            <NavLink to="/chat" className={({ isActive }) => isActive ? "text-blue-500 font-semibold" : "text-blue-700 hover:text-blue-900"}>AI Chat</NavLink>
                             <NavLink to="/ContactPage" className={({ isActive }) => isActive ? "text-blue-500 font-semibold" : "text-blue-700 hover:text-blue-900"}>Contact Me</NavLink>
                         </div>
 
