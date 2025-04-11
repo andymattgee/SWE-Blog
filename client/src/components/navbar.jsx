@@ -64,20 +64,20 @@ const Navbar = () => {
 
     return (
         <>
-            <nav className="sticky top-0 left-0 w-full bg-black bg-opacity-100  shadow-md z-50">
+            <nav className="sticky top-0 left-0 w-full bg-white dark:bg-black dark:bg-opacity-100 shadow-md z-50">
                 <div className="container mx-auto px-4">
                     <div className="flex justify-between items-center h-16">
                         {/* Logo/Title */}
-                        <Link to="/Home" className="text-blue-500 text-2xl md:text-3xl font-bold ">
+                        <Link to="/Home" className="text-blue-700 dark:text-blue-500 text-2xl md:text-3xl font-bold ">
                             Tech Talk
                         </Link>
 
                         {/* Horizontal Navigation Links */}
                         <div className="hidden md:flex items-center space-x-6">
-                            <NavLink to="/Home" className={({ isActive }) => isActive ? "text-blue-500 font-semibold" : "text-blue-700 hover:text-blue-900"}>Home</NavLink>
-                            <NavLink to="/entries" className={({ isActive }) => isActive ? "text-blue-500 font-semibold" : "text-blue-700 hover:text-blue-900"}>Blog</NavLink>
-                            <NavLink to="/chat" className={({ isActive }) => isActive ? "text-blue-500 font-semibold" : "text-blue-700 hover:text-blue-900"}>AI Chat</NavLink>
-                            <NavLink to="/ContactPage" className={({ isActive }) => isActive ? "text-blue-500 font-semibold" : "text-blue-700 hover:text-blue-900"}>Contact Me</NavLink>
+                            <NavLink to="/Home" className={({ isActive }) => isActive ? "text-blue-600 dark:text-blue-500 font-semibold" : "text-blue-800 hover:text-blue-600 dark:text-blue-700 dark:hover:text-blue-500"}>Home</NavLink>
+                            <NavLink to="/entries" className={({ isActive }) => isActive ? "text-blue-600 dark:text-blue-500 font-semibold" : "text-blue-800 hover:text-blue-600 dark:text-blue-700 dark:hover:text-blue-500"}>Blog</NavLink>
+                            <NavLink to="/chat" className={({ isActive }) => isActive ? "text-blue-600 dark:text-blue-500 font-semibold" : "text-blue-800 hover:text-blue-600 dark:text-blue-700 dark:hover:text-blue-500"}>AI Chat</NavLink>
+                            <NavLink to="/ContactPage" className={({ isActive }) => isActive ? "text-blue-600 dark:text-blue-500 font-semibold" : "text-blue-800 hover:text-blue-600 dark:text-blue-700 dark:hover:text-blue-500"}>Contact Me</NavLink>
                         </div>
 
                         {/* Wrapper for Theme Switch and User Icon */}
@@ -88,17 +88,17 @@ const Navbar = () => {
                             <div className="relative" ref={userMenuRef}>
                                 <button
                                     onClick={toggleUserMenu}
-                                    className="text-blue-700 hover:text-blue-800 focus:outline-none"
+                                    className="text-blue-800 hover:text-blue-600 dark:text-blue-700 dark:hover:text-blue-500 focus:outline-none"
                                 >
                                     <FaUser size={24} />
                                 </button>
 
                                 {/* User Dropdown Menu */}
                                 {isUserMenuOpen && (
-                                    <div className="absolute right-0 mt-2 w-48 bg-white bg-opacity-95 rounded-md shadow-lg py-1 border border-gray-300">
+                                    <div className="absolute right-0 mt-2 w-48 bg-white bg-opacity-95 dark:bg-gray-800 dark:bg-opacity-95 rounded-md shadow-lg py-1 border border-gray-300 dark:border-gray-600">
                                         <Link
                                             to="/profile"
-                                            className="block px-4 py-2 text-sm text-blue-700 hover:bg-blue-100 hover:text-blue-900"
+                                            className="block px-4 py-2 text-sm text-blue-800 hover:bg-blue-100 hover:text-blue-600 dark:text-blue-300 dark:hover:bg-gray-700 dark:hover:text-blue-100"
                                             onClick={closeUserMenu}
                                         >
                                             Profile
@@ -108,7 +108,7 @@ const Navbar = () => {
                                                 logout();
                                                 closeUserMenu();
                                             }}
-                                            className="block w-full text-left px-4 py-2 text-sm text-blue-700 hover:bg-blue-100 hover:text-blue-900"
+                                            className="block w-full text-left px-4 py-2 text-sm text-blue-800 hover:bg-blue-100 hover:text-blue-600 dark:text-blue-300 dark:hover:bg-gray-700 dark:hover:text-blue-100"
                                         >
                                             Logout
                                         </button>

@@ -54,13 +54,16 @@ const StyledWrapper = styled.div`
     padding: 5px;
     border: 4px solid transparent;
     cursor: pointer;
-    background-color: white;
+    /* Light mode background */
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb; /* Add a light border for definition */
   }
 
   .article-wrapper:hover {
-    -webkit-box-shadow: 10px 10px 0 #7e22ce, 20px 20px 0 #a855f7;
-    box-shadow: 10px 10px 0 #7e22ce, 20px 20px 0 #a855f7;
-    border-color: #7e22ce;
+    /* Light mode hover shadow and border */
+    -webkit-box-shadow: 10px 10px 0 #a855f7, 20px 20px 0 #d8b4fe; /* Lighter purple shadow */
+    box-shadow: 10px 10px 0 #a855f7, 20px 20px 0 #d8b4fe; /* Lighter purple shadow */
+    border-color: #a855f7; /* Lighter purple border */
     -webkit-transform: translate(-20px, -20px);
     -ms-transform: translate(-20px, -20px);
     transform: translate(-20px, -20px);
@@ -91,7 +94,8 @@ const StyledWrapper = styled.div`
     -webkit-transform: rotate(-45deg);
     -ms-transform: rotate(-45deg);
     transform: rotate(-45deg);
-    background-color: #a6c2f0;
+    /* Light mode hover background for arrow */
+    background-color: #e0e7ff; /* Lighter blue */
   }
 
   .project-info {
@@ -114,7 +118,8 @@ const StyledWrapper = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: black;
+    /* Light mode title color */
+    color: #1f2937; /* Dark gray */
   }
 
   .flex-pr {
@@ -151,7 +156,8 @@ const StyledWrapper = styled.div`
   .container-project {
     width: 100%;
     height: 170px;
-    background: #f0f0f0;
+    /* Light mode image container background */
+    background: #f3f4f6; /* Slightly lighter gray */
     border-radius: 10px;
     overflow: hidden;
   }
@@ -165,6 +171,45 @@ const StyledWrapper = styled.div`
   
   .article-wrapper:hover .project-image {
     transform: scale(1.05);
+  }
+
+  /* Dark mode overrides */
+  html.dark & {
+    .article-wrapper {
+      background-color: #1f2937; /* Dark background */
+      border: 4px solid transparent; /* Reset border */
+    }
+
+    .article-wrapper:hover {
+      -webkit-box-shadow: 10px 10px 0 #7e22ce, 20px 20px 0 #a855f7; /* Original dark shadow */
+      box-shadow: 10px 10px 0 #7e22ce, 20px 20px 0 #a855f7; /* Original dark shadow */
+      border-color: #7e22ce; /* Original dark border */
+    }
+    
+    .article-wrapper:active {
+       -webkit-box-shadow: none;
+       box-shadow: none;
+    }
+
+    .project-title {
+      color: #f3f4f6; /* Light gray text for dark mode */
+    }
+    
+    .project-hover svg {
+       color: #f3f4f6; /* Light gray arrow */
+    }
+
+    .article-wrapper:hover .project-hover {
+      background-color: #374151; /* Darker hover background for arrow */
+    }
+    
+    .container-project {
+       background: #374151; /* Darker gray for image container */
+    }
+
+    /* Note: .project-type styles are controlled by inline styles based on props,
+       so they might need adjustment in the component logic or props themselves
+       if the default light/dark contrast isn't sufficient. */
   }
 `;
 

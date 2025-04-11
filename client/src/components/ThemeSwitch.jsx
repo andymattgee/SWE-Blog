@@ -1,14 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 const Switch = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false); // State to track theme
+  // Initialize state from localStorage or default to false (light mode)
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem('theme');
+    return savedTheme === 'dark';
+  });
+
+  // Effect to apply the theme class to the HTML element and update localStorage
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (isDarkMode) {
+      root.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+      console.log('Theme set to dark');
+    } else {
+      root.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+      console.log('Theme set to light');
+    }
+  }, [isDarkMode]);
 
   // Handler for when the checkbox state changes
   const handleChange = (event) => {
+    // No need to update state here directly, useEffect handles it
+    // setIsDarkMode(event.target.checked); // Remove this line
+
+    // Update localStorage directly
     const newIsDarkMode = event.target.checked;
-    setIsDarkMode(newIsDarkMode);
-    console.log(`Theme changed to: ${newIsDarkMode ? 'dark' : 'light'}`); // Log the theme state
+    localStorage.setItem('theme', newIsDarkMode ? 'dark' : 'light');
+
+    // Apply class immediately for responsiveness (optional but good)
+    const root = window.document.documentElement;
+    if (newIsDarkMode) {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    
+    // Dispatch a custom event to notify other components in the same tab
+    window.dispatchEvent(new CustomEvent('themeChanged'));
+    setIsDarkMode(event.target.checked);
   };
 
   return (
