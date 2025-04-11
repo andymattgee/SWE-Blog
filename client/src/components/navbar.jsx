@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { FaBars, FaTimes, FaUser } from 'react-icons/fa';
 import axios from 'axios';
+import ThemeSwitch from './ThemeSwitch';
 
 // Navbar component for the application
 const Navbar = () => {
@@ -79,36 +80,41 @@ const Navbar = () => {
                             <NavLink to="/ContactPage" className={({ isActive }) => isActive ? "text-blue-500 font-semibold" : "text-blue-700 hover:text-blue-900"}>Contact Me</NavLink>
                         </div>
 
-                        {/* User Icon and Dropdown */}
-                        <div className="relative" ref={userMenuRef}>
-                            <button
-                                onClick={toggleUserMenu}
-                                className="text-blue-700 hover:text-blue-800 focus:outline-none"
-                            >
-                                <FaUser size={24} />
-                            </button>
+                        {/* Wrapper for Theme Switch and User Icon */}
+                        <div className="flex items-center space-x-4">
+                            <ThemeSwitch />
 
-                            {/* User Dropdown Menu */}
-                            {isUserMenuOpen && (
-                                <div className="absolute right-0 mt-2 w-48 bg-white bg-opacity-95 rounded-md shadow-lg py-1 border border-gray-300">
-                                    <Link
-                                        to="/profile"
-                                        className="block px-4 py-2 text-sm text-blue-700 hover:bg-blue-100 hover:text-blue-900"
-                                        onClick={closeUserMenu}
-                                    >
-                                        Profile
-                                    </Link>
-                                    <button
-                                        onClick={() => {
-                                            logout();
-                                            closeUserMenu();
-                                        }}
-                                        className="block w-full text-left px-4 py-2 text-sm text-blue-700 hover:bg-blue-100 hover:text-blue-900"
-                                    >
-                                        Logout
-                                    </button>
-                                </div>
-                            )}
+                            {/* User Icon and Dropdown */}
+                            <div className="relative" ref={userMenuRef}>
+                                <button
+                                    onClick={toggleUserMenu}
+                                    className="text-blue-700 hover:text-blue-800 focus:outline-none"
+                                >
+                                    <FaUser size={24} />
+                                </button>
+
+                                {/* User Dropdown Menu */}
+                                {isUserMenuOpen && (
+                                    <div className="absolute right-0 mt-2 w-48 bg-white bg-opacity-95 rounded-md shadow-lg py-1 border border-gray-300">
+                                        <Link
+                                            to="/profile"
+                                            className="block px-4 py-2 text-sm text-blue-700 hover:bg-blue-100 hover:text-blue-900"
+                                            onClick={closeUserMenu}
+                                        >
+                                            Profile
+                                        </Link>
+                                        <button
+                                            onClick={() => {
+                                                logout();
+                                                closeUserMenu();
+                                            }}
+                                            className="block w-full text-left px-4 py-2 text-sm text-blue-700 hover:bg-blue-100 hover:text-blue-900"
+                                        >
+                                            Logout
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
