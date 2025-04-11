@@ -3,6 +3,7 @@ import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { FaBars, FaTimes, FaUser } from 'react-icons/fa';
 import axios from 'axios';
 import ThemeSwitch from './ThemeSwitch';
+import logoSrc from '../../public/images/console-blog-logo.png'; // Import the logo
 
 // Navbar component for the application
 const Navbar = () => {
@@ -68,8 +69,12 @@ const Navbar = () => {
                 <div className="container mx-auto px-4">
                     <div className="flex justify-between items-center h-16">
                         {/* Logo/Title */}
-                        <Link to="/Home" className="text-blue-700 dark:text-blue-500 text-2xl md:text-3xl font-bold ">
-                            Tech Talk
+                        <Link to="/Home" className="flex items-center"> {/* Use flex to align image */}
+                            <img
+                                src={logoSrc} // Use the imported variable
+                                alt="Console Blog Logo"
+                                className="h-10 w-auto" // Adjust height as needed, width auto maintains aspect ratio
+                            />
                         </Link>
 
                         {/* Horizontal Navigation Links */}

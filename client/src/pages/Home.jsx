@@ -156,11 +156,11 @@ const Home = () => {
             <div className="max-w-7xl w-full mx-auto px-4 md:px-8 text-center">
               {/* Light mode: Purple text */}
               <h1 className="text-purple-700 dark:text-white text-4xl md:text-6xl font-bold mb-4">
-                Welcome to {userName ? userName + "'s" : "my"} Blog
+                Welcome to Console.Blog( )
               </h1>
               {/* Light mode: Lighter purple text */}
               <p className="text-purple-600 dark:text-white text-xl md:text-2xl">
-                Exploring Software Engineering, Web Development, and Technology
+              A place to think, build, break things, and reflect — in code and in life.
               </p>
               <div className="mt-8 flex flex-wrap justify-center items-center gap-4">
                 <SpaceButton text="READ BLOG" to="/entries" />

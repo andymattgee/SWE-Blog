@@ -158,3 +158,47 @@
     padding: 0 !important;
     border: none !important;
 }
+/* Active Toolbar Button Styles */
+
+/* Light Theme Active Button */
+/* Targets active buttons, picker labels, and selected picker items when NOT in dark theme */
+.todo-quill:not(.dark-theme) .ql-toolbar button.ql-active,
+.todo-quill:not(.dark-theme) .ql-toolbar .ql-picker-label.ql-active,
+.todo-quill:not(.dark-theme) .ql-toolbar .ql-picker-item.ql-selected {
+    background-color: #e9d5ff; /* Light purple background (Tailwind purple-200) */
+    color: #581c87; /* Darker purple text/icon (Tailwind purple-900) */
+    border-radius: 3px; /* Optional: slightly rounded corners for active state */
+}
+/* Ensure icon colors also change */
+.todo-quill:not(.dark-theme) .ql-toolbar button.ql-active .ql-stroke,
+.todo-quill:not(.dark-theme) .ql-toolbar .ql-picker-label.ql-active .ql-stroke,
+.todo-quill:not(.dark-theme) .ql-toolbar .ql-picker-item.ql-selected .ql-stroke {
+    stroke: #581c87 !important; /* Darker purple icon stroke */
+}
+.todo-quill:not(.dark-theme) .ql-toolbar button.ql-active .ql-fill,
+.todo-quill:not(.dark-theme) .ql-toolbar .ql-picker-label.ql-active .ql-fill,
+.todo-quill:not(.dark-theme) .ql-toolbar .ql-picker-item.ql-selected .ql-fill {
+    fill: #581c87 !important; /* Darker purple icon fill */
+}
+
+
+/* Dark Theme Active Button */
+/* Targets active buttons, picker labels, and selected picker items when in dark theme */
+.todo-quill.dark-theme .ql-toolbar button.ql-active,
+.todo-quill.dark-theme .ql-toolbar .ql-picker-label.ql-active,
+.todo-quill.dark-theme .ql-toolbar .ql-picker-item.ql-selected {
+    background-color: rgb(75, 85, 99); /* Slightly lighter gray background (gray-600) */
+    color: #c4b5fd; /* Lighter purple text/icon (Tailwind violet-300) */
+    border-radius: 3px; /* Optional: slightly rounded corners for active state */
+}
+/* Ensure icon colors also change */
+.todo-quill.dark-theme .ql-toolbar button.ql-active .ql-stroke,
+.todo-quill.dark-theme .ql-toolbar .ql-picker-label.ql-active .ql-stroke,
+.todo-quill.dark-theme .ql-toolbar .ql-picker-item.ql-selected .ql-stroke {
+    stroke: #c4b5fd !important; /* Lighter purple icon stroke */
+}
+.todo-quill.dark-theme .ql-toolbar button.ql-active .ql-fill,
+.todo-quill.dark-theme .ql-toolbar .ql-picker-label.ql-active .ql-fill,
+.todo-quill.dark-theme .ql-toolbar .ql-picker-item.ql-selected .ql-fill {
+    fill: #c4b5fd !important; /* Lighter purple icon fill */
+}

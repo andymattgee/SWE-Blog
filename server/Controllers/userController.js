@@ -8,13 +8,24 @@ const bcrypt = require('bcryptjs'); // Import bcrypt for password comparison
  */
 const register = async (req, res) => {
     try {
-        const user = new User(req.body); // Create a new user instance
+        // Explicitly create user with expected fields (email, password)
+        const user = new User({
+            email: req.body.email,
+            password: req.body.password
+            // Add other fields like firstName, lastName if they are sent and needed in the model
+        });
         await user.save(); // Save the user to the database
         const token = await user.generateAuthToken(); // Generate an authentication token
-        res.status(201).send({ user, token }); // Respond with user data and token
+        // Ensure a consistent success response structure
+        res.status(201).send({ success: true, user, token });
     } catch (error) {
         console.error('Error registering user:', error);
-        res.status(400).send(error); // Handle registration errors
+        // Send a structured error response
+        // Enhance error message for duplicate email
+        if (error.code === 11000 || (error.message && error.message.includes('E11000'))) {
+             return res.status(400).send({ success: false, message: 'Email already exists. Please use a different email or login.' });
+        }
+        res.status(400).send({ success: false, message: error.message || 'Registration failed', error: error });
     }
 };
 
@@ -25,15 +36,16 @@ const register = async (req, res) => {
  */
 const login = async (req, res) => {
     try {
-        const user = await User.findByCredentials(req.body.userName, req.body.password); // Authenticate user
+        // Use email for authentication
+        const user = await User.findByCredentials(req.body.email, req.body.password);
         if (!user) {
-            return res.status(401).json({ error: 'Invalid username or password' }); // Handle invalid credentials
+            return res.status(401).json({ error: 'Invalid email or password' }); // Update error message
         }
         const token = await user.generateAuthToken(); // Generate an authentication token
         res.send({ user, token }); // Respond with user data and token
     } catch (error) {
         console.error('Error logging in user:', error);
-        res.status(400).send({ error: 'Unable to login' }); // Handle login errors
+        res.status(400).send({ error: 'Unable to login. Please check your email and password.' }); // Update error message
     }
 };
 

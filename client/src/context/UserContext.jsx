@@ -63,9 +63,9 @@ export const UserProvider = ({ children }) => {
         currentData.tasksCount = 0;
       }
 
-      // Keep existing user data
-      if (userData && userData.userName) {
-        currentData.userName = userData.userName;
+      // Keep existing user email if available
+      if (userData && userData.email) {
+        currentData.email = userData.email;
       }
 
       updateUserData(currentData);

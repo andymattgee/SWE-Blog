@@ -1,26 +1,25 @@
-import React from 'react'
-import { Link, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
-import { useForm } from "react-hook-form";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+// Removed useForm import
 import LogLocalStorage from '../components/LogLocalStorage';
+import LoginForm from '../components/LoginForm'; // Import the new component
 import { useUser } from '../context/UserContext';
 import axios from 'axios';
+import beachImage from '../../public/images/beach.jpg'; // Import the image
 
 const Login = () => {
-  const { register, handleSubmit, formState: { errors }, reset } = useForm();
+  // Removed useForm hook
   const navigate = useNavigate();
   const { updateUserData } = useUser();
 
-  const handleEnterButton = () => {
-    navigate("/Home")
-  }
-  const handleSignupButton = () => {
-    navigate("/Signup")
-  };
-  const onSubmit = async (data) => {
+  // Removed handleEnterButton and handleSignupButton (will be handled by LoginForm props)
+  // Renamed onSubmit to handleLogin and adjusted parameters
+  const handleLogin = async (email, password) => {
     try {
       const response = await axios.post('http://localhost:3333/api/users/login', {
-        userName: data.userName,
-        password: data.password
+        // Send email and password
+        email: email,
+        password: password
       });
       
       // The response directly contains user and token
@@ -28,8 +27,10 @@ const Login = () => {
       
       // If we got here, the login was successful
       localStorage.setItem('token', token);
+      // Store email instead of userName
       const userData = {
-        userName: user.userName,
+        email: user.email,
+        // userName: user.userName, // Removed userName
         entriesCount: user.entries?.length || 0,
         tasksCount: user.todos?.length || 0
       };
@@ -39,52 +40,52 @@ const Login = () => {
       console.error('Login error:', error);
     }
 
-    reset({userName:'', password: ''});
-}
+    // Reset is handled within LoginForm now
+  };
+
+  // Define handlers for LoginForm props
+  const handleForgotPassword = () => {
+    console.log("thats too bad"); // Log message as requested
+  };
+
+  const handleNavigateToSignup = () => {
+    navigate("/Signup"); // Navigate to Signup page
+  };
+
+  const handleSocialClick = (platform) => {
+    console.log(`clicked on ${platform} button`); // Log message as requested
+  };
 
   return (
 
 
-    <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-tr from-cyan-600 via-blue-700 to-indigo-800">
-
-      <h1 className="text-white text-5xl font-bold font-serif mb-10">Engineering Blog & Task Tracker</h1>
-
-<form className="w-full max-w-sm" onSubmit={handleSubmit(onSubmit)}>
-                    <div className="mb-4">
-                        <label htmlFor="username" className="block text-gray-300 font-medium mb-1">Username</label>
-                        <input
-                            id="username"
-                            type="text"
-                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
-                            {...register("userName", { required: true })}
-                        />
-                        {errors.userName && <span className="text-red-500">Username is required</span>}
-                    </div>
-                    <div className="mb-4">
-                        <label htmlFor="password" className="block text-gray-300 font-medium mb-1">Password</label>
-                        <input
-                            id="password"
-                            type="password"
-                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
-                            {...register("password", { required: true })}
-                        />
-                        {errors.password && <span className="text-red-500">Password is required</span>}
-                    </div>
-                    <button
-                        type="submit"
-                        className="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600 border border-white"
-                    >
-                        Log In
-                    </button>
-                </form>
-      <button
-        type="button" class="text-white bg-blue-700 hover:bg-purple-800 focus:outline-none focus:ring-4 focus:ring-purple-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mb-2 mt-5 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
-        onClick={handleSignupButton} >
-        Signup Here
-      </button>
-      <div className="absolute bottom-4 right-4">
-        <LogLocalStorage />
+    <div
+      className="flex min-h-screen bg-cover bg-center"
+      style={{ backgroundImage: `url(${beachImage})` }} // Apply background to main container
+    >
+      {/* Left Column (Image Placeholder) */}
+      {/* Left Column (Image Background) */}
+      {/* Use w-full md:w-2/3 for responsiveness: full width on small, 2/3 on medium+ */}
+      {/* Left Column (Structural only, background is on parent) */}
+      <div className="w-full md:w-2/3">
+        {/* Optional: Add content overlay here if needed later */}
       </div>
+
+      {/* Right Column (Login Form) */}
+      {/* Right Column (Login Form) */}
+      {/* Use w-full md:w-1/3 for responsiveness: full width on small, 1/3 on medium+ */}
+      {/* Stack columns on small screens by default, flex-row starts at md */}
+      {/* Right Column (Login Form with highly transparent background) */}
+      <div className="w-full md:w-1/3 flex items-center justify-center p-8 md:p-12 bg-white bg-opacity-30 backdrop-blur-sm"> {/* Reduced opacity */}
+        {/* Render the LoginForm component */}
+        <LoginForm
+          onLogin={handleLogin}
+          onForgotPassword={handleForgotPassword}
+          onNavigateToSignup={handleNavigateToSignup}
+          onSocialClick={handleSocialClick}
+        />
+      </div>
+      {/* Removed Title and LogLocalStorage */}
     </div>
   )
 }

@@ -69,8 +69,8 @@ const UserProfile = () => {
                         {/* Display user name */}
                         {/* Border - Light: light gray; Dark: original dark gray */}
                         <div className="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-2">
-                            <span className="font-semibold">Name:</span>
-                            <span>{userData.userName}</span>
+                            <span className="font-semibold">Email:</span> {/* Changed label */}
+                            <span>{userData.email}</span> {/* Changed to display email */}
                         </div>
                         {/* Display user blog entries count */}
                         {/* Border - Light: light gray; Dark: original dark gray */}
