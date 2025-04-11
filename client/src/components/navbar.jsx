@@ -5,15 +5,15 @@ import axios from 'axios';
 
 // Navbar component for the application
 const Navbar = () => {
-    // State to manage the open/closed state of the mobile menu
-    const [isOpen, setIsOpen] = useState(false);
+    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false); // State for user dropdown
     const navigate = useNavigate(); // Hook to programmatically navigate
-    const menuRef = useRef(null);
+    const userMenuRef = useRef(null); // Ref for user dropdown
 
+    // Close user dropdown on click outside
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (menuRef.current && !menuRef.current.contains(event.target)) {
-                setIsOpen(false);
+            if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+                setIsUserMenuOpen(false);
             }
         };
 
@@ -51,19 +51,15 @@ const Navbar = () => {
         }
     }
 
-    /**
-     * Toggles the mobile menu open/closed state.
-     */
-    const toggleMenu = () => {
-        setIsOpen(!isOpen); // Toggle the state of the mobile menu
-    }
+    // Toggle user dropdown
+    const toggleUserMenu = () => {
+        setIsUserMenuOpen(!isUserMenuOpen);
+    };
 
-    /**
-     * Closes the mobile menu.
-     */
-    const closeMenu = () => {
-        setIsOpen(false); // Set the mobile menu state to closed
-    }
+    // Close user dropdown (e.g., after clicking a link)
+    const closeUserMenu = () => {
+        setIsUserMenuOpen(false);
+    };
 
     return (
         <>
@@ -71,84 +67,58 @@ const Navbar = () => {
                 <div className="container mx-auto px-4">
                     <div className="flex justify-between items-center h-16">
                         {/* Logo/Title */}
-                        <Link to="/Home" className="text-2xl md:text-3xl font-bold text-blue-700">
-                            Matt's Tech Journey
+                        <Link to="/Home" className="text-2xl md:text-3xl font-bold text-red-500">
+                            Tech Talk
                         </Link>
 
-                        <div className="flex items-center gap-4">
-                            {/* User Profile Icon */}
-                            <Link to="/profile" className="text-blue-700 hover:text-blue-800">
-                                <FaUser size={24} />
-                            </Link>
+                        {/* Horizontal Navigation Links */}
+                        <div className="hidden md:flex items-center space-x-6">
+                            <NavLink to="/Home" className={({ isActive }) => isActive ? "text-blue-500 font-semibold" : "text-blue-700 hover:text-blue-900"}>Home</NavLink>
+                            <NavLink to="/entries" className={({ isActive }) => isActive ? "text-blue-500 font-semibold" : "text-blue-700 hover:text-blue-900"}>Blog</NavLink>
+                            <NavLink to="/news" className={({ isActive }) => isActive ? "text-blue-500 font-semibold" : "text-blue-700 hover:text-blue-900"}>News</NavLink>
+                            <NavLink to="/chat" className={({ isActive }) => isActive ? "text-blue-500 font-semibold" : "text-blue-700 hover:text-blue-900"}>Chat</NavLink>
+                            <NavLink to="/ContactPage" className={({ isActive }) => isActive ? "text-blue-500 font-semibold" : "text-blue-700 hover:text-blue-900"}>Contact Me</NavLink>
+                        </div>
 
-                            {/* Hamburger Button for mobile menu */}
+                        {/* User Icon and Dropdown */}
+                        <div className="relative" ref={userMenuRef}>
                             <button
-                                onClick={toggleMenu}
+                                onClick={toggleUserMenu}
                                 className="text-blue-700 hover:text-blue-800 focus:outline-none"
                             >
-                                {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+                                <FaUser size={24} />
                             </button>
+
+                            {/* User Dropdown Menu */}
+                            {isUserMenuOpen && (
+                                <div className="absolute right-0 mt-2 w-48 bg-white bg-opacity-95 rounded-md shadow-lg py-1 border border-gray-300">
+                                    <Link
+                                        to="/profile"
+                                        className="block px-4 py-2 text-sm text-blue-700 hover:bg-blue-100 hover:text-blue-900"
+                                        onClick={closeUserMenu}
+                                    >
+                                        Profile
+                                    </Link>
+                                    <button
+                                        onClick={() => {
+                                            logout();
+                                            closeUserMenu();
+                                        }}
+                                        className="block w-full text-left px-4 py-2 text-sm text-blue-700 hover:bg-blue-100 hover:text-blue-900"
+                                    >
+                                        Logout
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
 
-                {/* Mobile Menu */}
-                <div 
-                    ref={menuRef}
-                    className={`${isOpen ? 'block' : 'hidden'} bg-white bg-opacity-95 shadow-lg absolute right-0 w-1/6 rounded-lg border-2 border-gray-700`}
-                >
-                    <div className="container mx-auto px-4 py-2">
-                        <div className="flex flex-col items-center space-y-4 pb-4"> {/* Center items in the column */}
-                            {/* Navigation Links */}
-                            <Link 
-                                to="/Home" 
-                                className="text-blue-700 hover:text-blue-900 text-lg font-medium"
-                                onClick={closeMenu} // Close menu on link click
-                            >
-                                Home
-                            </Link>
-                            <Link 
-                                to="/entries" 
-                                className="text-blue-700 hover:text-blue-900 text-lg font-medium"
-                                onClick={closeMenu} // Close menu on link click
-                            >
-                                Blog 
-                            </Link>
-                            <Link 
-                                to="/news" 
-                                className="text-blue-700 hover:text-blue-900 text-lg font-medium"
-                                onClick={closeMenu} // Close menu on link click
-                            >
-                                News
-                            </Link>
-                            
-                            <Link 
-                                to="/chat" 
-                                className="text-blue-700 hover:text-blue-900 text-lg font-medium"
-                                onClick={closeMenu} // Close menu on link click
-                            >
-                                Chat
-                            </Link>
-                            <Link 
-                                to="/ContactPage" 
-                                className="text-blue-700 hover:text-blue-900 text-lg font-medium"
-                                onClick={closeMenu} // Close menu on link click
-                            >
-                                Contact Me
-                            </Link>
-                            <button 
-                                onClick={() => {
-                                    logout(); // Call logout function
-                                    closeMenu(); // Close menu after logout
-                                }} 
-                                className="text-blue-700 hover:text-blue-900 text-lg font-medium"
-                            >
-                                Logout
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                {/* Mobile Menu (Optional - can be added back if needed for smaller screens) */}
+                {/* <div className={`${isOpen ? 'block' : 'hidden'} md:hidden`}> ... mobile links ... </div> */}
+
             </nav>
+            {/* Removed the old mobile menu structure */}
             {/* Remove spacer div since it's creating extra space */}
         </>
     );
