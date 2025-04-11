@@ -267,7 +267,8 @@ const Entries = () => {
                 )}
             </div>
 
-            <ModalManager 
+            <ModalManager
+                theme={theme} // Pass theme here
                 isNewEntryModalOpen={isNewEntryModalOpen}
                 onCloseNewEntryModal={() => setIsNewEntryModalOpen(false)}
                 handleAddEntry={handleAddEntry}
