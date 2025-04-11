@@ -98,7 +98,9 @@ const SignupForm = ({ onSubmit, onNavigateToLogin }) => {
         </label>
         <button type="submit" className="submit">Submit</button>
         <p className="signin">Already have an acount ? <a href="#" onClick={handleSigninClick}>Signin</a> </p>
+        {/* The div containing icons is removed below */}
       </form>
+      {/* Removed the #link-circle div and its contents */}
     </StyledWrapper>
   );
 }
@@ -114,6 +116,7 @@ const StyledWrapper = styled.div`
     padding: 20px;
     border-radius: 20px;
     position: relative;
+    /* CSS for #link-circle and children removed */
   }
 
   .title {
