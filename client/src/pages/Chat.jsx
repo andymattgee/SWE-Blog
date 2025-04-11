@@ -138,7 +138,7 @@ const Chatbot = () => {
 
     return (
         // Light: white bg; Dark: original gradient
-        <div className="min-h-screen flex flex-col bg-white dark:bg-gradient-to-tr dark:from-cyan-600 dark:via-blue-700 dark:to-indigo-800">
+        <div className="min-h-screen flex flex-col bg-white dark:bg-gradient-to-br dark:from-black dark:to-purple-900">
             <Navbar />
             <ToastContainer position="top-right" autoClose={3000} theme="colored" /> {/* Use colored theme */}
 

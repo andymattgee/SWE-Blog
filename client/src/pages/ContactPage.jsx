@@ -48,7 +48,7 @@ const ContactPage = () => {
         {/* Right Column - Form */}
         <div className="w-full md:w-1/2 p-6 md:p-12">
           {/* Light: white bg, dark text; Dark: original blue bg, white text */}
-          <div className="bg-white dark:bg-blue-600 rounded-xl p-8 md:p-10 shadow-xl border border-gray-200 dark:border-transparent">
+          <div className="bg-white dark:bg-purple-900 rounded-xl p-8 md:p-10 shadow-xl border-2 border-gray-200 ">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
               Send us a message
             </h2>
@@ -60,7 +60,7 @@ const ContactPage = () => {
                   <input
                     type="text"
                     placeholder="Full Name*"
-                    className="w-full px-4 py-3 rounded-md bg-gray-100 dark:bg-blue-500 dark:bg-opacity-50 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-blue-200 border border-gray-300 dark:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-white"
+                    className="w-full px-4 py-3 rounded-md bg-gray-100 dark:bg-purple-800 dark:bg-opacity-50 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-purple-300 border border-gray-300 dark:border-purple-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-white"
                     {...register("name", { required: true })}
                   />
                   {/* Light: darker red error; Dark: original light red */}
@@ -72,7 +72,7 @@ const ContactPage = () => {
                   <input
                     type="email"
                     placeholder="Email Address*"
-                    className="w-full px-4 py-3 rounded-md bg-gray-100 dark:bg-blue-500 dark:bg-opacity-50 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-blue-200 border border-gray-300 dark:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-white"
+                    className="w-full px-4 py-3 rounded-md bg-gray-100 dark:bg-purple-800 dark:bg-opacity-50 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-purple-300 border border-gray-300 dark:border-purple-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-white"
                     {...register("email", { 
                       required: true,
                       pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i 
@@ -88,7 +88,7 @@ const ContactPage = () => {
                   <input
                     type="text"
                     placeholder="Subject*"
-                    className="w-full px-4 py-3 rounded-md bg-gray-100 dark:bg-blue-500 dark:bg-opacity-50 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-blue-200 border border-gray-300 dark:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-white"
+                    className="w-full px-4 py-3 rounded-md bg-gray-100 dark:bg-purple-800 dark:bg-opacity-50 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-purple-300 border border-gray-300 dark:border-purple-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-white"
                     {...register("subject", { required: true })}
                   />
                   {/* Light: darker red error; Dark: original light red */}
@@ -100,7 +100,7 @@ const ContactPage = () => {
                   <textarea
                     placeholder="Tell us more about your project"
                     rows={4}
-                    className="w-full px-4 py-3 rounded-md bg-gray-100 dark:bg-blue-500 dark:bg-opacity-50 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-blue-200 border border-gray-300 dark:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-white resize-none"
+                    className="w-full px-4 py-3 rounded-md bg-gray-100 dark:bg-purple-800 dark:bg-opacity-50 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-purple-300 border border-gray-300 dark:border-purple-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-white resize-none"
                     {...register("message", { required: true })}
                   />
                   {/* Light: darker red error; Dark: original light red */}
@@ -110,7 +110,7 @@ const ContactPage = () => {
                 {/* Light: blue bg, white text; Dark: original white bg, blue text */}
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 dark:bg-white text-white dark:text-blue-600 font-bold py-3 px-6 rounded-md hover:bg-blue-700 dark:hover:bg-blue-50 transition duration-300 flex items-center justify-center"
+                  className="w-full bg-blue-600 dark:bg-white text-white dark:text-purple-700 font-bold py-3 px-6 rounded-md hover:bg-blue-700 dark:hover:bg-purple-100 transition duration-300 flex items-center justify-center"
                 >
                   <span>Send Message</span>
                 </button>

@@ -19,7 +19,7 @@ const EntryCard = ({ entry, onClick }) => {
             <div className="h-full">
                 {/* Light: white bg, gray border, light hover; Dark: original styles */}
                 {/* Light: white bg, gray border -> hover: larger purple shadow, purple border; Dark: original styles */}
-                <div className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-purple-500 rounded-lg shadow-md dark:shadow-lg overflow-hidden h-full transition duration-300 hover:shadow-xl hover:shadow-purple-400/50 dark:hover:bg-purple-900 dark:hover:shadow-xl dark:hover:shadow-gray-400/30 hover:border-purple-500 dark:hover:border-gray-300 cursor-pointer">
+                <div className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-purple-500 rounded-lg shadow-md dark:shadow-lg overflow-hidden h-full transition duration-300 hover:shadow-2xl hover:shadow-purple-500/60 dark:hover:bg-purple-900 dark:hover:shadow-2xl dark:hover:shadow-purple-400/40 hover:border-purple-500 dark:hover:border-gray-300 cursor-pointer hover:scale-105">
                     <article className="h-full flex flex-col">
                         {entry.image ? (
                             <div className="h-40 overflow-hidden">
