@@ -10,7 +10,7 @@ import beachImage from '../../public/images/beach.jpg'; // Import the image
 const Login = () => {
   // Removed useForm hook
   const navigate = useNavigate();
-  const { updateUserData } = useUser();
+  const { updateUserData, refreshUserData } = useUser(); // Add refreshUserData
 
   // Removed handleEnterButton and handleSignupButton (will be handled by LoginForm props)
   // Renamed onSubmit to handleLogin and adjusted parameters
@@ -34,8 +34,12 @@ const Login = () => {
         entriesCount: user.entries?.length || 0,
         tasksCount: user.todos?.length || 0
       };
-      updateUserData(userData);
-      navigate("/Home");
+      updateUserData(userData); // Update with initial login data (optional but can provide immediate basic info)
+      
+      // Now trigger the full refresh to get image URL and latest counts
+      refreshUserData(); // Call the refresh function from context
+      
+      navigate("/Home"); // Navigate after initiating the refresh
     } catch (error) {
       console.error('Login error:', error);
     }
