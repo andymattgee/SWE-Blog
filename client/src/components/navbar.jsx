@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
-import { FaBars, FaTimes, FaUser } from 'react-icons/fa';
+import { FaBars, FaTimes } from 'react-icons/fa'; // Removed FaUser as it's replaced
+import { useUser } from '../context/UserContext'; // Import useUser hook
 import axios from 'axios';
 import ThemeSwitch from './ThemeSwitch';
 import logoSrc from '../../public/images/console-blog-logo.png'; // Import the logo
@@ -10,6 +11,7 @@ const Navbar = () => {
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false); // State for user dropdown
     const navigate = useNavigate(); // Hook to programmatically navigate
     const userMenuRef = useRef(null); // Ref for user dropdown
+    const { userData } = useUser(); // Get user data from context
 
     // Close user dropdown on click outside
     useEffect(() => {
@@ -95,7 +97,24 @@ const Navbar = () => {
                                     onClick={toggleUserMenu}
                                     className="text-blue-800 hover:text-blue-600 dark:text-blue-700 dark:hover:text-blue-500 focus:outline-none"
                                 >
-                                    <FaUser size={24} />
+                                    {/* Circular div for profile picture or placeholder */}
+                                    {/* Increased size to match ThemeSwitch (approx. 44px) */}
+                                    <div className="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden border border-gray-300 dark:border-grey-600">
+                                        {userData && userData.image ? (
+                                            // Display user's profile picture if available
+                                            <img
+                                                src={userData.image}
+                                                alt="User profile"
+                                                className="w-full h-full object-cover" // Ensure image covers the circle
+                                            />
+                                        ) : (
+                                            // Fallback placeholder (e.g., gray circle or initials)
+                                            <div className="w-full h-full bg-gray-400 dark:bg-gray-600 flex items-center justify-center">
+                                                {/* Optional: You could add initials here if needed */}
+                                                {/* <span className="text-xs text-white">?</span> */}
+                                            </div>
+                                        )}
+                                    </div>
                                 </button>
 
                                 {/* User Dropdown Menu */}

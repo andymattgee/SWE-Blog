@@ -69,6 +69,47 @@ const logout = async (req, res) => {
 };
 
 /**
+ * Uploads or updates the user's profile picture.
+ * Expects the file to be handled by 'upload.single('profilePic')' middleware.
+ * @param {Object} req - The request object, containing user and file info
+ * @param {Object} res - The response object for sending responses
+ */
+const uploadProfilePicture = async (req, res) => {
+    try {
+        // Check if a file was uploaded by the middleware
+        if (!req.file) {
+            return res.status(400).json({ message: 'No profile picture file uploaded.' });
+        }
+
+        // The 'upload' middleware (multer-s3) adds 'location' to req.file with the S3 URL
+        const imageUrl = req.file.location;
+
+        // req.user is populated by the 'auth' middleware
+        const user = req.user;
+
+        // Update the user's image field
+        user.image = imageUrl;
+        await user.save();
+
+        // Respond with success and the new image URL
+        res.status(200).json({
+            message: 'Profile picture updated successfully',
+            imageUrl: imageUrl,
+            // Optionally send back updated user data (excluding sensitive fields)
+            // user: { _id: user._id, email: user.email, image: user.image /* other safe fields */ }
+        });
+
+    } catch (error) {
+        console.error('Error uploading profile picture:', error);
+        // Check for specific multer errors if needed, otherwise send a generic error
+        if (error instanceof multer.MulterError) {
+            return res.status(400).json({ message: `File upload error: ${error.message}` });
+        }
+        res.status(500).json({ message: 'Server error while uploading profile picture.' });
+    }
+};
+
+/**
  * Changes user's password after verifying current password.
  * @param {Object} req - The request object containing passwords
  * @param {Object} res - The response object for sending responses
@@ -93,10 +134,39 @@ const changePassword = async (req, res) => {
     }
 };
 
+/**
+ * Gets the profile data for the currently authenticated user.
+ * Assumes 'auth' middleware has populated req.user.
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object
+ */
+const getMe = async (req, res) => {
+    try {
+        // req.user is populated by the auth middleware
+        // Select only the fields needed by the frontend context
+        const userData = {
+            _id: req.user._id,
+            email: req.user.email,
+            image: req.user.image, // Include the image URL
+            // You could potentially add entriesCount and tasksCount here
+            // if you fetch/populate them, but it might be simpler
+            // to keep those fetches separate in the context for now.
+            // entriesCount: req.user.entries.length,
+            // tasksCount: req.user.todos.length
+        };
+        res.status(200).json(userData);
+    } catch (error) {
+        console.error('Error fetching user profile:', error);
+        res.status(500).json({ message: 'Server error while fetching user profile.' });
+    }
+};
+
 // Export the controller functions for use in routes
 module.exports = {
     register,
     login,
     logout,
-    changePassword
+    changePassword,
+    uploadProfilePicture,
+    getMe // Export the getMe function
 };
