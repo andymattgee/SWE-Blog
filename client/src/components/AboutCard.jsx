@@ -35,7 +35,9 @@ const StyledWrapper = styled.div`
     overflow: hidden;
     border-radius: 10px;
     transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
-    background-color: rgba(17, 17, 17, 0.8);
+    /* Light mode background */
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #e5e7eb; /* Light border for definition */
     margin: 0 auto;
   }
 
@@ -44,7 +46,8 @@ const StyledWrapper = styled.div`
     flex-direction: column;
     align-items: flex-start;
     gap: 20px;
-    color: #e8e8e8;
+    /* Light mode text */
+    color: #1f2937;
     transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
     z-index: 2;
   }
@@ -60,7 +63,8 @@ const StyledWrapper = styled.div`
   }
 
   .content .btn {
-    color: #e8e8e8;
+    /* Light mode button text */
+    color: #ffffff; /* Keep button text white initially */
     text-decoration: none;
     padding: 12px 24px;
     font-weight: 600;
@@ -100,11 +104,39 @@ const StyledWrapper = styled.div`
   .content .btn:hover {
     outline: 2px solid #e8e8e8;
     background: transparent;
-    color: #e8e8e8;
+    /* Light mode button hover text */
+    color: #1f2937;
   }
 
   .content .btn:active {
     box-shadow: none;
+  }
+
+  /* Dark mode overrides */
+  html.dark & {
+    .card {
+      background-color: rgba(17, 17, 17, 0.8); /* Original dark background */
+      border: none; /* Remove light border in dark mode */
+    }
+
+    .content {
+      color: #e8e8e8; /* Original dark text */
+    }
+
+    .content .btn {
+      color: #e8e8e8; /* Original dark button text */
+    }
+    
+    .card:hover .btn {
+      color: #212121; /* Original dark hover button text */
+      background: #e8e8e8; /* Original dark hover button background */
+    }
+
+    .content .btn:hover {
+      outline: 2px solid #e8e8e8; /* Original dark hover button outline */
+      background: transparent; /* Original dark hover button background */
+      color: #e8e8e8; /* Original dark hover button text */
+    }
   }
 `;
 

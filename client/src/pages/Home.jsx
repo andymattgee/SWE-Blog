@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import LogLocalStorage from '../components/LogLocalStorage';
 import PsychedelicPattern from '../components/PsychedelicPattern';
+import BlockPattern from '../components/BlockPattern'; // Import the new pattern
 import SpaceButton from '../components/SpaceButton';
 import GradientCard from '../components/GradientCard';
 import AboutCard from '../components/AboutCard';
@@ -26,6 +27,11 @@ const Home = () => {
   const techScrollRef = useRef(null);
   const scrollIntervalRef = useRef(null);
   const [isPaused, setIsPaused] = useState(false);
+  // Initialize theme state directly from localStorage
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem('theme');
+    return savedTheme === 'dark';
+  });
 
   /**
    * Retrieve user information from localStorage and update the state
@@ -37,6 +43,28 @@ const Home = () => {
       setUserName(storedUserName);
     }
   }, []);
+
+  // Effect to listen for theme changes from other tabs/sources
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const updatedTheme = localStorage.getItem('theme');
+      setIsDarkMode(updatedTheme === 'dark');
+    };
+    // Listen to storage event for changes
+    window.addEventListener('storage', handleStorageChange);
+    // Also listen to a custom event that ThemeSwitch could dispatch
+    // This handles changes within the same tab more reliably
+    const handleThemeChange = () => {
+       const updatedTheme = localStorage.getItem('theme');
+       setIsDarkMode(updatedTheme === 'dark');
+    }
+    window.addEventListener('themeChanged', handleThemeChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('themeChanged', handleThemeChange);
+    };
+  }, []); // Empty dependency array means this runs once on mount to set up listeners
 
   // Initialize auto-scrolling for technologies section
   useEffect(() => {
@@ -110,55 +138,56 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
+    // Main div: White background default (light), black background dark
+    <div className="min-h-screen flex flex-col dark:bg-black">
       <Navbar />
 
-      {/* Hero Banner Section */}
-      <div className="relative h-[50vh] w-full mx-auto mt-0 bg-black overflow-hidden">
-        {/* Psychedelic Pattern Background */}
-        <div className="absolute inset-0 w-screen h-full">
-          <PsychedelicPattern />
-        </div>
-        
-        {/* Content Overlay with higher z-index */}
-        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center z-10">
-          <div className="text-center">
-            <h1 className="text-white text-4xl md:text-6xl font-bold mb-4">
-              Welcome to {userName ? userName + "'s" : "My"} Tech Blog
-            </h1>
-            <p className="text-white text-xl md:text-2xl">
-              Exploring Software Engineering, Web Development, and Technology
-            </p>
-            <div className="mt-8 flex flex-wrap justify-center items-center gap-4">
-              <SpaceButton text="READ BLOG" to="/entries" />
-              {/* <Link to="/contactPage" className="bg-transparent hover:bg-white hover:text-purple-700 text-white font-bold py-3 px-6 rounded-lg border border-white transition-colors">
-                Contact Me
-              </Link> */}
+      {/* Hero Section: White bg light, black bg dark */}
+      <section className="py-0 w-full bg-white dark:bg-black">
+        <div className="relative h-[50vh] w-full overflow-hidden">
+          {/* Conditionally render background pattern based on theme */}
+          {isDarkMode ? <PsychedelicPattern /> : <BlockPattern />}
+          {/* Overlay */}
+          {/* Overlay - Ensure it's above the pattern */}
+          <div className="absolute inset-0 bg-black bg-opacity-10 dark:bg-opacity-40 z-10"></div>
+          {/* Content */}
+          {/* Content - Ensure it's above the overlay and pattern */}
+          <div className="absolute inset-0 flex items-center justify-center z-20">
+            <div className="max-w-7xl w-full mx-auto px-4 md:px-8 text-center">
+              {/* Light mode: Purple text */}
+              <h1 className="text-purple-700 dark:text-white text-4xl md:text-6xl font-bold mb-4">
+                Welcome to Console.Blog( )
+              </h1>
+              {/* Light mode: Lighter purple text */}
+              <p className="text-purple-600 dark:text-white text-xl md:text-2xl">
+              A place to think, build, break things, and reflect — in code and in life.
+              </p>
+              <div className="mt-8 flex flex-wrap justify-center items-center gap-4">
+                <SpaceButton text="READ BLOG" to="/entries" />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* About Me Section */}
+      {/* About Me Section: Inherits background from main div */}
       <section className="py-16 px-4 md:px-8 max-w-7xl mx-auto">
-        
-        
         <div className="flex justify-center">
           <AboutCard />
         </div>
       </section>
 
-      {/* Technologies Section with auto-scroll */}
-      <section className="py-16 px-4 md:px-8 bg-gray-900 bg-opacity-50">
+      {/* Technologies Section: Light gray bg light, original dark gray bg dark */}
+      <section className="py-16 px-4 md:px-8 bg-gray-100 dark:bg-gray-900 dark:bg-opacity-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Technologies I Work With</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white mb-4">Technologies I Work With</h2>
             <div className="h-1 w-20 bg-purple-500 mx-auto"></div>
-            <p className="text-gray-300 mt-4 text-sm italic">Hover over card for details</p>
+            <p className="text-gray-600 dark:text-gray-300 mt-4 text-sm italic">Hover over card for details</p>
           </div>
           
           <div className="relative">
-            {/* Scrollable container with auto-scroll */}
+            {/* Scrollable container */}
             <div 
               ref={techScrollRef}
               className="overflow-x-auto scrollbar-hide pb-12 pt-6" 
@@ -166,71 +195,28 @@ const Home = () => {
             >
               <div className="flex space-x-12 min-w-max px-8 py-2">
                 {/* Technology Cards */}
-                <GradientCard 
-                  title="React"
-                  subtitle="Frontend Library"
-                  highlight="Component-based"
-                />
-                
-                <GradientCard 
-                  title="Node.js"
-                  subtitle="Backend Runtime"
-                  highlight="JavaScript everywhere"
-                />
-                
-                <GradientCard 
-                  title="MongoDB"
-                  subtitle="Database"
-                  highlight="NoSQL, Document-based"
-                />
-                
-                <GradientCard 
-                  title="JavaScript"
-                  subtitle="Programming Language"
-                  highlight="Web Development"
-                />
-                
-                <GradientCard 
-                  title="Next.js"
-                  subtitle="React Framework"
-                  highlight="SSR & Static Generation"
-                />
-                
-                <GradientCard 
-                  title="TypeScript"
-                  subtitle="JavaScript Superset"
-                  highlight="Type Safety"
-                />
-                
-                <GradientCard 
-                  title="TailwindCSS"
-                  subtitle="CSS Framework"
-                  highlight="Utility-first"
-                />
-                
-                <GradientCard 
-                  title="GraphQL"
-                  subtitle="Query Language"
-                  highlight="Efficient data fetching"
-                />
-                
-                <GradientCard 
-                  title="AWS"
-                  subtitle="Cloud Services"
-                  highlight="Scalable infrastructure"
-                />
+                <GradientCard title="React" subtitle="Frontend Library" highlight="Component-based" />
+                <GradientCard title="Node.js" subtitle="Backend Runtime" highlight="JavaScript everywhere" />
+                <GradientCard title="MongoDB" subtitle="Database" highlight="NoSQL, Document-based" />
+                <GradientCard title="JavaScript" subtitle="Programming Language" highlight="Web Development" />
+                <GradientCard title="Next.js" subtitle="React Framework" highlight="SSR & Static Generation" />
+                <GradientCard title="TypeScript" subtitle="JavaScript Superset" highlight="Type Safety" />
+                <GradientCard title="TailwindCSS" subtitle="CSS Framework" highlight="Utility-first" />
+                <GradientCard title="GraphQL" subtitle="Query Language" highlight="Efficient data fetching" />
+                <GradientCard title="AWS" subtitle="Cloud Services" highlight="Scalable infrastructure" />
               </div>
             </div>
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 bg-gradient-to-r from-gray-900 to-transparent w-12 h-full pointer-events-none"></div>
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 bg-gradient-to-l from-gray-900 to-transparent w-12 h-full pointer-events-none"></div>
+            {/* Fades: Adapt to section background */}
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 bg-gradient-to-r from-gray-100 dark:from-gray-900 to-transparent w-12 h-full pointer-events-none"></div>
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 bg-gradient-to-l from-gray-100 dark:from-gray-900 to-transparent w-12 h-full pointer-events-none"></div>
           </div>
         </div>
       </section>
 
-      {/* Projects Highlight Section */}
+      {/* Projects Section: Inherits background from main div */}
       <section className="py-16 px-4 md:px-8 max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Featured Projects</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white mb-4">Featured Projects</h2>
           <div className="h-1 w-20 bg-purple-500 mx-auto"></div>
         </div>
         
@@ -247,11 +233,11 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Contact CTA Section */}
-      <section className="py-16 px-4 md:px-8 bg-gray-900 bg-opacity-50">
+      {/* Contact CTA Section: Light gray bg light, original dark gray bg dark */}
+      <section className="py-16 px-4 md:px-8 bg-gray-100 dark:bg-gray-900 dark:bg-opacity-50">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Let's Work Together</h2>
-          <p className="text-xl text-gray-300 mb-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white mb-6">Let's Work Together</h2>
+          <p className="text-xl text-gray-700 dark:text-gray-300 mb-8">
             Interested in collaborating or have questions about my work?
             Feel free to reach out and let's start a conversation.
           </p>
@@ -272,4 +258,4 @@ const Home = () => {
   );
 }
 
-export default Home
+export default Home;

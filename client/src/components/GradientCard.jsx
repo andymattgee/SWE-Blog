@@ -41,7 +41,8 @@ const StyledWrapper = styled.div`
   .black-box {
     position: absolute;
     inset: 0;
-    background-color: #000;
+    /* Light mode background */
+    background-color: #f9fafb; /* Light gray */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -49,7 +50,8 @@ const StyledWrapper = styled.div`
     padding: 12px;
     gap: 12px;
     border-radius: 15px;
-    color: #ffffff;
+    /* Light mode text */
+    color: #1f2937; /* Dark gray */
     z-index: 3;
     transition: background-color 0.3s ease;
   }
@@ -85,7 +87,8 @@ const StyledWrapper = styled.div`
     font-size: 24px;
     text-transform: uppercase;
     font-weight: 800;
-    color: #ffffff;
+    /* Light mode heading text */
+    color: #1f2937; /* Dark gray */
     text-align: center;
     transition: transform 0.3s ease;
     margin-bottom: 10px;
@@ -106,7 +109,8 @@ const StyledWrapper = styled.div`
   .additional-info p {
     font-size: 18px;
     margin: 5px 0;
-    color: #ffffff;
+    /* Light mode additional info text */
+    color: #374151; /* Medium gray */
   }
 
   .additional-info p:last-child {
@@ -122,7 +126,8 @@ const StyledWrapper = styled.div`
 
   .card:hover .heading {
     transform: translateY(-40px);
-    color: #ffffff;
+    /* Light mode hover heading text */
+    color: #1f2937; /* Dark gray */
   }
 
   .card:hover .additional-info {
@@ -141,6 +146,30 @@ const StyledWrapper = styled.div`
   .card:hover {
     background-image: linear-gradient(-45deg, #40c9ff 0%, #e81cff 100%);
     transform: scale(1.02);
+  }
+
+  /* Dark mode overrides */
+  html.dark & {
+    .black-box {
+      background-color: #000; /* Original dark background */
+      color: #ffffff; /* Original dark text */
+    }
+
+    .heading {
+      color: #ffffff; /* Original dark heading text */
+    }
+
+    .additional-info p {
+      color: #ffffff; /* Original dark additional info text */
+    }
+    
+    .additional-info p:last-child {
+      color: #40c9ff; /* Keep original highlight color */
+    }
+
+    .card:hover .heading {
+      color: #ffffff; /* Original dark hover heading text */
+    }
   }
 `;
 

@@ -38,7 +38,6 @@ const PasswordChangeModal = ({ isOpen, onClose }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // Check if new passwords match
         if (newPassword !== confirmPassword) {
             toast.error('New passwords do not match');
             clearFields();
@@ -47,7 +46,9 @@ const PasswordChangeModal = ({ isOpen, onClose }) => {
 
         setIsLoading(true);
         try {
-            const response = await fetch('/api/users/change-password', {
+            // NOTE: The API endpoint '/api/users/change-password' might need adjustment
+            // depending on your actual backend setup.
+            const response = await fetch('/api/users/change-password', { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -61,7 +62,6 @@ const PasswordChangeModal = ({ isOpen, onClose }) => {
 
             const data = await response.json();
             
-            // Check for response errors
             if (!response.ok) {
                 throw new Error(data.error || 'Failed to change password');
             }
@@ -77,24 +77,27 @@ const PasswordChangeModal = ({ isOpen, onClose }) => {
         }
     };
 
-    // If the modal is not open, return null to prevent rendering.
     if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-gray-900 bg-opacity-90 rounded-lg p-6 w-full max-w-md text-white border border-purple-500 shadow-xl">
-                <h2 className="text-2xl font-bold mb-4 text-blue-400">Change Password</h2>
+            {/* Modal: Light bg, dark text, gray border; Dark: original styles */}
+            <div className="bg-white dark:bg-gray-900 dark:bg-opacity-90 rounded-lg p-6 w-full max-w-md text-gray-900 dark:text-white border border-gray-300 dark:border-purple-500 shadow-xl">
+                {/* Title: Darker blue light; Original blue dark */}
+                <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Change Password</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-300">
+                        {/* Label: Darker gray light; Original light gray dark */}
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Current Password
                         </label>
                         <div className="relative">
+                            {/* Input: Light bg, dark text, gray border; Dark: original styles */}
                             <input
                                 type={showCurrentPassword ? "text" : "password"}
                                 value={currentPassword}
                                 onChange={(e) => setCurrentPassword(e.target.value)}
-                                className="mt-1 block w-full rounded-md bg-gray-800 border-gray-700 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                className="mt-1 block w-full rounded-md bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                 required
                             />
                             <button
@@ -102,20 +105,23 @@ const PasswordChangeModal = ({ isOpen, onClose }) => {
                                 onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                                 className="absolute inset-y-0 right-0 pr-3 flex items-center"
                             >
-                                {showCurrentPassword ? <FaEyeSlash className="text-gray-400 hover:text-gray-600" /> : <FaEye className="text-gray-400 hover:text-gray-600" />}
+                                {/* Eye Icon: Darker gray light; Original gray dark */}
+                                {showCurrentPassword ? <FaEyeSlash className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-600" /> : <FaEye className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-600" />}
                             </button>
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-300">
+                        {/* Label: Darker gray light; Original light gray dark */}
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             New Password
                         </label>
                         <div className="relative">
+                            {/* Input: Light bg, dark text, gray border; Dark: original styles */}
                             <input
                                 type={showNewPassword ? "text" : "password"}
                                 value={newPassword}
                                 onChange={(e) => setNewPassword(e.target.value)}
-                                className="mt-1 block w-full rounded-md bg-gray-800 border-gray-700 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                className="mt-1 block w-full rounded-md bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                 required
                             />
                             <button
@@ -123,20 +129,23 @@ const PasswordChangeModal = ({ isOpen, onClose }) => {
                                 onClick={() => setShowNewPassword(!showNewPassword)}
                                 className="absolute inset-y-0 right-0 pr-3 flex items-center"
                             >
-                                {showNewPassword ? <FaEyeSlash className="text-gray-400 hover:text-gray-600" /> : <FaEye className="text-gray-400 hover:text-gray-600" />}
+                                {/* Eye Icon: Darker gray light; Original gray dark */}
+                                {showNewPassword ? <FaEyeSlash className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-600" /> : <FaEye className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-600" />}
                             </button>
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-300">
+                        {/* Label: Darker gray light; Original light gray dark */}
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Confirm New Password
                         </label>
                         <div className="relative">
+                            {/* Input: Light bg, dark text, gray border; Dark: original styles */}
                             <input
                                 type={showConfirmPassword ? "text" : "password"}
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                className="mt-1 block w-full rounded-md bg-gray-800 border-gray-700 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                className="mt-1 block w-full rounded-md bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                 required
                             />
                             <button
@@ -144,19 +153,22 @@ const PasswordChangeModal = ({ isOpen, onClose }) => {
                                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                 className="absolute inset-y-0 right-0 pr-3 flex items-center"
                             >
-                                {showConfirmPassword ? <FaEyeSlash className="text-gray-400 hover:text-gray-600" /> : <FaEye className="text-gray-400 hover:text-gray-600" />}
+                                {/* Eye Icon: Darker gray light; Original gray dark */}
+                                {showConfirmPassword ? <FaEyeSlash className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-600" /> : <FaEye className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-600" />}
                             </button>
                         </div>
                     </div>
-                    <div className="flex justify-end space-x-3">
+                    <div className="flex justify-end space-x-3 pt-2"> {/* Added pt-2 for spacing */}
+                        {/* Cancel Button: Light gray bg/border, dark text; Dark: original styles */}
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-800 hover:bg-gray-700 rounded-md border border-gray-700"
+                            className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-700"
                             disabled={isLoading}
                         >
                             Cancel
                         </button>
+                        {/* Submit Button: Original styles (blue bg, white text) work for both modes */}
                         <button
                             type="submit"
                             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md border border-blue-400 disabled:opacity-50"

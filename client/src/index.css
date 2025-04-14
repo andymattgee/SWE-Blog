@@ -1,3 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    /* Set base light mode bg/text and dark mode text. Dark bg will be page-specific */
+    @apply bg-white text-gray-900 dark:text-gray-100 transition-colors duration-300;
+  }
+}
+
 /* Add your global styles here */
 
 /* Hide scrollbar but maintain functionality */

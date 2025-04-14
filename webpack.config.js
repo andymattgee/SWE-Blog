@@ -3,11 +3,15 @@
 const path = require('path');
 // Imports the HtmlWebpackPlugin, a plugin for generating an HTML file to serve the webpack bundles
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-
+// Import the React Refresh plugin
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 // Exports the configuration object for Webpack
+// Determine if it's development mode
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
 module.exports = {
     // Sets the mode based on the NODE_ENV environment variable (development or production)
-    mode: process.env.NODE_ENV,
+    mode: isDevelopment ? 'development' : 'production',
     // Entry point(s) for the application
     entry: {
         index: './client/src/index.js',
@@ -64,8 +68,10 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: "SWE-Blog",
             template: './client/public/index.html'
-        })
-    ],
+        }),
+        // Add React Refresh plugin only in development
+        isDevelopment && new ReactRefreshWebpackPlugin(), // Corrected && and comma placement
+    ].filter(Boolean), // Apply filter to the whole array
     // Configuration for modules (how different types of files are treated)
     module: {
         rules: [
@@ -76,17 +82,9 @@ module.exports = {
                 // Exclude node_modules from processing
                 exclude: /node_modules/,
                 // Use babel-loader for JS/JSX files
-                use: {
-                    loader: 'babel-loader',
-                    // Presets used for transpiling
-                    options: {
-                        presets: [
-                            ["@babel/preset-env", { targets: "defaults" }],
-                            // '@babel/preset-env',
-                            '@babel/preset-react',
-                        ]
-                    }
-                }
+                // Use babel-loader for JS/JSX files
+                // No options needed here, babel.config.js is used automatically
+                use: 'babel-loader'
             },
             {
                 // Test for CSS and SCSS files

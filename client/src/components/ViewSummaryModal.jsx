@@ -70,7 +70,7 @@ const formatSummaryContent = (content) => {
  * @param {Function} props.onClose - Function to call when closing the modal
  * @param {Object} props.entry - The entry object being viewed
  */
-const ViewSummaryModal = ({ isOpen, onClose, entry }) => {
+const ViewSummaryModal = ({ theme = 'dark', isOpen, onClose, entry }) => { // Add theme prop, default to dark
     const modalRef = useRef(null);
     const [summary, setSummary] = useState({
         professionalSummary: '',
@@ -262,7 +262,11 @@ const ViewSummaryModal = ({ isOpen, onClose, entry }) => {
         >
             <div 
                 ref={modalRef} 
-                className="bg-gray-900 bg-opacity-90 rounded-lg p-6 max-w-xl w-full max-h-[80vh] overflow-y-auto text-white border border-purple-500 shadow-xl"
+                className={`rounded-lg p-6 max-w-xl w-full max-h-[80vh] overflow-y-auto shadow-xl ${
+                    theme === 'light'
+                    ? 'bg-white text-gray-900 border border-gray-300'
+                    : 'bg-gray-900 bg-opacity-95 text-white border border-purple-500'
+                }`}
                 onClick={handleModalClick}
                 onMouseDown={(e) => e.stopPropagation()}
                 onMouseUp={(e) => e.stopPropagation()}
@@ -273,36 +277,36 @@ const ViewSummaryModal = ({ isOpen, onClose, entry }) => {
                             e.stopPropagation();
                             onClose();
                         }}
-                        className="text-gray-400 hover:text-gray-200"
+                        className={`text-xl font-bold ${theme === 'light' ? 'text-gray-500 hover:text-gray-800' : 'text-gray-400 hover:text-gray-200'}`}
                     >
-                        x
+                        ×
                     </button>
                 </div>
                 <div className="flex justify-center items-center mb-4">
-                    <h2 className="text-xl font-bold text-blue-400">AI Summary</h2>
+                    <h2 className={`text-xl font-bold ${theme === 'light' ? 'text-purple-700' : 'text-blue-400'}`}>AI Summary</h2>
                 </div>
 
                 <div className="space-y-6">
                     {showLoading && (
                         <div className="text-center py-8 flex flex-col items-center justify-center">
                             <HamsterLoader />
-                            <p className="text-gray-300 mt-4">Generating AI summary...</p>
+                            <p className={`mt-4 ${theme === 'light' ? 'text-gray-600' : 'text-gray-300'}`}>Generating AI summary...</p>
                         </div>
                     )}
                     
                     {showError && (
                         <div className="text-center py-8">
-                            <p className="text-red-400 mb-4">Unable to generate or retrieve summary for this entry.</p>
-                            <p className="text-gray-300">Please close this modal and try again.</p>
+                            <p className={`mb-4 ${theme === 'light' ? 'text-red-600' : 'text-red-400'}`}>Unable to generate or retrieve summary for this entry.</p>
+                            <p className={`${theme === 'light' ? 'text-gray-600' : 'text-gray-300'}`}>Please close this modal and try again.</p>
                         </div>
                     )}
                     
                     {showSummary && (
                         <>
                             <div>
-                                <h3 className="text-lg font-medium text-blue-400 mb-2">Professional Summary</h3>
-                                <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                                    <div className="text-gray-300">
+                                <h3 className={`text-lg font-medium mb-2 ${theme === 'light' ? 'text-purple-600' : 'text-blue-400'}`}>Professional Summary</h3>
+                                <div className={`rounded-lg p-4 border ${theme === 'light' ? 'bg-gray-50 border-gray-200' : 'bg-gray-800 border-gray-700'}`}>
+                                    <div className={`${theme === 'light' ? 'text-gray-800' : 'text-gray-300'}`}>
                                         {formatSummaryContent(summary.professionalSummary)}
                                     </div>
                                 </div>
@@ -310,9 +314,9 @@ const ViewSummaryModal = ({ isOpen, onClose, entry }) => {
                             
                             {summary.personalSummary && (
                                 <div>
-                                    <h3 className="text-lg font-medium text-blue-400 mb-2">Personal Summary</h3>
-                                    <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                                        <div className="text-gray-300">
+                                    <h3 className={`text-lg font-medium mb-2 ${theme === 'light' ? 'text-purple-600' : 'text-blue-400'}`}>Personal Summary</h3>
+                                    <div className={`rounded-lg p-4 border ${theme === 'light' ? 'bg-gray-50 border-gray-200' : 'bg-gray-800 border-gray-700'}`}>
+                                        <div className={`${theme === 'light' ? 'text-gray-800' : 'text-gray-300'}`}>
                                             {formatSummaryContent(summary.personalSummary)}
                                         </div>
                                     </div>
@@ -328,7 +332,11 @@ const ViewSummaryModal = ({ isOpen, onClose, entry }) => {
                             e.stopPropagation();
                             onClose();
                         }}
-                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors duration-200"
+                        className={`px-4 py-2 rounded transition-colors duration-200 ${
+                            theme === 'light'
+                            ? 'bg-purple-600 text-white hover:bg-purple-700'
+                            : 'bg-blue-600 text-white hover:bg-blue-700'
+                        }`}
                     >
                         Close
                     </button>

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react'; // Added useEffect
 import axios from 'axios';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -14,18 +14,24 @@ const Chatbot = () => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [imagePreview, setImagePreview] = useState('');
     const fileInputRef = useRef(null);
+    const chatContainerRef = useRef(null); // Ref for chat container
+
+    // Scroll to bottom of chat history
+    useEffect(() => {
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        }
+    }, [chatHistory]);
 
     const handleImageSelect = (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
-        // Check file type
         if (!file.type.match('image.*')) {
             toast.error('Please select an image file');
             return;
         }
 
-        // Check file size (limit to 4MB)
         if (file.size > 4 * 1024 * 1024) {
             toast.error('Image size should be less than 4MB');
             return;
@@ -33,7 +39,6 @@ const Chatbot = () => {
 
         setSelectedImage(file);
 
-        // Create image preview
         const reader = new FileReader();
         reader.onloadend = () => {
             setImagePreview(reader.result);
@@ -64,7 +69,6 @@ const Chatbot = () => {
 
         setLoading(true);
 
-        // Create form data for multipart/form-data request
         const formData = new FormData();
         formData.append('message', message);
 
@@ -72,69 +76,55 @@ const Chatbot = () => {
             formData.append('image', selectedImage);
         }
 
-        // Add user message to chat history
         const userMessageContent = message.trim()
             ? message
             : 'Sent an image for analysis';
 
-        // Add user message with image preview if available
         const userMessage = {
             role: 'user',
             content: userMessageContent,
-            imageUrl: imagePreview // Store image preview URL in chat history
+            imageUrl: imagePreview 
         };
 
         setChatHistory(prev => [...prev, userMessage]);
+        setMessage(''); // Clear input immediately after adding to history
+        removeSelectedImage(); // Clear image immediately
 
         try {
-            console.log('Sending message to API with image:', selectedImage ? selectedImage.name : 'No image');
+            console.log('Sending message to API with image:', selectedImage ? 'Yes' : 'No'); // Simplified log
 
-            // Use axios to send formData
             const { data } = await axios.post('http://localhost:3333/api/chat', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             });
 
-            // Add AI response to chat history
             const aiResponse = { role: 'assistant', content: data.response };
             setChatHistory(prev => [...prev, aiResponse]);
 
             setResponse(data.response);
-            toast.success('Response received!');
+            // toast.success('Response received!'); // Maybe remove this for less noise
         } catch (error) {
             console.error('Error in chat request:', error);
-
-            // Handle different error scenarios
+            let errorMessage = 'Failed to get response from AI';
             if (error.response) {
-                // The request was made and the server responded with a status code
-                // that falls out of the range of 2xx
-                const errorMessage = error.response.data.message || error.response.data.error || 'Server error';
-                toast.error(`Error: ${errorMessage}`);
-                setResponse(`Error: ${errorMessage}`);
+                errorMessage = error.response.data.message || error.response.data.error || 'Server error';
             } else if (error.request) {
-                // The request was made but no response was received
-                toast.error('No response from server. Please check your connection.');
-                setResponse('Error: No response from server');
+                errorMessage = 'No response from server. Please check your connection.';
             } else {
-                // Something happened in setting up the request that triggered an Error
-                toast.error(`Error: ${error.message}`);
-                setResponse(`Error: ${error.message}`);
+                errorMessage = error.message;
             }
-
-            // Add error message to chat history
+            toast.error(`Error: ${errorMessage}`);
+            setResponse(`Error: ${errorMessage}`);
             setChatHistory(prev => [...prev, {
                 role: 'system',
-                content: 'Error: Failed to get response from AI'
+                content: `Error: ${errorMessage}`
             }]);
+        } finally { // Use finally to ensure loading is always set to false
+            setLoading(false);
         }
-
-        setLoading(false);
-        setMessage(''); // Clear input field after sending
-        removeSelectedImage(); // Clear selected image
     };
 
-    // Handle Enter key press
     const handleKeyPress = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -142,29 +132,31 @@ const Chatbot = () => {
         }
     };
 
-    // Trigger file input click
     const triggerFileInput = () => {
         fileInputRef.current.click();
     };
 
     return (
-        <div className="min-h-screen flex flex-col bg-gradient-to-tr from-cyan-600 via-blue-700 to-indigo-800">
+        // Light: white bg; Dark: original gradient
+        <div className="min-h-screen flex flex-col bg-white dark:bg-gradient-to-br dark:from-black dark:to-purple-900">
             <Navbar />
-            <ToastContainer position="top-right" autoClose={3000} />
+            <ToastContainer position="top-right" autoClose={3000} theme="colored" /> {/* Use colored theme */}
 
             <div className="flex-grow container mx-auto px-4 py-8 flex flex-col items-center">
                 <div className="w-full max-w-3xl flex justify-between items-center mb-6">
-
-                    <h1 className="text-3xl font-bold mb-6 text-white">Chat with GPT-4 Vision</h1>
-                    <button onClick={handleClearChat} className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                    {/* Light: dark text; Dark: white text */}
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Chat with GPT-4 Vision</h1>
+                    <button onClick={handleClearChat} className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">
                         Clear Chat
                     </button>
                 </div>
-                <div className="w-full max-w-3xl bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                {/* Light: light gray bg; Dark: original dark gray bg */}
+                <div className="w-full max-w-3xl bg-gray-100 dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-200 dark:border-transparent flex flex-col"> {/* Added flex flex-col */}
                     {/* Chat history display */}
-                    <div className="h-[60vh] overflow-y-auto p-4 space-y-4" id="chat-container">
+                    <div ref={chatContainerRef} className="flex-grow h-[60vh] overflow-y-auto p-4 space-y-4" id="chat-container"> {/* Added flex-grow */}
                         {chatHistory.length === 0 ? (
-                            <div className="text-center text-gray-400 py-8">
+                            // Light: medium gray text; Dark: light gray text
+                            <div className="text-center text-gray-500 dark:text-gray-400 py-8">
                                 <p>Start a conversation with the AI</p>
                                 <p className="text-sm mt-2">Try asking a question, uploading an image, or requesting information</p>
                             </div>
@@ -173,10 +165,10 @@ const Chatbot = () => {
                                 <div
                                     key={index}
                                     className={`p-3 rounded-lg ${msg.role === 'user'
-                                            ? 'bg-purple-600 text-white ml-auto max-w-[80%]'
+                                            ? 'bg-purple-500 text-white ml-auto max-w-[80%]' // User: Light purple bg
                                             : msg.role === 'assistant'
-                                                ? 'bg-gray-700 text-white max-w-[80%]'
-                                                : 'bg-red-500 text-white max-w-[80%]'
+                                                ? 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-white max-w-[80%]' // Assistant: Light gray bg light, dark gray bg dark
+                                                : 'bg-red-500 text-white max-w-[80%]' // System: Keep red
                                         }`}
                                 >
                                     {/* Display image if present */}
@@ -190,17 +182,19 @@ const Chatbot = () => {
                                         </div>
                                     )}
                                     {/* Display message content */}
-                                    <div className="whitespace-pre-wrap">{msg.content}</div>
+                                    <div className="whitespace-pre-wrap break-words">{msg.content}</div> {/* Added break-words */}
                                 </div>
                             ))
                         )}
                         {loading && (
-                            <div className="bg-gray-700 text-white p-3 rounded-lg max-w-[80%] flex items-center space-x-2">
+                            // Loading: Light gray bg light, dark gray bg dark
+                            <div className="bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-white p-3 rounded-lg max-w-[80%] flex items-center space-x-2">
                                 <div className="animate-pulse">Thinking</div>
                                 <div className="flex space-x-1">
-                                    <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                                    <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                                    <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                                    {/* Loading dots: Dark in light mode, white in dark mode */}
+                                    <div className="w-2 h-2 bg-gray-700 dark:bg-white rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                                    <div className="w-2 h-2 bg-gray-700 dark:bg-white rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                                    <div className="w-2 h-2 bg-gray-700 dark:bg-white rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                                 </div>
                             </div>
                         )}
@@ -208,7 +202,8 @@ const Chatbot = () => {
 
                     {/* Image preview area */}
                     {imagePreview && (
-                        <div className="p-2 bg-gray-900 border-t border-gray-700">
+                        // Image Preview: Lighter bg and border in light mode
+                        <div className="p-2 bg-gray-200 dark:bg-gray-900 border-t border-gray-300 dark:border-gray-700">
                             <div className="relative inline-block">
                                 <img
                                     src={imagePreview}
@@ -226,10 +221,12 @@ const Chatbot = () => {
                     )}
 
                     {/* Input area */}
-                    <div className="p-4 bg-gray-900 border-t border-gray-700">
+                    {/* Input Area: Lighter bg and border in light mode */}
+                    <div className="p-4 bg-gray-200 dark:bg-gray-900 border-t border-gray-300 dark:border-gray-700">
                         <div className="flex space-x-2">
+                            {/* Textarea: Light bg, dark text, light border in light mode */}
                             <textarea
-                                className="flex-grow p-3 text-white bg-gray-800 rounded-md border border-gray-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none resize-none"
+                                className="flex-grow p-3 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-md border border-gray-300 dark:border-gray-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none resize-none"
                                 placeholder="Type your message or upload an image..."
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
@@ -267,14 +264,16 @@ const Chatbot = () => {
                                 <FaPaperPlane />
                             </button>
                         </div>
-                        <p className="text-xs text-gray-400 mt-2">
+                        {/* Helper text: Darker gray in light mode */}
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                             Press Enter to send, Shift+Enter for new line. Images up to 4MB supported.
                         </p>
                     </div>
                 </div>
             </div>
 
-            <div className="mt-auto">
+            {/* Footer pushed to bottom */}
+            <div className="mt-auto"> 
                 <Footer />
             </div>
         </div>

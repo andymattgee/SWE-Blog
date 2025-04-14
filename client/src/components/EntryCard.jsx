@@ -17,23 +17,30 @@ const EntryCard = ({ entry, onClick }) => {
     return (
         <div className="col-span-1" onClick={() => onClick(entry)}>
             <div className="h-full">
-                <div className="bg-gray-900 border border-purple-500 rounded-lg shadow-lg overflow-hidden h-full transition duration-300 hover:bg-purple-900 hover:shadow-xl hover:shadow-gray-400/30 hover:border-gray-300 cursor-pointer">
+                {/* Light: white bg, gray border, light hover; Dark: original styles */}
+                {/* Light: white bg, gray border -> hover: larger purple shadow, purple border; Dark: original styles */}
+                <div className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-purple-500 rounded-lg shadow-md dark:shadow-lg overflow-hidden h-full transition duration-300 hover:shadow-2xl hover:shadow-purple-500/60 dark:hover:bg-purple-900 dark:hover:shadow-2xl dark:hover:shadow-purple-400/40 hover:border-purple-500 dark:hover:border-gray-300 cursor-pointer hover:scale-105">
                     <article className="h-full flex flex-col">
                         {entry.image ? (
                             <div className="h-40 overflow-hidden">
                                 <EntryImage imagePath={entry.image} />
                             </div>
                         ) : (
-                            <div className="h-40 bg-gradient-to-br from-purple-900 to-blue-900 flex items-center justify-center">
-                                <span className="text-4xl text-white opacity-30">✍️</span>
+                            // Light: lighter gradient; Dark: original gradient
+                            <div className="h-40 bg-gradient-to-br from-purple-100 to-blue-100 dark:from-purple-900 dark:to-blue-900 flex items-center justify-center">
+                                {/* Light: gray icon; Dark: white icon */}
+                                <span className="text-4xl text-gray-500 dark:text-white opacity-30">✍️</span>
                             </div>
                         )}
                         <div className="p-4 flex-grow flex flex-col">
                             <div className="flex justify-between items-center mb-2">
-                                <h3 className="text-lg font-bold text-white truncate pr-2">{entry.title}</h3>
-                                <span className="text-xs text-gray-300 whitespace-nowrap">{formattedDate}</span>
+                                {/* Light: dark text; Dark: white text */}
+                                <h3 className="text-lg font-bold text-gray-900 dark:text-white truncate pr-2">{entry.title}</h3>
+                                {/* Light: medium gray text; Dark: light gray text */}
+                                <span className="text-xs text-gray-500 dark:text-gray-300 whitespace-nowrap">{formattedDate}</span>
                             </div>
-                            <div className="text-gray-300 text-sm line-clamp-3 flex-grow">
+                            {/* Light: medium gray text; Dark: light gray text */}
+                            <div className="text-gray-600 dark:text-gray-300 text-sm line-clamp-3 flex-grow">
                                 <div dangerouslySetInnerHTML={{ __html: processQuillContent(entry.professionalContent) }} />
                             </div>
                         </div>
@@ -44,4 +51,4 @@ const EntryCard = ({ entry, onClick }) => {
     );
 };
 
-export default EntryCard; 
+export default EntryCard;
