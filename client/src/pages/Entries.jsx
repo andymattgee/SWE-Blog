@@ -14,19 +14,21 @@
  * 
  * @component
  */
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useContext } from 'react';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import 'react-quill/dist/quill.snow.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { BsPlusLg } from 'react-icons/bs';
+import { BsPlusLg } from 'react-icons/bs'; 
 import '../styles/todo-quill.css';
 import '../styles/quill-viewer.css';
 import Footer from '../components/Footer';
 import EntryCard from '../components/EntryCard';
 import ModalManager from '../components/ModalManager';
+import AddEntryButton from '../components/AddEntryButton'; 
+import { ActivityCalendar } from 'react-activity-calendar';
 
 /* Custom styles for Quill editor containers */
 import '../styles/quill-container.css';
@@ -41,15 +43,34 @@ const debounce = (func, wait) => {
 };
 
 const Entries = () => {
+    // State to track the current theme
+    const [theme, setTheme] = useState('light'); // Default to light
+
+    // Effect to detect theme changes (based on Tailwind's 'dark' class on <html>)
+    useEffect(() => {
+        const checkTheme = () => {
+            const isDark = document.documentElement.classList.contains('dark');
+            setTheme(isDark ? 'dark' : 'light');
+        };
+
+        checkTheme(); // Initial check
+
+        // Observe changes to the class attribute of the html element
+        const observer = new MutationObserver(checkTheme);
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+        // Cleanup observer on component unmount
+        return () => observer.disconnect();
+    }, []);
     // State management
-    const [entries, setEntries] = useState([]); // List of all entries
-    const [selectedEntry, setSelectedEntry] = useState(null); // Currently selected entry for modal
-    const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
-    const [isEditing, setIsEditing] = useState(false); // Edit mode state
+    const [entries, setEntries] = useState([]); 
+    const [selectedEntry, setSelectedEntry] = useState(null); 
+    const [isModalOpen, setIsModalOpen] = useState(false); 
+    const [isEditing, setIsEditing] = useState(false); 
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [entryToDelete, setEntryToDelete] = useState(null);
     const [isNewEntryModalOpen, setIsNewEntryModalOpen] = useState(false);
-    const [isSummaryModalOpen, setIsSummaryModalOpen] = useState(false); // Summary modal state
+    const [isSummaryModalOpen, setIsSummaryModalOpen] = useState(false); 
 
     const fetchEntries = useCallback(async () => {
         try {
@@ -64,7 +85,6 @@ const Entries = () => {
                 throw new Error('Failed to fetch entries');
             }
 
-            // Use data field from response
             setEntries(response.data.data || []);
         } catch (error) {
             console.error('Error fetching entries:', error);
@@ -88,12 +108,10 @@ const Entries = () => {
                 throw new Error(response.data.message || 'Failed to update entry');
             }
 
-            // Update the entries list with the updated entry
             setEntries(entries.map(entry =>
                 entry._id === id ? response.data.data : entry
             ));
 
-            // Close the modal and show success message
             setIsModalOpen(false);
             setIsEditing(false);
             toast.success('Entry updated successfully');
@@ -104,14 +122,6 @@ const Entries = () => {
         }
     };
 
-    /**
-     * Handles the deletion of an entry.
-     * Shows a confirmation modal before proceeding with deletion.
-     * 
-     * @async
-     * @param {string} id - The ID of the entry to delete
-     * @throws {Error} If the API request fails
-     */
     const handleDelete = async (id) => {
         try {
             const token = localStorage.getItem('token');
@@ -123,9 +133,9 @@ const Entries = () => {
 
             if (response.data.success) {
                 toast.success('Entry deleted successfully!');
-                fetchEntries(); // Refresh entries list to get correct sorting
+                fetchEntries(); 
                 setIsModalOpen(false);
-                setIsDeleteModalOpen(false); // Close the delete confirmation modal
+                setIsDeleteModalOpen(false); 
             } else {
                 throw new Error(response.data.message || 'Failed to delete entry');
             }
@@ -135,21 +145,16 @@ const Entries = () => {
         }
     };
 
-    /**
-     * Handles adding a new entry
-     */
     const handleAddEntry = async (formData) => {
         try {
             const token = localStorage.getItem('token');
 
-            // Create FormData object for file upload
             const data = new FormData();
             data.append('title', formData.title);
             data.append('professionalContent', formData.professionalContent);
             data.append('personalContent', formData.personalContent || '');
             data.append('date', new Date().toISOString());
 
-            // Only append image if one was selected
             if (formData.image) {
                 data.append('image', formData.image);
             }
@@ -164,7 +169,7 @@ const Entries = () => {
             if (response.data.success) {
                 toast.success('Entry created successfully!');
                 setIsNewEntryModalOpen(false);
-                fetchEntries(); // Refresh entries list to get correct sorting
+                fetchEntries(); 
             } else {
                 throw new Error(response.data.message || 'Failed to create entry');
             }
@@ -174,10 +179,9 @@ const Entries = () => {
         }
     };
 
-    // Effect to fetch entries
     useEffect(() => {
         fetchEntries();
-    }, []);
+    }, [fetchEntries]); 
 
     const handleEntryClick = async (entry) => {
         try {
@@ -201,11 +205,6 @@ const Entries = () => {
         }
     };
 
-    /**
-     * Maps entries to grid view cards
-     * 
-     * @returns {Array<JSX.Element>} Array of entry cards
-     */
     const gridItems = entries.map((entry) => (
         <EntryCard
             key={entry._id}
@@ -214,29 +213,25 @@ const Entries = () => {
         />
     ));
 
-    // Handle opening and closing summary modal
     const handleOpenSummaryModal = () => {
         setIsSummaryModalOpen(true);
     };
 
     const handleCloseSummaryModal = () => {
-        // Only close the summary modal without affecting the entry modal
         setIsSummaryModalOpen(false);
     };
 
-    // When closing the main entry modal, also close summary if open
     const handleCloseViewModal = () => {
         setIsModalOpen(false);
         setIsEditing(false);
-        
-        // Ensure summary modal closes with parent
         if (isSummaryModalOpen) {
             setIsSummaryModalOpen(false);
         }
     };
 
     return (
-        <div className="min-h-screen [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)] flex flex-col">
+        // Light mode: white bg with subtle purple gradient bottom; Dark mode: black bg
+        <div className="min-h-screen bg-gradient-to-b from-white via-white to-purple-50 dark:from-black dark:via-black dark:to-black flex flex-col">
             <Navbar />
             <ToastContainer
                 position="top-right"
@@ -248,22 +243,21 @@ const Entries = () => {
                 pauseOnFocusLoss
                 draggable
                 pauseOnHover
-                theme="dark"
+                theme="dark" 
             />
-            <div className="container mx-auto px-4 py-8">
+            <div className="container mx-auto px-4 py-8 flex-grow"> 
                 <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-3xl font-bold text-white">Bloggy Mc-Blog Face</h1>
-                    <button
+                    {/* Light mode: dark text; Dark mode: white text */}
+                    
+                    <AddEntryButton
                         onClick={() => setIsNewEntryModalOpen(true)}
-                        className="p-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition duration-200 flex items-center justify-center"
-                        title="Create New Entry"
-                    >
-                        <BsPlusLg size={20} />
-                    </button>
+                        theme={theme} // Pass the current theme
+                    />
                 </div>
 
                 {entries.length === 0 ? (
-                    <div className="text-center text-gray-400 py-12">
+                    // Light mode: medium gray text; Dark mode: original light gray
+                    <div className="text-center text-gray-500 dark:text-gray-400 py-12">
                         <p className="text-xl">No entries yet. Create your first entry!</p>
                     </div>
                 ) : (
@@ -273,8 +267,8 @@ const Entries = () => {
                 )}
             </div>
 
-            {/* Add ModalManager Component */}
-            <ModalManager 
+            <ModalManager
+                theme={theme} // Pass theme here
                 isNewEntryModalOpen={isNewEntryModalOpen}
                 onCloseNewEntryModal={() => setIsNewEntryModalOpen(false)}
                 handleAddEntry={handleAddEntry}

@@ -16,59 +16,77 @@ export const UserProvider = ({ children }) => {
   };
 
   const refreshUserData = async () => {
+    console.log("Attempting to refresh user data..."); // Add log
     try {
       const token = localStorage.getItem('token');
-      if (!token) return;
-
-      // Get current user data
-      const currentData = { ...userData };
-      
-      // Get entries count
-      try {
-        const entriesResponse = await axios.get('http://localhost:3333/entries', {
-          headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ${token}`
-          }
-        });
-        console.log('Entries response:', entriesResponse.data);
-        if (entriesResponse.data && entriesResponse.data.data) {
-          currentData.entriesCount = entriesResponse.data.data.length;
-        }
-      } catch (error) {
-        console.error('Error fetching entries:', error);
-        currentData.entriesCount = 0;
+      if (!token) {
+        console.log("No token found, cannot refresh."); // Add log
+        return;
       }
 
-      // Get todos count
+      // Object to hold the refreshed data
+      let refreshedData = {};
+      
+      // --- Fetch Core User Profile Data ---
       try {
-        const todosResponse = await axios.get('http://localhost:3333/api/todos', {
-          headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ${token}`
-          }
+        console.log("Fetching /api/users/me..."); // Add log
+        const profileResponse = await axios.get('http://localhost:3333/api/users/me', {
+          headers: { Authorization: `Bearer ${token}` }
         });
-        console.log('Todos response:', todosResponse.data);
-        if (todosResponse.data && todosResponse.data.data) {
+        console.log('Profile response:', profileResponse.data); // Add log
+        if (profileResponse.data) {
+          // Store essential profile data (email, image)
+          refreshedData.email = profileResponse.data.email;
+          refreshedData.image = profileResponse.data.image;
+          // Add other fields from /me if needed later
+        } else {
+           console.log("No data received from /api/users/me"); // Add log
+        }
+      } catch (error) {
+        console.error('Error fetching user profile data:', error.response ? error.response.data : error.message);
+        // Handle profile fetch error - maybe clear user data or redirect?
+        // For now, we'll proceed without profile data if it fails.
+      }
+
+      // --- Fetch Entries Count ---
+      try {
+        console.log("Fetching /entries count..."); // Add log
+        const entriesResponse = await axios.get('http://localhost:3333/entries', {
+          headers: { Accept: 'application/json', Authorization: `Bearer ${token}` }
+        });
+        // console.log('Entries response:', entriesResponse.data); // Keep if needed
+        refreshedData.entriesCount = entriesResponse.data?.data?.length || 0;
+      } catch (error) {
+        console.error('Error fetching entries count:', error);
+        refreshedData.entriesCount = 0; // Default to 0 on error
+      }
+
+      // --- Fetch Todos Count ---
+      try {
+        console.log("Fetching /api/todos count..."); // Add log
+        const todosResponse = await axios.get('http://localhost:3333/api/todos', {
+          headers: { Accept: 'application/json', Authorization: `Bearer ${token}` }
+        });
+        // console.log('Todos response:', todosResponse.data); // Keep if needed
+        if (todosResponse.data?.data) {
           const allTodos = [
             ...(todosResponse.data.data.today || []),
             ...(todosResponse.data.data.pending || []),
             ...(todosResponse.data.data.overdue || []),
             ...(todosResponse.data.data.completed || [])
           ];
-          currentData.tasksCount = allTodos.length;
+          refreshedData.tasksCount = allTodos.length;
+        } else {
+          refreshedData.tasksCount = 0;
         }
       } catch (error) {
-        console.error('Error fetching todos:', error);
-        currentData.tasksCount = 0;
+        console.error('Error fetching todos count:', error);
+        refreshedData.tasksCount = 0; // Default to 0 on error
       }
 
-      // Keep existing user data
-      if (userData && userData.userName) {
-        currentData.userName = userData.userName;
-      }
-
-      updateUserData(currentData);
+      // --- Update Context State ---
+      console.log("Updating user data in context:", refreshedData); // Add log
+      updateUserData(refreshedData);
     } catch (error) {
       console.error('Error refreshing user data:', error);
     }

@@ -8,13 +8,24 @@ const bcrypt = require('bcryptjs'); // Import bcrypt for password comparison
  */
 const register = async (req, res) => {
     try {
-        const user = new User(req.body); // Create a new user instance
+        // Explicitly create user with expected fields (email, password)
+        const user = new User({
+            email: req.body.email,
+            password: req.body.password
+            // Add other fields like firstName, lastName if they are sent and needed in the model
+        });
         await user.save(); // Save the user to the database
         const token = await user.generateAuthToken(); // Generate an authentication token
-        res.status(201).send({ user, token }); // Respond with user data and token
+        // Ensure a consistent success response structure
+        res.status(201).send({ success: true, user, token });
     } catch (error) {
         console.error('Error registering user:', error);
-        res.status(400).send(error); // Handle registration errors
+        // Send a structured error response
+        // Enhance error message for duplicate email
+        if (error.code === 11000 || (error.message && error.message.includes('E11000'))) {
+             return res.status(400).send({ success: false, message: 'Email already exists. Please use a different email or login.' });
+        }
+        res.status(400).send({ success: false, message: error.message || 'Registration failed', error: error });
     }
 };
 
@@ -25,15 +36,16 @@ const register = async (req, res) => {
  */
 const login = async (req, res) => {
     try {
-        const user = await User.findByCredentials(req.body.userName, req.body.password); // Authenticate user
+        // Use email for authentication
+        const user = await User.findByCredentials(req.body.email, req.body.password);
         if (!user) {
-            return res.status(401).json({ error: 'Invalid username or password' }); // Handle invalid credentials
+            return res.status(401).json({ error: 'Invalid email or password' }); // Update error message
         }
         const token = await user.generateAuthToken(); // Generate an authentication token
         res.send({ user, token }); // Respond with user data and token
     } catch (error) {
         console.error('Error logging in user:', error);
-        res.status(400).send({ error: 'Unable to login' }); // Handle login errors
+        res.status(400).send({ error: 'Unable to login. Please check your email and password.' }); // Update error message
     }
 };
 
@@ -53,6 +65,47 @@ const logout = async (req, res) => {
     } catch (error) {
         console.error('Error logging out user:', error);
         res.status(500).send(error); // Handle logout errors
+    }
+};
+
+/**
+ * Uploads or updates the user's profile picture.
+ * Expects the file to be handled by 'upload.single('profilePic')' middleware.
+ * @param {Object} req - The request object, containing user and file info
+ * @param {Object} res - The response object for sending responses
+ */
+const uploadProfilePicture = async (req, res) => {
+    try {
+        // Check if a file was uploaded by the middleware
+        if (!req.file) {
+            return res.status(400).json({ message: 'No profile picture file uploaded.' });
+        }
+
+        // The 'upload' middleware (multer-s3) adds 'location' to req.file with the S3 URL
+        const imageUrl = req.file.location;
+
+        // req.user is populated by the 'auth' middleware
+        const user = req.user;
+
+        // Update the user's image field
+        user.image = imageUrl;
+        await user.save();
+
+        // Respond with success and the new image URL
+        res.status(200).json({
+            message: 'Profile picture updated successfully',
+            imageUrl: imageUrl,
+            // Optionally send back updated user data (excluding sensitive fields)
+            // user: { _id: user._id, email: user.email, image: user.image /* other safe fields */ }
+        });
+
+    } catch (error) {
+        console.error('Error uploading profile picture:', error);
+        // Check for specific multer errors if needed, otherwise send a generic error
+        if (error instanceof multer.MulterError) {
+            return res.status(400).json({ message: `File upload error: ${error.message}` });
+        }
+        res.status(500).json({ message: 'Server error while uploading profile picture.' });
     }
 };
 
@@ -81,10 +134,39 @@ const changePassword = async (req, res) => {
     }
 };
 
+/**
+ * Gets the profile data for the currently authenticated user.
+ * Assumes 'auth' middleware has populated req.user.
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object
+ */
+const getMe = async (req, res) => {
+    try {
+        // req.user is populated by the auth middleware
+        // Select only the fields needed by the frontend context
+        const userData = {
+            _id: req.user._id,
+            email: req.user.email,
+            image: req.user.image, // Include the image URL
+            // You could potentially add entriesCount and tasksCount here
+            // if you fetch/populate them, but it might be simpler
+            // to keep those fetches separate in the context for now.
+            // entriesCount: req.user.entries.length,
+            // tasksCount: req.user.todos.length
+        };
+        res.status(200).json(userData);
+    } catch (error) {
+        console.error('Error fetching user profile:', error);
+        res.status(500).json({ message: 'Server error while fetching user profile.' });
+    }
+};
+
 // Export the controller functions for use in routes
 module.exports = {
     register,
     login,
     logout,
-    changePassword
+    changePassword,
+    uploadProfilePicture,
+    getMe // Export the getMe function
 };

@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import EntryImage from './EntryImage';
+import DeleteButton from './DeleteButton'; // Import the new delete button
+import EditButton from './EditButton'; // Import the new edit button
+import SummarizeButton from './SummarizeButton'; // Import the new summarize button
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
@@ -23,7 +25,7 @@ const processQuillContent = (content) => {
  * @param {Function} props.onSummarize - Function to call when summarize button is clicked
  * @param {boolean} props.isSummaryOpen - Whether the summary modal is open
  */
-const ViewEntryModal = ({ entry, isOpen, onClose, onEdit, onDelete, onSummarize, isSummaryOpen }) => {
+const ViewEntryModal = ({ theme = 'dark', entry, isOpen, onClose, onEdit, onDelete, onSummarize, isSummaryOpen }) => { // Add theme prop, default to dark
     const modalRef = useRef(null);
     // Use the prop to keep track of summary modal state
     const [isLocalSummaryOpen, setIsLocalSummaryOpen] = useState(isSummaryOpen || false);
@@ -173,17 +175,21 @@ const ViewEntryModal = ({ entry, isOpen, onClose, onEdit, onDelete, onSummarize,
         <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
             <div 
                 ref={modalRef} 
-                className="bg-gray-900 bg-opacity-90 rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white border border-purple-500 shadow-xl"
+                className={`rounded-lg p-8 max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-xl ${
+                    theme === 'light'
+                    ? 'bg-white text-gray-900 border border-gray-300'
+                    : 'bg-gray-900 bg-opacity-95 text-white border border-purple-500'
+                }`}
             >
                 <div className="flex justify-end">
-                    <button onClick={onClose} className="text-gray-400 hover:text-gray-200">x</button>
+                    <button onClick={onClose} className={`text-xl font-bold ${theme === 'light' ? 'text-gray-500 hover:text-gray-800' : 'text-gray-400 hover:text-gray-200'}`}>×</button>
                 </div>
                 <div className="flex justify-center items-center mb-2">
-                    <h2 className="text-2xl font-bold text-blue-400">{entry.title}</h2>
+                    <h2 className={`text-2xl font-bold ${theme === 'light' ? 'text-purple-700' : 'text-blue-400'}`}>{entry.title}</h2>
                 </div>
 
                 {formattedDate && (
-                    <div className="text-center text-gray-400 text-sm mb-6">
+                    <div className={`text-center text-sm mb-6 ${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>
                         {formattedDate}
                     </div>
                 )}
@@ -195,45 +201,30 @@ const ViewEntryModal = ({ entry, isOpen, onClose, onEdit, onDelete, onSummarize,
                         </div>
                     )}
                     <div>
-                        <h3 className="text-lg font-medium text-blue-400 mb-2">Professional Content</h3>
-                        <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                            <div className="todo-quill dark-theme ql-editor" dangerouslySetInnerHTML={{ __html: processQuillContent(entry.professionalContent) }} />
+                        <h3 className={`text-lg font-medium mb-2 ${theme === 'light' ? 'text-purple-600' : 'text-blue-400'}`}>Professional Content</h3>
+                        <div className={`rounded-lg p-4 border ${theme === 'light' ? 'bg-white border-gray-200' : 'bg-gray-800 border-gray-700'}`}>
+                            <div className={`todo-quill ql-editor ${theme === 'dark' ? 'dark-theme' : ''}`} dangerouslySetInnerHTML={{ __html: processQuillContent(entry.professionalContent) }} />
                         </div>
                     </div>
                     {entry.personalContent && (
                         <div>
-                            <h3 className="text-lg font-medium text-blue-400 mb-2">Personal Content</h3>
-                            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                                <div className="todo-quill dark-theme ql-editor" dangerouslySetInnerHTML={{ __html: processQuillContent(entry.personalContent) }} />
+                            <h3 className={`text-lg font-medium mb-2 ${theme === 'light' ? 'text-purple-600' : 'text-blue-400'}`}>Personal Content</h3>
+                            <div className={`rounded-lg p-4 border ${theme === 'light' ? 'bg-white border-gray-200' : 'bg-gray-800 border-gray-700'}`}>
+                                <div className={`todo-quill ql-editor ${theme === 'dark' ? 'dark-theme' : ''}`} dangerouslySetInnerHTML={{ __html: processQuillContent(entry.personalContent) }} />
                             </div>
                         </div>
                     )}
                     <div className="flex justify-between items-center mt-6">
                         <div className="flex">
-                            <button
+                            <SummarizeButton
                                 onClick={handleSummarizeClick}
-                                className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200"
-                                title="Summarize with AI"
                                 disabled={isLoadingSummary}
-                            >
-                                {isLoadingSummary ? 'Summarizing...' : 'Summarize with AI'}
-                            </button>
+                                isLoading={isLoadingSummary}
+                            />
                         </div>
                         <div className="flex space-x-4">
-                            <button
-                                onClick={onEdit}
-                                className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200"
-                                title="Edit Entry"
-                            >
-                                <FaEdit size={18} />
-                            </button>
-                            <button
-                                onClick={() => onDelete(entry._id)}
-                                className="p-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors duration-200"
-                                title="Delete Entry"
-                            >
-                                <FaTrashAlt size={18} />
-                            </button>
+                            <EditButton onClick={onEdit} />
+                            <DeleteButton onClick={() => onDelete(entry._id)} />
                         </div>
                     </div>
                 </div>

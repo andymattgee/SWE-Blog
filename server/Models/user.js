@@ -5,17 +5,18 @@ const Schema = mongoose.Schema; // Create a Schema constructor
 
 // Define the schema for a User
 const userSchema = new Schema({
-    userName: {
-        type: String,
-        required: true // Username, required field
-    },
+    // userName removed
     password: {
         type: String,
         required: true // Password, required field
     },
     email: {
         type: String,
-        required: false // Optional email field
+        required: true, // Make email required
+        unique: true,   // Ensure email is unique
+        lowercase: true, // Store emails in lowercase
+        trim: true,     // Remove leading/trailing whitespace
+        match: [/\S+@\S+\.\S+/, 'is invalid'] // Basic email format validation
     },
     image: {
         type: String,
@@ -56,8 +57,9 @@ userSchema.methods.generateAuthToken = async function() {
 };
 
 // Static method to find a user by credentials (username and password)
-userSchema.statics.findByCredentials = async (userName, password) => {
-    const user = await User.findOne({ userName }); // Find the user by username
+// Static method to find a user by credentials (email and password)
+userSchema.statics.findByCredentials = async (email, password) => {
+    const user = await User.findOne({ email }); // Find the user by email
     if (!user) {
         throw new Error('Unable to login'); // Throw an error if user not found
     }

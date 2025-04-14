@@ -6,6 +6,7 @@ import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewSummaryModal from './ViewSummaryModal';
 
 const ModalManager = ({
+    theme, // Add theme prop here
     isNewEntryModalOpen,
     onCloseNewEntryModal,
     handleAddEntry,
@@ -29,6 +30,7 @@ const ModalManager = ({
             {/* New Entry Modal */}
             {isNewEntryModalOpen && (
                 <NewEntryModal
+                    theme={theme} // Pass theme here
                     isOpen={isNewEntryModalOpen}
                     onClose={onCloseNewEntryModal}
                     onSubmit={handleAddEntry}
@@ -38,6 +40,7 @@ const ModalManager = ({
             {/* View Modal */}
             {isModalOpen && !isEditing && selectedEntry && (
                 <ViewEntryModal
+                    theme={theme} // Pass theme prop here
                     entry={selectedEntry}
                     isOpen={isModalOpen}
                     onClose={onCloseModal}
@@ -51,6 +54,7 @@ const ModalManager = ({
             {/* Edit Modal */}
             {isModalOpen && isEditing && selectedEntry && (
                 <EditEntryModal
+                    theme={theme} // Pass theme here
                     entry={selectedEntry}
                     isOpen={isModalOpen}
                     onClose={onCloseModal} // Reuse onCloseModal for edit mode closing
@@ -61,6 +65,7 @@ const ModalManager = ({
             {/* Delete Confirmation Modal */}
             {isDeleteModalOpen && (
                 <DeleteConfirmationModal
+                    theme={theme} // Pass theme here
                     onConfirm={() => handleDelete(entryToDelete)}
                     onCancel={onCloseDeleteModal}
                 />
@@ -68,7 +73,8 @@ const ModalManager = ({
 
             {/* Summary Modal */}
             {isSummaryModalOpen && selectedEntry && (
-                <ViewSummaryModal 
+                <ViewSummaryModal
+                    theme={theme} // Pass theme here
                     isOpen={isSummaryModalOpen}
                     onClose={onCloseSummaryModal}
                     entry={selectedEntry}
