@@ -194,16 +194,33 @@ const Home = () => {
               style={{ minHeight: '290px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
               <div className="flex space-x-12 min-w-max px-8 py-2">
-                {/* Technology Cards */}
-                <GradientCard title="React" subtitle="Frontend Library" highlight="Component-based" />
-                <GradientCard title="Node.js" subtitle="Backend Runtime" highlight="JavaScript everywhere" />
-                <GradientCard title="MongoDB" subtitle="Database" highlight="NoSQL, Document-based" />
-                <GradientCard title="JavaScript" subtitle="Programming Language" highlight="Web Development" />
-                <GradientCard title="Next.js" subtitle="React Framework" highlight="SSR & Static Generation" />
-                <GradientCard title="TypeScript" subtitle="JavaScript Superset" highlight="Type Safety" />
-                <GradientCard title="TailwindCSS" subtitle="CSS Framework" highlight="Utility-first" />
-                <GradientCard title="GraphQL" subtitle="Query Language" highlight="Efficient data fetching" />
-                <GradientCard title="AWS" subtitle="Cloud Services" highlight="Scalable infrastructure" />
+                {/* Technology Cards - Dynamically generated */}
+                {[
+                  { title: "JavaScript", subtitle: "Language (ES6+)", highlight: "Web Foundation" },
+                  { title: "React", subtitle: "Frontend Library", highlight: "Component-Based UI" },
+                  { title: "Next.js", subtitle: "React Framework", highlight: "SSR & SSG" },
+                  { title: "HTML", subtitle: "Markup Language", highlight: "Web Structure" },
+                  { title: "CSS", subtitle: "Styling Language", highlight: "Web Design" },
+                  { title: "Tailwind CSS", subtitle: "CSS Framework", highlight: "Utility-First" },
+                  { title: "Node.js", subtitle: "Backend Runtime", highlight: "JavaScript Server" },
+                  { title: "Express.js", subtitle: "Node.js Framework", highlight: "Web Applications" },
+                  { title: "Webpack", subtitle: "Module Bundler", highlight: "Asset Management" },
+                  { title: "React Router", subtitle: "Routing Library", highlight: "Client-Side Nav" },
+                  { title: "NoSQL", subtitle: "Database Type", highlight: "Flexible Data (e.g., MongoDB)" },
+                  { title: "Postman", subtitle: "API Platform", highlight: "API Testing & Dev" },
+                  { title: "OAuth", subtitle: "Authorization", highlight: "Secure Delegation" },
+                  { title: "NextAuth", subtitle: "Auth for Next.js", highlight: "Easy Authentication" },
+                  { title: "Redis", subtitle: "In-Memory Store", highlight: "Caching & Sessions" },
+                  { title: "Docker", subtitle: "Containerization", highlight: "App Deployment" },
+                  { title: "SQL", subtitle: "Database Language", highlight: "Relational Data" },
+                ].map((tech, index) => (
+                  <GradientCard
+                    key={index}
+                    title={tech.title}
+                    subtitle={tech.subtitle}
+                    highlight={tech.highlight}
+                  />
+                ))}
               </div>
             </div>
             {/* Fades: Adapt to section background */}

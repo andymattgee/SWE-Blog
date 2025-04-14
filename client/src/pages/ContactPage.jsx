@@ -30,18 +30,19 @@ const ContactPage = () => {
           </h1>
           {/* Light: dark text; Dark: white text */}
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-8">
-            Tell us about your project.
+            Let me know if you have any questions or feedback.
           </h2>
           {/* Light: medium gray text; Dark: light gray text */}
-          <p className="text-lg text-gray-600 dark:text-gray-300 mb-10">
-            Let's create something together
+          
+          <p className="text-2xl text-red-500 dark:text-red-500 mb-10">
+            ** Page currently under construction and not ready for use. **
           </p>
           
           {/* Light: light gray bg, dark text; Dark: original translucent bg, white text */}
           <div className="bg-gray-100 dark:bg-white dark:bg-opacity-10 dark:backdrop-blur-md rounded-lg p-6 inline-flex items-center mt-4 w-fit border border-gray-200 dark:border-transparent">
             <FaEnvelope className="text-blue-600 dark:text-blue-400 mr-3" />
             <span className="text-gray-800 dark:text-white">Mail us at</span>
-            <a href="mailto:contact@devblog.com" className="text-blue-600 dark:text-blue-400 ml-2 hover:underline">contact@devblog.com</a>
+            <a href="mailto:contact@devblog.com" className="text-blue-600 dark:text-blue-400 ml-2 hover:underline">sampleEmail@gmail.com</a>
           </div>
         </div>
         
