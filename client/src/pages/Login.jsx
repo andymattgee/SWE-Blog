@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom'; // Hook for programmatic navigat
 import LoginForm from '../components/LoginForm'; // Reusable login form UI component
 import { useUser } from '../context/UserContext'; // Hook to access user context functions (update, refresh)
 import axios from 'axios'; // Library for making HTTP requests
-import beachImage from '../../public/images/beach.jpg'; // Background image for the page
+import mtsVideo from '../../public/videos/mtsVideo.mp4'; // Import the video file
 
 /**
  * @component Login
@@ -106,16 +106,25 @@ const Login = () => {
   };
 
   return (
-    // Main container div covering the full screen height
-    // Background image is applied here
-    <div
-      className="flex min-h-screen bg-cover bg-center"
-      style={{ backgroundImage: `url(${beachImage})` }}
-    >
-      {/* Left Column (Spacer/Background Area) */}
+    // Main container div covering the full screen height with relative positioning
+    <div className="relative flex min-h-screen overflow-hidden">
+      {/* Background Video */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline // Important for mobile devices
+        className="absolute top-0 left-0 w-full h-full object-cover -z-10" // Position fixed behind content
+        src={mtsVideo} // Use the imported video variable
+      >
+        Your browser does not support the video tag.
+      </video>
+
+      {/* Left Column (Spacer/Background Area - maintains layout structure) */}
       {/* This div takes up 2/3 of the width on medium screens and above, acting as a visual spacer */}
       {/* On small screens, it takes full width but is effectively hidden by the right column stacking */}
-      <div className="w-full md:w-2/3">
+      {/* Added z-index to ensure it's above the video but below the form */}
+      <div className="w-full md:w-2/3 z-0">
         {/* Intentionally empty - serves as part of the background layout */}
       </div>
 
@@ -124,7 +133,8 @@ const Login = () => {
       {/* On small screens, it takes full width and stacks below the (hidden) left column */}
       {/* Uses flex to center the LoginForm vertically and horizontally */}
       {/* Applies a semi-transparent white background with a blur effect for readability */}
-      <div className="w-full md:w-1/3 flex items-center justify-center p-8 md:p-12 bg-white bg-opacity-30 backdrop-blur-sm">
+      {/* Added z-index to ensure it's above the video */}
+      <div className="w-full md:w-1/3 flex items-center justify-center p-8 md:p-12 bg-white bg-opacity-30 backdrop-blur-sm z-10">
         {/* Render the reusable LoginForm component */}
         {/* Pass handler functions as props to the LoginForm */}
         <LoginForm
@@ -134,7 +144,6 @@ const Login = () => {
           onSocialClick={handleSocialClick} // Function for social login buttons
         />
       </div>
-      {/* Removed Title and LogLocalStorage components as they are no longer used here */}
     </div>
   );
 }
