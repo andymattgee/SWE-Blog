@@ -54,34 +54,23 @@ export const UserProvider = ({ children }) => {
         const entriesResponse = await axios.get('http://localhost:3333/entries', {
           headers: { Accept: 'application/json', Authorization: `Bearer ${token}` }
         });
-        // console.log('Entries response:', entriesResponse.data); // Keep if needed
-        refreshedData.entriesCount = entriesResponse.data?.data?.length || 0;
+        const entries = entriesResponse.data?.data;
+        refreshedData.entriesCount = entries?.length || 0;
+        // Find the most recent entry date (assuming entries are sorted or finding max)
+        if (entries && entries.length > 0) {
+          // Assuming entries are sorted newest first by the backend or sorting here
+          // If not sorted, find the max date:
+          // const latestDate = entries.reduce((max, entry) => new Date(entry.createdAt) > new Date(max) ? entry.createdAt : max, entries[0].createdAt);
+          // refreshedData.lastEntryDate = latestDate;
+
+          // Assuming sorted newest first:
+          refreshedData.lastEntryDate = entries[0].createdAt;
+        } else {
+          refreshedData.lastEntryDate = null; // No entries, no last date
+        }
       } catch (error) {
         console.error('Error fetching entries count:', error);
         refreshedData.entriesCount = 0; // Default to 0 on error
-      }
-
-      // --- Fetch Todos Count ---
-      try {
-        console.log("Fetching /api/todos count..."); // Add log
-        const todosResponse = await axios.get('http://localhost:3333/api/todos', {
-          headers: { Accept: 'application/json', Authorization: `Bearer ${token}` }
-        });
-        // console.log('Todos response:', todosResponse.data); // Keep if needed
-        if (todosResponse.data?.data) {
-          const allTodos = [
-            ...(todosResponse.data.data.today || []),
-            ...(todosResponse.data.data.pending || []),
-            ...(todosResponse.data.data.overdue || []),
-            ...(todosResponse.data.data.completed || [])
-          ];
-          refreshedData.tasksCount = allTodos.length;
-        } else {
-          refreshedData.tasksCount = 0;
-        }
-      } catch (error) {
-        console.error('Error fetching todos count:', error);
-        refreshedData.tasksCount = 0; // Default to 0 on error
       }
 
       // --- Update Context State ---

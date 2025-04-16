@@ -26,10 +26,6 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Entry' // Reference to the user's entries
     }],
-    todos: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Todo' // Reference to the user's todos
-    }],
     tokens: [{ // Array to store authentication tokens
         token: {
             type: String,

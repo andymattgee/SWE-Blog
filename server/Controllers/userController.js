@@ -152,7 +152,6 @@ const getMe = async (req, res) => {
             // if you fetch/populate them, but it might be simpler
             // to keep those fetches separate in the context for now.
             // entriesCount: req.user.entries.length,
-            // tasksCount: req.user.todos.length
         };
         res.status(200).json(userData);
     } catch (error) {
