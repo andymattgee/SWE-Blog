@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react'
 import { Link, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import LogLocalStorage from '../components/LogLocalStorage';
 import PsychedelicPattern from '../components/PsychedelicPattern';
 import BlockPattern from '../components/BlockPattern'; // Import the new pattern
 import SpaceButton from '../components/SpaceButton';
@@ -170,6 +169,15 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Why This App Section: Inherits background from main div */}
+      <section className="py-16 px-4 md:px-8 max-w-4xl mx-auto text-center">
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white mb-4">Why This App?</h2>
+        <div className="h-1 w-20 bg-purple-500 mx-auto mb-8"></div>
+        <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+          This application began as a personal project focused on reinforcing and deepening my understanding of the MERN stack (MongoDB, Express.js, React, Node.js). What started as a simple blog platform has gradually evolved, with new features and functionalities being added incrementally over time as I continue to explore and learn. It serves as both a practical learning tool and a space for experimentation. Originally, the vision also included incorporating elements of a personal resume/profile site suitable for sharing with recruiters. However, the focus shifted towards a dedicated blog, though some remnants of the initial profile concept might still be visible on this page.
+        </p>
+      </section>
+
       {/* About Me Section: Inherits background from main div */}
       <section className="py-16 px-4 md:px-8 max-w-7xl mx-auto">
         <div className="flex justify-center">
@@ -264,10 +272,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* LogLocalStorage positioned at bottom right */}
-      <div className="fixed bottom-8 right-8 z-10">
-        <LogLocalStorage />
-      </div>
+      {/* LogLocalStorage component removed */}
 
       {/* Footer */}
       <Footer />

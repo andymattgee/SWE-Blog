@@ -14,7 +14,7 @@
  * 
  * @component
  */
-import React, { useState, useEffect, useCallback, useRef, useContext } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react'; // Removed useContext as useUser handles it
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
@@ -28,7 +28,8 @@ import Footer from '../components/Footer';
 import EntryCard from '../components/EntryCard';
 import ModalManager from '../components/ModalManager';
 import AddEntryButton from '../components/AddEntryButton'; 
-import { ActivityCalendar } from 'react-activity-calendar';
+import { ActivityCalendar } from 'react-activity-calendar'; // Keep if used, otherwise remove
+import { useUser } from '../context/UserContext'; // Import useUser hook
 
 /* Custom styles for Quill editor containers */
 import '../styles/quill-container.css';
@@ -45,6 +46,7 @@ const debounce = (func, wait) => {
 const Entries = () => {
     // State to track the current theme
     const [theme, setTheme] = useState('light'); // Default to light
+    const { userData } = useUser(); // Get user data from context
 
     // Effect to detect theme changes (based on Tailwind's 'dark' class on <html>)
     useEffect(() => {
@@ -246,9 +248,33 @@ const Entries = () => {
                 theme="dark" 
             />
             <div className="container mx-auto px-4 py-8 flex-grow"> 
-                <div className="flex justify-between items-center mb-8">
-                    {/* Light mode: dark text; Dark mode: white text */}
-                    
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 space-y-4 sm:space-y-0">
+                    {/* Last Entry Info */}
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                        {userData?.lastEntryDate ? (
+                            <>
+                                <div>
+                                    Last Entry Date: {new Date(userData.lastEntryDate).toLocaleDateString()}
+                                </div>
+                                <div>
+                                    Days Since Last Entry: {(() => {
+                                        const lastDate = new Date(userData.lastEntryDate);
+                                        const today = new Date();
+                                        // Reset time part to compare dates only
+                                        lastDate.setHours(0, 0, 0, 0);
+                                        today.setHours(0, 0, 0, 0);
+                                        const diffTime = Math.abs(today - lastDate);
+                                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                        return diffDays;
+                                    })()}
+                                </div>
+                            </>
+                        ) : (
+                            <div>No entries recorded yet.</div>
+                        )}
+                    </div>
+
+                    {/* Add Entry Button */}
                     <AddEntryButton
                         onClick={() => setIsNewEntryModalOpen(true)}
                         theme={theme} // Pass the current theme

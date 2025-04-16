@@ -11,11 +11,14 @@ const Signup = () => {
     // Removed useForm hook and related state
 
     // Renamed onSubmit to handleSignup and adjusted parameters
-    const handleSignup = async (email, password) => {
+    // Updated handleSignup to accept firstName and lastName
+    const handleSignup = async (firstName, lastName, email, password) => {
         try {
-            // Send email and password to the backend
+            // Send all required fields to the backend
             const result = await axios.post('http://localhost:3333/api/users/register', {
-                email: email, // Send email field
+                firstName: firstName, // Add firstName
+                lastName: lastName,   // Add lastName
+                email: email,
                 password: password
             });
 

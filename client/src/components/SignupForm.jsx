@@ -21,7 +21,8 @@ const SignupForm = ({ onSubmit, onNavigateToLogin }) => {
       return;
     }
     // Submit only email and password as requested
-    onSubmit(email, password);
+    // Pass all required fields to the onSubmit handler
+    onSubmit(firstName, lastName, email, password);
   };
 
   const handleSigninClick = (e) => {

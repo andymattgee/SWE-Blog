@@ -10,9 +10,10 @@ const register = async (req, res) => {
     try {
         // Explicitly create user with expected fields (email, password)
         const user = new User({
+            firstName: req.body.firstName, // Add firstName
+            lastName: req.body.lastName,   // Add lastName
             email: req.body.email,
             password: req.body.password
-            // Add other fields like firstName, lastName if they are sent and needed in the model
         });
         await user.save(); // Save the user to the database
         const token = await user.generateAuthToken(); // Generate an authentication token
@@ -146,13 +147,11 @@ const getMe = async (req, res) => {
         // Select only the fields needed by the frontend context
         const userData = {
             _id: req.user._id,
+            firstName: req.user.firstName, // Add firstName
+            lastName: req.user.lastName,   // Add lastName
             email: req.user.email,
             image: req.user.image, // Include the image URL
-            // You could potentially add entriesCount and tasksCount here
-            // if you fetch/populate them, but it might be simpler
-            // to keep those fetches separate in the context for now.
-            // entriesCount: req.user.entries.length,
-            // tasksCount: req.user.todos.length
+            // entriesCount: req.user.entries.length, // Keep separate fetch for now
         };
         res.status(200).json(userData);
     } catch (error) {

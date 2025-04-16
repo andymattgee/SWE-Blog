@@ -5,7 +5,16 @@ const Schema = mongoose.Schema; // Create a Schema constructor
 
 // Define the schema for a User
 const userSchema = new Schema({
-    // userName removed
+    firstName: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    lastName: {
+        type: String,
+        required: true,
+        trim: true
+    },
     password: {
         type: String,
         required: true // Password, required field
@@ -25,10 +34,6 @@ const userSchema = new Schema({
     entries: [{
         type: Schema.Types.ObjectId,
         ref: 'Entry' // Reference to the user's entries
-    }],
-    todos: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Todo' // Reference to the user's todos
     }],
     tokens: [{ // Array to store authentication tokens
         token: {

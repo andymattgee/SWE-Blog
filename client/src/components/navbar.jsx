@@ -4,7 +4,7 @@ import { FaBars, FaTimes } from 'react-icons/fa'; // Removed FaUser as it's repl
 import { useUser } from '../context/UserContext'; // Import useUser hook
 import axios from 'axios';
 import ThemeSwitch from './ThemeSwitch';
-import logoSrc from '../../public/images/console-blog-logo.png'; // Import the logo
+// import logoSrc from '../../public/images/console-blog-logo.png'; // Logo image removed
 
 // Navbar component for the application
 const Navbar = () => {
@@ -72,11 +72,10 @@ const Navbar = () => {
                     <div className="flex justify-between items-center h-16">
                         {/* Logo/Title */}
                         <Link to="/Home" className="flex items-center"> {/* Use flex to align image */}
-                            <img
-                                src={logoSrc} // Use the imported variable
-                                alt="Console Blog Logo"
-                                className="h-10 w-auto" // Adjust height as needed, width auto maintains aspect ratio
-                            />
+                            {/* Replaced image with styled text */}
+                            <span className="text-2xl font-bold font-comfortaa text-blue-800 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 transition-colors duration-200">
+                                Console.Blog( )
+                            </span>
                         </Link>
 
                         {/* Horizontal Navigation Links */}
