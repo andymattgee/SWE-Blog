@@ -11,7 +11,7 @@ const cors = require('cors'); // Import CORS middleware
 const path = require('path'); // Import path module for file paths
 
 // Retrieve environment variables for configuration
-const PORT = process.env.PORT || 3333; // Port for the server to listen on
+const PORT = process.env.PORT || 5001; // Port for the server to listen on
 const DB_URL = process.env.DB_URL || 'mongodb://localhost:27017'; // MongoDB connection URL
 const DB_NAME = process.env.DB_NAME || 'swe-blog'; // MongoDB database name
 
@@ -48,6 +48,11 @@ app.use(cors());
 
 // Serve static files from the uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Simple test route for checking server status
+app.get('/', (req, res) => {
+    res.send('helo from your node backend!');
+});
 
 // Define routes for the application
 app.use('/api/users', userRoute); // User-related routes
