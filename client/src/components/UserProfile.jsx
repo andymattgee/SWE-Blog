@@ -136,17 +136,27 @@ const UserProfile = () => {
                             <span className="font-semibold">Email:</span> {/* Changed label */}
                             <span>{userData.email}</span> {/* Changed to display email */}
                         </div>
+                        {/* Display user's full name */}
+                        {/* Border - Light: light gray; Dark: original dark gray */}
+                        <div className="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-2">
+                            <span className="font-semibold">Name:</span>
+                            <span>{`${userData.firstName || ''} ${userData.lastName || ''}`}</span>
+                        </div>
                         {/* Display user blog entries count */}
                         {/* Border - Light: light gray; Dark: original dark gray */}
                         <div className="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-2">
                             <span className="font-semibold">Blog Entries:</span>
                             <span>{userData.entriesCount}</span>
                         </div>
-                        {/* Display user tasks count */}
+                        {/* Display last entry date */}
                         {/* Border - Light: light gray; Dark: original dark gray */}
                         <div className="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-2">
-                            <span className="font-semibold">Tasks:</span>
-                            <span>{userData.tasksCount}</span>
+                            <span className="font-semibold">Last Entry Date:</span>
+                            <span>
+                                {userData.lastEntryDate
+                                    ? new Date(userData.lastEntryDate).toLocaleDateString()
+                                    : 'N/A'}
+                            </span>
                         </div>
                         {/* Action Buttons Container */}
                         <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4 pt-6">

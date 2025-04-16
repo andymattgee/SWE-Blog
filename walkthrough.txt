@@ -30,7 +30,7 @@ gitIgnore ->
 node_modules ->
     -contains all installed dependencies, as defined in the package.json file. 
     -stores that actual code of libraries/packages that your project relies on
-    ** when someone clones your repo, they should run 'npm install' to recrease node_modules on their machine that will allow project to run **
+    ** when someone clones your repo, they should run 'npm install' to recreate node_modules on their machine that will allow project to run **
 
 Setting up MongoDB
     make new data base in Mongo Atlas DB, browse collections, + create database.
@@ -38,7 +38,7 @@ Setting up MongoDB
         click on drivers button, copy connection string to code, replace password and username
         make sure to add either dbURL to .env or password/username to .env
 
-3/4/25 Beginning to use Cursor AI IDE for editing and agent use
+
 
 
 

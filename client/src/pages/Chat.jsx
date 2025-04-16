@@ -145,11 +145,15 @@ const Chatbot = () => {
             <div className="flex-grow container mx-auto px-4 py-8 flex flex-col items-center">
                 <div className="w-full max-w-3xl flex justify-between items-center mb-6">
                     {/* Light: dark text; Dark: white text */}
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Chat with GPT-4 Vision</h1>
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Chat with GPT-4 Turbo</h1>
                     <button onClick={handleClearChat} className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">
                         Clear Chat
                     </button>
                 </div>
+                {/* Disclaimer Text */}
+                <p className="text-xs text-gray-500 dark:text-gray-400 text-center mb-4 max-w-xl">
+                    Disclaimer: This chat feature was implemented as an experiment with the OpenAI API. Responses are currently unformatted, and the chat does not maintain conversational context between messages.
+                </p>
                 {/* Light: light gray bg; Dark: original dark gray bg */}
                 <div className="w-full max-w-3xl bg-gray-100 dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-200 dark:border-transparent flex flex-col"> {/* Added flex flex-col */}
                     {/* Chat history display */}

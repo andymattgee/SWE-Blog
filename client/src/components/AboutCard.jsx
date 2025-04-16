@@ -9,9 +9,8 @@ const AboutCard = () => {
         <div className="content">
           <p className="heading">About Me</p>
           <p className="para">
-            I'm a passionate software engineer and web developer with a focus on creating elegant, 
-            user-friendly solutions to complex problems. My journey in tech has led me through various 
-            technologies and frameworks, allowing me to build versatile and responsive applications.
+          I’m a physical therapist assistant who’s pivoting into tech — I’ve always loved designing things and being creative, and web development just clicked for me. I’ve been diving into full-stack development but find myself especially excited about front-end work where I can make things look and feel just right. Right now, I’m building a personal blog app and working with a small team on a fashion project that uses AI to help people organize their closets. I’m learning a ton and having fun creating things that (hopefully) make life a little cooler and easier.
+
           </p>
           <Link to="/contactPage">
             <button className="btn">Contact Me</button>
