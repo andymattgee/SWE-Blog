@@ -8,11 +8,11 @@ import SpaceButton from '../components/SpaceButton';
 import GradientCard from '../components/GradientCard';
 import AboutCard from '../components/AboutCard';
 import ProjectCard from '../components/ProjectCard';
-import stars from '../../public/videos/starryVideo.mp4'
+
 import mountains from '../../public/images/mountains.jpg';
-import computerGlasses from '../../public/images/computer_glasses.jpg';
+import fall from '../../public/images/fall-bg.jpg';
 import mtsRed from '../../public/images/mts_Red.jpg';
-import bannerTwo from '../../public/images/bannerTwo.jpg';
+
 
 /**
  * The Home component is the main page of the application.
@@ -118,7 +118,7 @@ const Home = () => {
     },
     {
       title: "Project Two",
-      image: computerGlasses,
+      image: fall,
       projectUrl: "https://github.com",
       types: [
         { name: "Node.js", bgColor: "rgba(104, 159, 56, 0.2)", textColor: "#388e3c" },

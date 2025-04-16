@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import starryVideo from '../../public/videos/starryVideo.mp4'; // Import the video
 import { useForm } from 'react-hook-form';
 import { FaEnvelope, FaArrowRight } from 'react-icons/fa';
 
@@ -18,18 +19,32 @@ const ContactPage = () => {
 
   return (
     // Light: white bg; Dark: black bg (simplified from gradient)
-    <div className="min-h-screen flex flex-col bg-white dark:bg-black">
+    // Make the main container relative to position the video absolutely within it, and remove background color
+    <div className="min-h-screen flex flex-col relative overflow-hidden">
+      {/* Video Background */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute top-0 left-0 w-full h-full object-cover z-[-1]" // Position behind content
+      >
+        <source src={starryVideo} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      
       <Navbar />
       
-      <div className="flex-grow flex flex-col md:flex-row w-full max-w-7xl mx-auto px-4 py-16">
+      {/* Add a semi-transparent overlay to make text more readable */}
+      <div className="flex-grow flex flex-col md:flex-row w-full max-w-7xl mx-auto px-4 py-16 relative z-10 bg-black bg-opacity-30 dark:bg-opacity-50">
         {/* Left Column - Content */}
         <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col justify-center">
           {/* Light: dark text; Dark: white text */}
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+          {/* Ensure text is white or light-colored for visibility over the video */}
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Let's chat.
           </h1>
-          {/* Light: dark text; Dark: white text */}
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">
             Let me know if you have any questions or feedback.
           </h2>
           {/* Light: medium gray text; Dark: light gray text */}
@@ -38,19 +53,19 @@ const ContactPage = () => {
             ** Page currently under construction and not ready for use. **
           </p>
           
-          {/* Light: light gray bg, dark text; Dark: original translucent bg, white text */}
-          <div className="bg-gray-100 dark:bg-white dark:bg-opacity-10 dark:backdrop-blur-md rounded-lg p-6 inline-flex items-center mt-4 w-fit border border-gray-200 dark:border-transparent">
-            <FaEnvelope className="text-blue-600 dark:text-blue-400 mr-3" />
-            <span className="text-gray-800 dark:text-white">Mail us at</span>
-            <a href="mailto:contact@devblog.com" className="text-blue-600 dark:text-blue-400 ml-2 hover:underline">sampleEmail@gmail.com</a>
+          {/* Adjust background for better readability over video */}
+          <div className="bg-white bg-opacity-20 dark:bg-black dark:bg-opacity-40 backdrop-blur-sm rounded-lg p-6 inline-flex items-center mt-4 w-fit border border-gray-200 dark:border-gray-600">
+            <FaEnvelope className="text-blue-300 mr-3" />
+            <span className="text-white">Mail us at</span>
+            <a href="mailto:contact@devblog.com" className="text-blue-300 ml-2 hover:underline">sampleEmail@gmail.com</a>
           </div>
         </div>
         
         {/* Right Column - Form */}
         <div className="w-full md:w-1/2 p-6 md:p-12">
-          {/* Light: white bg, dark text; Dark: original blue bg, white text */}
-          <div className="bg-white dark:bg-purple-900 rounded-xl p-8 md:p-10 shadow-xl border-2 border-gray-200 ">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+          {/* Adjust form background for readability */}
+          <div className="bg-white bg-opacity-20 dark:bg-black dark:bg-opacity-40 backdrop-blur-sm rounded-xl p-8 md:p-10 shadow-xl border border-gray-200 dark:border-gray-600">
+            <h2 className="text-2xl font-bold text-white mb-6">
               Send us a message
             </h2>
             
@@ -61,11 +76,11 @@ const ContactPage = () => {
                   <input
                     type="text"
                     placeholder="Full Name*"
-                    className="w-full px-4 py-3 rounded-md bg-gray-100 dark:bg-purple-800 dark:bg-opacity-50 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-purple-300 border border-gray-300 dark:border-purple-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-white"
+                    className="w-full px-4 py-3 rounded-md bg-white bg-opacity-30 dark:bg-black dark:bg-opacity-50 text-gray-900 dark:text-white placeholder-gray-300 dark:placeholder-gray-400 border border-gray-400 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-white"
                     {...register("name", { required: true })}
                   />
                   {/* Light: darker red error; Dark: original light red */}
-                  {errors.name && <span className="text-red-600 dark:text-red-300 text-sm mt-1">Name is required</span>}
+                  {errors.name && <span className="text-red-400 text-sm mt-1">Name is required</span>}
                 </div>
                 
                 <div>
@@ -73,15 +88,15 @@ const ContactPage = () => {
                   <input
                     type="email"
                     placeholder="Email Address*"
-                    className="w-full px-4 py-3 rounded-md bg-gray-100 dark:bg-purple-800 dark:bg-opacity-50 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-purple-300 border border-gray-300 dark:border-purple-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-white"
+                    className="w-full px-4 py-3 rounded-md bg-white bg-opacity-30 dark:bg-black dark:bg-opacity-50 text-gray-900 dark:text-white placeholder-gray-300 dark:placeholder-gray-400 border border-gray-400 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-white"
                     {...register("email", { 
                       required: true,
                       pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i 
                     })}
                   />
                   {/* Light: darker red error; Dark: original light red */}
-                  {errors.email?.type === 'required' && <span className="text-red-600 dark:text-red-300 text-sm mt-1">Email is required</span>}
-                  {errors.email?.type === 'pattern' && <span className="text-red-600 dark:text-red-300 text-sm mt-1">Invalid email address</span>}
+                  {errors.email?.type === 'required' && <span className="text-red-400 text-sm mt-1">Email is required</span>}
+                  {errors.email?.type === 'pattern' && <span className="text-red-400 text-sm mt-1">Invalid email address</span>}
                 </div>
                 
                 <div>
@@ -89,11 +104,11 @@ const ContactPage = () => {
                   <input
                     type="text"
                     placeholder="Subject*"
-                    className="w-full px-4 py-3 rounded-md bg-gray-100 dark:bg-purple-800 dark:bg-opacity-50 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-purple-300 border border-gray-300 dark:border-purple-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-white"
+                    className="w-full px-4 py-3 rounded-md bg-white bg-opacity-30 dark:bg-black dark:bg-opacity-50 text-gray-900 dark:text-white placeholder-gray-300 dark:placeholder-gray-400 border border-gray-400 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-white"
                     {...register("subject", { required: true })}
                   />
                   {/* Light: darker red error; Dark: original light red */}
-                  {errors.subject && <span className="text-red-600 dark:text-red-300 text-sm mt-1">Subject is required</span>}
+                  {errors.subject && <span className="text-red-400 text-sm mt-1">Subject is required</span>}
                 </div>
                 
                 <div>
@@ -101,17 +116,17 @@ const ContactPage = () => {
                   <textarea
                     placeholder="Tell us more about your project"
                     rows={4}
-                    className="w-full px-4 py-3 rounded-md bg-gray-100 dark:bg-purple-800 dark:bg-opacity-50 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-purple-300 border border-gray-300 dark:border-purple-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-white resize-none"
+                    className="w-full px-4 py-3 rounded-md bg-white bg-opacity-30 dark:bg-black dark:bg-opacity-50 text-gray-900 dark:text-white placeholder-gray-300 dark:placeholder-gray-400 border border-gray-400 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-white resize-none"
                     {...register("message", { required: true })}
                   />
                   {/* Light: darker red error; Dark: original light red */}
-                  {errors.message && <span className="text-red-600 dark:text-red-300 text-sm mt-1">Message is required</span>}
+                  {errors.message && <span className="text-red-400 text-sm mt-1">Message is required</span>}
                 </div>
                 
                 {/* Light: blue bg, white text; Dark: original white bg, blue text */}
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 dark:bg-white text-white dark:text-purple-700 font-bold py-3 px-6 rounded-md hover:bg-blue-700 dark:hover:bg-purple-100 transition duration-300 flex items-center justify-center"
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-md transition duration-300 flex items-center justify-center"
                 >
                   <span>Send Message</span>
                 </button>
