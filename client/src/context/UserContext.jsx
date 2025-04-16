@@ -35,10 +35,11 @@ export const UserProvider = ({ children }) => {
         });
         console.log('Profile response:', profileResponse.data); // Add log
         if (profileResponse.data) {
-          // Store essential profile data (email, image)
+          // Store essential profile data (email, image, names)
+          refreshedData.firstName = profileResponse.data.firstName;
+          refreshedData.lastName = profileResponse.data.lastName;
           refreshedData.email = profileResponse.data.email;
           refreshedData.image = profileResponse.data.image;
-          // Add other fields from /me if needed later
         } else {
            console.log("No data received from /api/users/me"); // Add log
         }

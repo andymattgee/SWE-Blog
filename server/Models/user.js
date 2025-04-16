@@ -5,7 +5,16 @@ const Schema = mongoose.Schema; // Create a Schema constructor
 
 // Define the schema for a User
 const userSchema = new Schema({
-    // userName removed
+    firstName: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    lastName: {
+        type: String,
+        required: true,
+        trim: true
+    },
     password: {
         type: String,
         required: true // Password, required field
