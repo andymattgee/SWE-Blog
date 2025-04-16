@@ -6,6 +6,7 @@ node_modules/
 .env
 
 # Build output
+build/
 /build
 /dist
 
