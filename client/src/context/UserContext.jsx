@@ -89,7 +89,7 @@ export const UserProvider = ({ children }) => {
       // Fetches basic user details like name, email, and profile image.
       try {
         console.log("Fetching /api/users/me...");
-        const profileResponse = await axios.get('http://localhost:3333/api/users/me', {
+        const profileResponse = await axios.get('http://localhost:5001/api/users/me', {
           headers: { Authorization: `Bearer ${token}` }
         });
         console.log('Profile response:', profileResponse.data);
@@ -119,7 +119,7 @@ export const UserProvider = ({ children }) => {
       // Fetches all entries to determine the count and the date of the most recent one.
       try {
         console.log("Fetching /entries...");
-        const entriesResponse = await axios.get('http://localhost:3333/entries', {
+        const entriesResponse = await axios.get('http://localhost:5001/entries', {
           headers: { Accept: 'application/json', Authorization: `Bearer ${token}` }
         });
         const entries = entriesResponse.data?.data; // Assuming API returns { data: [...] }

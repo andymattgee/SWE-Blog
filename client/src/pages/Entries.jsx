@@ -85,7 +85,7 @@ const Entries = () => {
                 toast.error("Authentication required. Please log in.");
                 return; // Exit if no token
             }
-            const response = await axios.get('http://localhost:3333/entries', {
+            const response = await axios.get('http://localhost:5001/entries', {
                 headers: {
                     Authorization: `Bearer ${token}` // Send token in Authorization header
                 }
@@ -121,7 +121,7 @@ const Entries = () => {
                 toast.error("Authentication required.");
                 return;
             }
-            const response = await axios.put(`http://localhost:3333/entries/${id}`, formData, {
+            const response = await axios.put(`http://localhost:5001/entries/${id}`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data' // Necessary for file uploads
@@ -162,7 +162,7 @@ const Entries = () => {
                 toast.error("Authentication required.");
                 return;
             }
-            const response = await axios.delete(`http://localhost:3333/entries/${id}`, {
+            const response = await axios.delete(`http://localhost:5001/entries/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -211,7 +211,7 @@ const Entries = () => {
                 data.append('image', formData.image);
             }
 
-            const response = await axios.post('http://localhost:3333/entries', data, {
+            const response = await axios.post('http://localhost:5001/entries', data, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data' // Required for file uploads
@@ -251,7 +251,7 @@ const Entries = () => {
                 return;
             }
             // Fetch full entry details using its ID
-            const response = await axios.get(`http://localhost:3333/entries/${entry._id}`, {
+            const response = await axios.get(`http://localhost:5001/entries/${entry._id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

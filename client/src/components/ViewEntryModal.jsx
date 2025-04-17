@@ -123,7 +123,7 @@ const ViewEntryModal = ({ theme = 'dark', entry, isOpen, onClose, onEdit, onDele
             
             // Make API request to generate summary
             const response = await axios.post(
-                'http://localhost:3333/api/summary/generate',
+                'http://localhost:5001/api/summary/generate',
                 {
                     professionalContent: entry.professionalContent,
                     personalContent: entry.personalContent,
