@@ -48,7 +48,7 @@ const PasswordChangeModal = ({ isOpen, onClose }) => {
         try {
             // NOTE: The API endpoint '/api/users/change-password' might need adjustment
             // depending on your actual backend setup.
-            const response = await fetch('/api/users/change-password', { 
+            const response = await fetch('http://localhost:5001/api/users/change-password', { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

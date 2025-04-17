@@ -93,7 +93,7 @@ const Chatbot = () => {
         try {
             console.log('Sending message to API with image:', selectedImage ? 'Yes' : 'No'); // Simplified log
 
-            const { data } = await axios.post('http://localhost:3333/api/chat', formData, {
+            const { data } = await axios.post('http://localhost:5001/api/chat', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

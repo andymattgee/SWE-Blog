@@ -76,7 +76,7 @@ const UserProfile = () => {
         try {
             console.log('Uploading profile picture:', selectedFile.name);
             // Send POST request to the backend endpoint
-            const response = await axios.post('http://localhost:3333/api/users/profile-picture', formData, {
+            const response = await axios.post('http://localhost:5001/api/users/profile-picture', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data', // Important for file uploads
                     Authorization: `Bearer ${token}`

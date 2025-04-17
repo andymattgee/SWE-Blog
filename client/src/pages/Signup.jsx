@@ -28,7 +28,7 @@ const Signup = () => {
     const handleSignup = async (firstName, lastName, email, password) => {
         try {
             // Make a POST request to the registration endpoint
-            const result = await axios.post('http://localhost:3333/api/users/register', {
+            const result = await axios.post('http://localhost:5001/api/users/register', {
                 firstName: firstName,
                 lastName: lastName,
                 email: email,
